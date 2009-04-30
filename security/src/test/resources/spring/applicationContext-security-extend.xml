@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+
+<beans default-lazy-init="false">
+
+    <bean id="accessDecisionManager" class="org.springframework.security.vote.AffirmativeBased">
+        <property name="allowIfAllAbstainDecisions" value="false" />
+        <property name="decisionVoters">
+            <list>
+                <bean class="org.springframework.security.vote.RoleVoter"/>
+                <bean class="org.springframework.security.vote.AuthenticatedVoter"/>
+            </list>
+        </property>
+    </bean>
+
+    <!--
+         filterInvocationInterceptor在执行转向url前检查objectDefinitionSource中设定的用户权限信息
+         过程：
+         首先，objectDefinitionSource中定义了访问URL需要的属性信息(这里的属性信息仅仅是标志，告诉accessDecisionManager要用哪些voter来投票)
+         然后，authenticationManager调用自己的provider来对用户的认证信息进行校验。
+         最后，所有投票者根据用户持有认证和访问url需要的属性，调用自己的voter来投票，决定是否允许访问。
+     -->
+    <bean id="filterInvocationInterceptor"
+       class="org.springframework.security.intercept.web.FilterSecurityInterceptor">
+        <property name="authenticationManager" ref="authenticationManager" />
+        <property name="accessDecisionManager" ref="accessDecisionManager" />
+        <property name="objectDefinitionSource">
+            <bean class="com.family168.security.intercept.web.CacheBaseUrlDefinitionSource">
+                <property name="convertUrlToLowercaseBeforeComparison" value="true" />
+                <property name="useAntPath" value="true" />
+                <property name="protectAllResource" value="false"/>
+                <property name="acegiCacheManager" ref="acegiCacheManager" />
+            </bean>
+        </property>
+    </bean>
+
+    <!--
+    　　　methodSecurityInterceptor在执行方法前进行拦截，检查用户权限信息
+    -->
+    <bean id="securityInterceptor"
+       class="org.springframework.security.intercept.method.aopalliance.MethodSecurityInterceptor">
+        <property name="validateConfigAttributes" value="false"/>
+        <property name="authenticationManager" ref="authenticationManager"/>
+        <property name="accessDecisionManager" ref="accessDecisionManager" />
+        <property name="runAsManager" ref="runAsManager"/>
+        <property name="objectDefinitionSource">
+            <bean class="com.family168.security.intercept.method.CacheBaseMethodDefinitionSource">
+                <property name="acegiCacheManager" ref="acegiCacheManager" />
+            </bean>
+        </property>
+    </bean>
+
+    <!-- RunAsManager -->
+    <bean id="runAsManager"
+       class="org.springframework.security.runas.RunAsManagerImpl">
+        <property name="key" value="my_run_as_password"/>
+    </bean>
+
+    <!-- ================= Springside Extends == -->
+
+    <bean id="userCache" class="org.springframework.security.providers.dao.cache.EhCacheBasedUserCache">
+        <property name="cache">
+            <bean class="org.springframework.cache.ehcache.EhCacheFactoryBean">
+                <property name="cacheManager" ref="cacheManager" />
+                <property name="cacheName" value="userCache" />
+            </bean>
+        </property>
+    </bean>
+
+    <bean id="resourceCache" class="com.family168.security.cache.EhCacheBasedResourceCache"
+        autowire="byName">
+        <property name="cache">
+            <bean class="org.springframework.cache.ehcache.EhCacheFactoryBean">
+                <property name="cacheManager" ref="cacheManager" />
+                <property name="cacheName" value="resourceCache" />
+            </bean>
+        </property>
+    </bean>
+
+    <!--
+        总管UserCache和ResourceCache
+    -->
+    <bean id="acegiCacheManager" class="com.family168.security.cache.AcegiCacheManagerFactoryBean">
+        <property name="userCache" ref="userCache" />
+        <property name="resourceCache" ref="resourceCache" />
+        <property name="authenticationService">
+            <bean id="authenticationService" class="com.family168.security.service.HibernateAuthenticationService">
+                <property name="sessionFactory" ref="sessionFactory"/>
+            </bean>
+        </property>
+    </bean>
+
+    <!--
+        登陆时从缓存里获取用户
+    -->
+    <bean id="userDetailsService" class="com.family168.security.InCacheDaoImpl">
+        <property name="userCache" ref="userCache" />
+    </bean>
+
+    <!--
+        设置需要securityInterceptor来判断权限的类
+    -->
+    <bean id="autoProxyCreator"
+       class="org.springframework.aop.framework.autoproxy.BeanNameAutoProxyCreator">
+        <property name="proxyTargetClass" value="true" />
+        <property name="interceptorNames">
+            <list>
+                <idref local="securityInterceptor" />
+                <idref bean="userManagerSecurity" />
+            </list>
+        </property>
+        <property name="beanNames">
+            <list>
+                <idref bean="deptManager"/>
+                <idref bean="userManager"/>
+                <idref bean="roleManager"/>
+                <idref bean="rescManager"/>
+                <idref bean="menuManager"/>
+            </list>
+        </property>
+    </bean>
+
+</beans>

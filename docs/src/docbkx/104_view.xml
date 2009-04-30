@@ -1,0 +1,304 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter xml:id="view">
+    <title>view</title>
+
+    <sect1>
+        <title>JSTL和JSP-2.0</title>
+        <sect2>
+            <title>配置</title>
+            <para>确定Web Container支持Servlet2.4， 复制支持jstl 1.1.2版本的jstl.jar,standard.jar(可查阅jar文件中META-INF的信息)到WEB-INF/lib。</para>
+            <para>在web.xml使用schema进行配置。</para>
+            <programlisting language="xml"><![CDATA[
+<web-app id="starter" version="2.4"
+    xmlns="http://java.sun.com/xml/ns/j2ee"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">]]>
+            </programlisting>
+            <para>在jsp中，将core和fmt的引入改为（留意多了uri里多了jsp）</para>
+            <programlisting><![CDATA[
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>]]>
+            </programlisting>
+        </sect2>
+        <sect2>
+            <title>使用JSP-2.0的EL表达式</title>
+            <para>直接在html里面使用EL，而不是<![CDATA[<c:out value="">]]>。</para>
+            <para><![CDATA[不要用<c:url value=""/>]]></para>
+            <para><![CDATA[<c:url value=""/>]]>虽然解决了context-path的问题,但嵌套起来复杂无比。建议在公共的taglib.jsp加入</para>
+            <programlisting><![CDATA[
+<c:set var="ctx" value="${pageContext.request.contextPath}"/>]]>
+            </programlisting>
+            <para>然后在需要使用绝对路径的地方直接编写</para>
+            <programlisting><![CDATA[
+<link href="${ctx}/styles/default.css" type="text/css">]]>
+            </programlisting>
+            <para>而不是看得眼花的</para>
+            <programlisting><![CDATA[
+<link href="<c:url value="/styles/default.css"/>" type="text/css">]]>
+            </programlisting>
+        </sect2>
+        <sect2>
+            <title>新增的Function标签</title>
+            <para>Function标签里最有用的一项是取得List,Map的size了。另外有一些StringUtils和Collection的函数。JSTL里面不给调用对象除getXXX()外的任何方法真是件很让让人郁闷的事情！！</para>
+            <programlisting><![CDATA[
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
+${fn:length(list)}]]>
+            </programlisting>
+        </sect2>
+        <sect2>
+            <title>EL运算符</title>
+            <para>除了最基本的算术运算符，逻辑运算符，比较运算符外，还有一个empty运算符，用来判断变量是否为null或list, map的size是否为零。</para>
+            <programlisting><![CDATA[
+<c:if test="${not empty list}">]]>
+            </programlisting>
+        </sect2>
+        <sect2>
+            <title>[]与.两种访问属性或元素的方式</title>
+            <para>${user.name}与${user["name"]}等价。${user["name"]}主要用于"name"串为变量，或者字符串中含有"."字符的情况如 ${map[user.name]}是访问Map元素的一种很重要的方式。</para>
+            <para>对于List类型，可以使用list[0]返回第一个元素。</para>
+            <para>对于Map类型，可以使用key和value进行遍历。</para>
+            <programlisting><![CDATA[
+<c:forEach var="entry" items="${map}">
+    <option value="${entry.key}">${entry.value}</option>
+</c:forEach>]]>
+            </programlisting>
+            <para>对于set就不能直接使用[0]这类指定索引的方式获取数据了，我们只能通过循环才能拿到set中的各项数据。</para>
+        </sect2>
+        <sect2>
+            <title>访问静态变量</title>
+            <para>EL本身不支持静态变量访问，变通的方法是写一个tag,将某个类的静态变量反射到一个map中， 如http://www.javaranch.com/journal/200601/Journal200601.jsp#a3</para>
+            <para>不过使用Map将失去静态变量编译期安全的意义，因此还是建议在这种情况下，使用普通JSP</para>
+        </sect2>
+    </sect1>
+
+    <sect1>
+        <title>OSCache</title>
+        <sect2>
+            <title>用于缓存Web内容的Taglib</title>
+            <para>因为Web应用多数使用MVC架构, 最需要避免的数据库操作一般都是由Controller调用DAO来完成，如果只是缓存View层内容意义不大。</para>
+            <para>使用的方式，可以选择使用JSP Cache taglib缓存include语句，也可以使用Cache Filter缓存对应的URL请求，推荐使用第一种。</para>
+            <programlisting><![CDATA[
+<%@ taglib uri="http://www.opensymphony.com/oscache" prefix="oscache" %>
+<oscache:cache key="index" time="300">
+    <jsp:include page="/jstl.jsp"/>
+</oscache:cache>]]>
+            </programlisting>
+            <para>taglib参数中唯一值得留意的是key属性，如果key="abc"，则整个系统里key="abc"都会显示同样的内容，所以需谨慎选择，小心冲突。</para>
+            <para>如果不设key，则会自动以当前URL为key，如果一页里有缓存多个区块的，还会加上序号。注意这时候，又要避免URL中一些无谓的参数影响cache的效果，可能需要手工以主URL及有用的参数来设定key。</para>
+        </sect2>
+        <sect2>
+            <title>缓存Request</title>
+            <para>如果生成的excel, 图片等，不需要经常更新的，可以在URL级进行缓存，可以大大减低系统负荷。</para>
+            <programlisting><![CDATA[
+<filter>
+    <filter-name>CacheFilter</filter-name>
+    <filter-class>com.opensymphony.oscache.web.filter.CacheFilter</filter-class>
+    <init-param>
+        <param-name>time</param-name>
+        <param-value>600</param-value>
+    </init-param>
+    <init-param>
+        <param-name>scope</param-name>
+        <param-value>session</param-value>
+    </init-param>
+</filter>
+<filter-mapping>
+    <filter-name>CacheFilter</filter-name>
+    <url-pattern>report.png</url-pattern>
+</filter-mapping>]]>
+            </programlisting>
+        </sect2>
+        <sect2>
+            <title>CRON级的刷新时间配置</title>
+        </sect2>
+        <para>OSCache还支持Cron语法的刷新时间配置。</para>
+        <para>Cron表达式的基本语法</para>
+        <para>Cron表达式包括5个字段分别为Minute,Hour,DOM(Day Of Month),Month,DOW(Day Of Week)。他们顺序地对应了5个位置。当某个位置上的值为*时,表示该位置上的任意时间。另外还提供了指定时间的操作符号"-"，","，"/"，他们分别表示一段时间范围，具体的时间，以及递增的时间段。下面是几个例子说明一下Cron表达式的基本应用，有兴趣的也可以查看下OSCache的文档。</para>
+        <para>"10/20 * * * *" :因是第一个位置，并且是一个递增的表达式,所以表达式指定的是每个小时的第10分钟，第30分钟，第50分钟缓存内容失效。"* 8-18/4 * * *" :指定每天早上8点到晚上6点之间，每4个小时缓存内容失效。等同于"* 8,12,16 * * *""* * * * 1-5":表示每个星期一到星期五内容失效。</para>
+    </sect1>
+
+    <sect1>
+        <title>Jodd Form taglib</title>
+        <para>Jodd Form的使用极其简单，太简单了。</para>
+        <para><![CDATA[它只要把<form>的头尾以<jodd:form bean="bean" scope="request">包住即可，就会自动绑定bean的所有同名属性到普通html标记--input, selectbox, checkbox,radiobox.....在这些input框里不用再写任何代码。</para>
+        <para>可见，它的好处一是节约代码，二是保留了html版的form tag, 不需要用一套taglib来代替原来的标签。而且支持内嵌对象的绑定，如category.category.name。比那些需要使用非纯html标记的<ww:input>，逐个绑定input框，select框的Form Tag，虽减了些许灵活性，但实在方便得太厉害。]]></para>
+        <para><![CDATA[如果属性来自于request，而不是某个java bean，写<jodd:form bean="request">]]></para>
+        <para>jodd采用的是普通的bean反射，调用所有属性的toString()函数。</para>
+        <para>注意，jodd在html tag不含value="xxx"属性时才会自动绑定。如果某个input框你不希望jodd自动绑定，或者默认的toString()不能满足要求时，可以手工为该input框写上 value="xxxx"，jodd看到你已经定义了属性值，就会自动绕开。</para>
+    </sect1>
+
+    <sect1>
+        <title>pager-taglib组件</title>
+        <para> Pager-taglib 2.0 是一套分页标签库，可以灵活地实现多种不同风格的分页导航页面，并且可以很好的与服务器分页逻辑分离。这样一套标签库，你想你的分页效果怎样就能怎样。</para>
+    </sect1>
+
+    <sect1>
+        <title>Sitemesh</title>
+        <para>并不主张所有页面使用SiteMesh ，把这些页面的头尾都摘了只会让IDE识别不了，不知所云。真的是有些前台页面，需要动态增加显示内容，能让你敏感的觉得如果使用Decorator模式会比〈jsp: include〉来得更好时，才推荐使用。</para>
+        <orderedlist>
+            <listitem>
+                <para>在web.xml 声明 SiteMesh2</para>
+            </listitem>
+            <listitem>
+                <para>在sitemesh.xml中添加自己的mapper</para>
+            </listitem>
+            <listitem>
+                <para>/在decorators.xml添加我们的decorator，在web.xml中添加自己的UnicodePageFilter。基本搞定我们的工作。</para>
+            </listitem>
+        </orderedlist>
+    </sect1>
+
+    <sect1>
+        <title>freemarker</title>
+        <para>freemarker是一个时下比较流行的模版框架。模版技术应用的场合很多，例如代码生成，XML文件生成之类，而其最主要的作用还是应用于VIEW层的HTML代码生成。Freemarker框架的兴起也同流行MVC框架的大规模引用有直接关系。使用Freemarker的MVC框架有Webwork,SpringMVC,Struts2.0等等。。</para>
+    </sect1>
+
+    <sect1>
+        <title>html格式</title>
+        <para>页面尽量符合Xhtml 1.0，在页首加入，Eclipse会自动检查：</para>
+        <programlisting><![CDATA[
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">]]>
+        </programlisting>
+        <para>如果想宽松一点，仅支持HTML4.0.1，在页首加入：</para>
+        <programlisting><![CDATA[
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">]]>
+        </programlisting>
+        <para>考虑在设计页面的时候基于<ulink url="http://blueprintcss.org/">Blue Print CSS</ulink>，这是一套CSS框架。</para>
+    </sect1>
+
+    <sect1>
+        <title>ExtremeTable<emphasis>（待研究）</emphasis></title>
+        <para>问题在于作者已经停止更新了。考虑用jmesa？</para>
+        <para> Extreme Table是最功能强大而又容易配置,扩展,自定义的Table 控件。最紧要的功能包括排序, 分页, 导出Excel, pdf和汇总。</para>
+        <para>安装原始版本</para>
+        <para>从http://www.extremecomponents.org 下载最新版</para>
+        <para>把extremecomponents.jar 放入web-inf/lib</para>
+        <para>根据minum, 导出excel 或 导出pdf的需要，把/lib下的jar copy到web-inf/lib</para>
+        <para>把images里的图片放入web的任意目录</para>
+        <para>把css文件放到web的任意目录</para>
+        <para>在/source/org/extremecomponents/table/core目录找到extremetable.properties文件,把它复制到WEB-INF/classes里面并进行修改.</para>
+        <para>修改web.xml (见2)</para>
+        <para>复制SpringSide的样式</para>
+        <para>Copy springside的Table Head的图，查。</para>
+        <para>将springside中的修改版extremecomponents.css文件放入任意目录</para>
+        <para>把/src/resource/extremetable.properties 复制到对应目录</para>
+        <para>使用Compact View很重要</para>
+        <para> 默认的式样不符合大家的审美，幸亏还有Compact View和css设置，让我们可以敬谢不敏它号称非常方便的HtmlView子类扩展。</para>
+        <para>在全局设置里</para>
+        <programlisting><![CDATA[
+table.view.html=org.extremecomponents.table.view.CompactView]]>
+        </programlisting>
+        <para>把images里/table/compact/*.gif copy 到 /table</para>
+        <para>全局属性配置</para>
+        <para> ExtremeTable支持在properties文件里方便的统一配置丰富的全局属性,在/source/org/extremecomponents/table/core目录找到extremetable.properties文件,把它复制到WEB-INF/classes里面.在web.xml里面增加</para>
+        <programlisting><![CDATA[
+<context-param>
+    <param-name>extremecomponentsPreferencesLocation</param-name>
+    <param-value>/extremetable.properties</param-value>
+</context-param>]]>
+        </programlisting>
+        <para>一般只写需要修改的文件:</para>
+        <programlisting><![CDATA[
+table.filterable=false
+table.imagePath=/images/table/*.gif
+table.locale=zh_CN
+table.view.html=org.extremecomponents.table.view.CompactView
+row.highlightRow=true
+column.format.date=yyyy-MM-dd
+column.format.currency=###,###,###,###,#00.00]]>
+        </programlisting>
+        <para>导出Excel</para>
+        <para>注意Excel 导出的Tag已改为，且官方版不支持中文文件名。</para>
+        <programlisting><![CDATA[
+<ec:exportXls fileName="BookList.xls" tooltip="导出 Excel"/>]]>
+        </programlisting>
+        <para>在web.xml必须加入：</para>
+        <programlisting><![CDATA[
+<filter>
+    <filter-name>eXtremeExport</filter-name>
+    <filter-class>org.extremecomponents.table.filter.ExportFilter</filter-class>
+</filter>
+<filter-mapping>
+    <filter-name>eXtremeExport</filter-name>
+    <url-pattern>/*</url-pattern>
+</filter-mapping>]]>
+        </programlisting>
+        <para> ExtremeTable导出的一项重要特性是可以根据不同的View导出不同的列.比如html管理界面可能只列出订单几个最重要的列，而导出excel时则需要导出所有的列。</para>
+        <programlisting><![CDATA[
+<ec:column property="orderdate" title="订单日期"  cell="date" format="yyyy-MM-dd"  viewsDenied= "html"/>]]>
+        </programlisting>
+        <para>又比如有些操作按纽的列只想在html出现,excel里不想出现：</para>
+        <programlisting><![CDATA[
+<ec:column property="orderdate" title="订单日期" viewAllowed= "html"/>]]>
+        </programlisting>
+        <para> 以上订单日期列在html view看不到，而excel,pdf view可以见到.而"编辑图标"，"选择Checkbox"这些管理界面上的列，也可以设置不export到pdf,excel view</para>
+        <para>使用排序功能时,如果property为嵌套属性时,需要设置alias</para>
+        <para>因为javascript的关系.</para>
+        <programlisting><![CDATA[
+<ec:column property="customer.name" title="客户名称" alias="customer"/>]]>
+        </programlisting>
+        <para>Date Cell与NumberCell 和RowCountCell</para>
+        <para>在全局属性定义:</para>
+        <programlisting><![CDATA[
+column.format.date= yyyy-MM-dd
+column.format.currency= ￥###,###,#00.00]]>
+        </programlisting>
+        <programlisting><![CDATA[
+<ec:column property="totalprice" title="总金额" cell="currency" width="80" />
+<ec:column property="shipdate" title="发货日期"  cell="date" width= "80"/>]]>
+        </programlisting>
+        <para>其中RowCountCell用于显示序号。</para>
+        <para> 汇总</para>
+        <para>在column中加入两个cac属性，就会自动在table的底端显示汇总</para>
+        <programlisting><![CDATA[
+<ec:column property="totalprice" title="总金额" cell="number" format="###,###,##0.00" calc="total" calcTitle= "汇总:"/>]]>
+        </programlisting>
+        <para>i18N</para>
+        <para>在Web.xml里面指定i18N的Properties文件</para>
+        <programlisting><![CDATA[
+<context-param>
+    <param-name>extremecomponentsMessagesLocation</param-name>
+    <param-value>messages</param-value>
+</context-param>]]>
+        </programlisting>
+        <programlisting><![CDATA[
+<ec:column property="name" title="book.name"/>]]>
+        </programlisting>
+        <para>数据库分页</para>
+        <para>EC默认从数据库中查找所有记录然后由它来分页，如果查询结果较大，可以考虑使用数据库端分页的方案。此时，EC会使用Limit对象向Controller传递PageNo,PageSize,OrderBy等分页信息。而服务端将向EC返回总记录数和当前页的内容，具体请参看 BookController。</para>
+        <para>显示导出excel及分页</para>
+        <para>最快的方式是设置table的showStatusBar= false</para>
+        <programlisting><![CDATA[
+<ec:table  items= "order.orderItems"var="item" action=""   showStatusBar= "false">]]>
+        </programlisting>
+        <para>ImagePath</para>
+        <para>旧版EC包括其文档都在每个table tag里定义ImagePath, 新版已经可以自动插入ContextPath,只需在properties文件定义table.imagePath=/images/table/*.gif即可</para>
+        <para>自定义及扩展</para>
+        <para>ExtremeTable比Display Tag的i一个就是良好的自定义和扩展能力，不用千人一面。不过，人总是懒的，虽然扩展子类很容易，但能不扩展就还是不可扩展了。幸亏用Compact View再改改CSS一般就能达到要求。</para>
+        <para>良好的CSS定义</para>
+        <para>ExtremeTable 的CSS定义非常严谨, 并且提供很多个层次的修改方式:1.直接修改css文件, 可以把table view改成任意样式2.修改全局属性, 改变某种元素对应的css class名</para>
+        <programlisting><![CDATA[
+table.styleClass=tableRegion]]>
+        </programlisting>
+        <para>在某个页面的row,column tag中定义class</para>
+        <programlisting><![CDATA[
+<ec:row style="" or styleClass=""/>]]>
+        </programlisting>
+        <para> SpringSide采用层次1, 直接修改extremecomponents.css为合适的样式</para>
+        <para><![CDATA[方便的<tr><td>属性扩展]]></para>
+        <para><![CDATA[row与column已提供了丰富的普通属性与 javascript属性如onClick(), 如果属性仍然未够,可自行扩展<row>与<column>tag ，并通过全局属性指定新的子类名。为了方便大家在子类扩展属性, extreme Table提供了专门的回调函数与Util函数如]]></para>
+        <programlisting><![CDATA[
+public void addColumnAttributes(Column column) {
+   column.addAttribute("customAttributeOne", customAttributeOne);
+}]]>
+        </programlisting>
+        <para>详细请看手册,Table, Row,Column都提供相同的扩展:http://extremecomponents.org/wiki/index.php/Column#Extended_Attributes如果不是Extremetable的特别支持, 普通taglib class要扩展属性的话:1.定义真正的Java属性,setter,getter2. tld文件中声明新的属性 3.重载输出函数将新属性打印出来</para>
+        <para>扩展HTMLView,cell 等显示组件</para>
+        <para>  Extreme Table在这些类的扩展上放便很多，但这个版本里我还没有进行尝试，就不写了。请自行参考官方文档:http://extremecomponents.org/wiki/index.php/Html_View_Tutorial .</para>
+    </sect1>
+
+</chapter>
+
+
+

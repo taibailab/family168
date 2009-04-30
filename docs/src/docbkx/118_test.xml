@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter xml:id="test">
+    <title>测试</title>
+
+    <sect1>
+        <title>TDD的好处</title>
+        <para>注重实效的TDD的确能加快，而不是拖慢开发的进度（片面的追求覆盖率的全面UnitTest不在此列）</para>
+        <orderedlist>
+            <listitem>
+                <para>可以实现真正分层开发。</para>
+            </listitem>
+            <listitem>
+                <para>不需要依赖和频繁重启Web Container。</para>
+            </listitem>
+            <listitem>
+                <para>手工测试总不免改动数据库，如何把数据库恢复到测试前的状态是件伤脑筋的事情。Unit Test可以使用自动Rollback机制，巧妙的解决了这件事情。</para>
+            </listitem>
+        </orderedlist>
+        <sect2>
+            <title>单元测试的两种风格</title>
+            <sect3>
+                <title>纯MockObject的风格</title>
+                <para>Rod的&lt;Professional J2EE with Spring&gt;的例子即是这种风格。这种风格不依赖Spring与ApplicationContext，完全绝对的分层开发。但缺点是需要手工注入所有依赖bean，手工设置所有出场对象的方法和假定返回值，代码量非常巨大，而且这种Mock UT离实际环境很远，仍然需要再写一套集成测试的Test Case。</para>
+                <para>优点是速度快，可以保证测试环境的稳定，单元测试的方法不会受到其他外部依赖的影响。</para>
+            </sect3>
+            <sect3>
+                <title>Pragmatic风格</title>
+                <para>使用Spring Test加载applicationContext，自动注入所有测试对象，并利用真实对象进行测试。这样的好处是开发人员可以专注于测试检验代码的编写。</para>
+                <para>重载public String[] getConfigLocations()方法限定applicationContext，加上lazy-load可以每次只加载依赖的的对象环境。大大提高测试效率。</para>
+                <para>Spring Test还可以对加载的applicationContext进行缓存，不用给每个测试方法都创建一次完整环境，进一步提高效率。</para>
+            </sect3>
+        </sect2>
+        <sect2>
+            <title>测试用例分三类</title>
+            <sect3>
+                <title>单元测试</title>
+                <para>使用JUnit 3.8 + EasyMock，Mock掉所有依赖类，严格隔绝其他类对本类的影响。</para>
+            </sect3>
+            <sect3>
+                <title>集成测试</title>
+                <para>使用JUnit 3.8 + Spring的TestContext Framework，注入其他依赖Bean，使用实际数据库进行测试。</para>
+                <para>集成测试会依赖其他的依赖类，不能单独测试。但优点是不用写太多的Mock语句，也能测试几个类集成起来的效果，所以测试效率也会比较高。</para>
+                <para>Spring 2.5的依赖测试用例支持ApplicationContext依赖注入，事务自动回滚等功能(也可设置不回滚)，详见Spring 2.5 集成测试资料。</para>
+                <para>另Apache Commons Lang的RandomStringUtils可提供测试时某些Unique字段的随机数 。</para>
+            </sect3>
+            <sect3>
+                <title>功能测试</title>
+                <para>依照测试用例文档，使用SoapUI，Selenium这些外部工具或者纯手工进行测试。</para>
+            </sect3>
+            <para>上述三类测试，对问题的定位越来越笼统，但对产品最后质量的测试效率则越来越高。在国内现状中，大力提倡TDD的同时，还不可能严格要求大家必须编写足够的测试用例，愿意写测试的同志已经是好同志了。</para>
+        </sect2>
+    </sect1>
+
+    <sect1>
+        <title>JUnit 3.8 vs JUnit 4.5</title>
+        <para>JUnit 4打破了原来的继承体系，纯以annotation标注。但是对每个方法上多出来的@Test有些反感，所以依然采用JUnit 3的方法命名方式。</para>
+        <para>如果想用JUnit 4里的特性，可以用Spring为JUnit 3提供的@IfProfileValue(符合条件才运行)，@ExpectedException(期望异常)，@Timed(超时控制)。这些东西看起来都很不错，可惜实际中还没真正用过。</para>
+    </sect1>
+
+    <sect1>
+        <title>EasyMock</title>
+        <para>MockObject是一样彻底分层开发的好东西，而且使用上没什么难度。而且已不再存在只支持接口不支持Class的限制。</para>
+        <sect2>
+            <title>EasyMock VS JMock</title>
+            <para>JMock要求TestCase继承于MockObjectTestCase太霸道了。妨碍了我们继承自己编写的超类。因此采用没那么霸道的easyMock。</para>
+            <para>另外，easyMock的脚本录制虽不如jmock那么优美，但胜在简短易读。jmock那句太长了。</para>
+        </sect2>
+        <sect2>
+            <title>使用</title>
+            <para>使用jdk5中提供的static import减少代码长度，再用classextension让easymock支持仿造class。</para>
+            <programlisting><![CDATA[
+import start org.easymock.classextension.EasyMock.*;]]>
+            </programlisting>
+            <para>导入以后分三步使用：</para>
+            <itemizedlist>
+                <listitem>
+                    <para>createMock()</para>
+                </listitem>
+                <listitem>
+                    <para>expect()</para>
+                    <para>replay()</para>
+                </listitem>
+                <listitem>
+                    <para>verify()</para>
+                </listitem>
+            </itemizedlist>
+            <programlisting>
+UserManager userManager = createMock(UserManager.class);
+expect(userManager.get(1L)).andReturn(new User());
+replay(userManager);
+User user = userManager.get(1L);
+assertNotNull(user);
+verify(userManager);
+            </programlisting>
+        </sect2>
+    </sect1>
+
+    <sect1>
+        <title>Spring Test</title>
+        <para>关于Spring的单元测试文档详细请看 满江红翻译Spring2.0 参考手册第8章测试。</para>
+        <sect2>
+            <title>Spring下的Unit Test</title>
+            <para>Spring下的Unit Test主要关注三个方面：</para>
+            <orderedlist>
+                <listitem>
+                    <para>bean的依赖注入</para>
+                </listitem>
+                <listitem>
+                    <para>事务控制，Open Session in Test及默认回滚</para>
+                </listitem>
+                <listitem>
+                    <para>脱离WebContainer对控制层的测试</para>
+                </listitem>
+            </orderedlist>
+            <para>使用spring-test提供的几个超类非常有好处，spring提供了可以一次读取xml并缓存的机制，让所有testCase都可以共享同一份applicationContext，大大加快了测试速度。</para>
+            <para>需要注意的是获得ctx缓存的key是根据getConfigLocation()获得的，如果在子类中覆盖了这个方法，返回不同的数值，会导致重新加载。同样的如果不覆盖方法返回不同值，那么使用的都是同一份ctx。</para>
+        </sect2>
+        <sect2>
+            <title>为测试注入依赖</title>
+            <para>为了测试Spring管理下的Bean，可以继承于AbstractDependencyInjectionSpringContextTests，实现public String[] getConfigLocations()函数， 返回applicationContext文件路径的数组。</para>
+            <programlisting><![CDATA[
+protected String[] getConfigLocations() {
+    return new String[]{"classpath*:spring/*.xml",  "classpath*:spring/test/*.xml"};
+}]]>
+            </programlisting>
+            <para>并显式写一些需要注入的变量的setter函数。</para>
+            <itemizedlist>
+                <listitem>
+                    <para>tips1：此基类有一个applicationContext的成员变量，所以除了依靠setter注入外，还可以随时用applicationContext.getBean(String beanName) 取出所需的bean。</para>
+                </listitem>
+                <listitem>
+                    <para>tips2：注意此基类默认是autowire by type的，所以如果context文件里有两个相同类型的Bean就会报错，可能需要在getConfigLocations()函数里，setAutowireMode(AUTOWIRE_BY_NAME);把它设回by name，或者取消setter函数，自行用applicationContext.getBean()来显式查找Bean。</para>
+                </listitem>
+            </itemizedlist>
+        </sect2>
+        <sect2>
+            <title>测试service层</title>
+            <para>AbstractTransactionalDataSourceSpringContextTests继承于AbstractDependencyInjectionSpringContextTests，除了拥有上类的能力外，还管理了每个测试的事务，会Open Session In Test，还会在每个测试后默认回滚所有的操作。</para>
+            <para>此类的实现其实依赖于Application Context中定义的PlatformTransactionManager。由于使用了Autowrie by type，PlatformTransactionManager可以任意取名。</para>
+            <para>另外还依赖于Application Context中定义的DataSource，同样可以任意取名。</para>
+            <itemizedlist>
+                <listitem>
+                    <para>tips1：如果需要在测试后提交，需要setRollBack(false); 或者调用setComplete(); 注意如果没有提交，hibernate这样奸诈的Framework就不会去实际操作数据库，降低了测试的效果。</para>
+                </listitem>
+                <listitem>
+                    <para>tips2：此基类还通过注入的DataSource创建了一个JDBCTemplate变量，可以跑SQL帮忙核对Hibernate的结果，Spring将确保该查询在同一个事务内执行。为正常工作你需要告诉你的ORM工具'刷新'它的已改变内容，例如使用Hibernate Session接口的flush() 方法。</para>
+                </listitem>
+                <listitem>
+                    <para>tips3：除了tips2以外，该类还有countRowsInTable(String tableName)，deleteFromTables(String[] names) ，executeSqlScript(String sqlResourcePath, boolean continueOnError)三个简便函数。</para>
+                </listitem>
+            </itemizedlist>
+        </sect2>
+        <sect2>
+            <title>测试action层</title>
+            <para>action层需要用Spring提供的几个mock对象仿造请求。</para>
+            <para>因为action不含太多的逻辑，所有测试controller有点吃力不讨好，建议直接用Selenium进行集成测试。</para>
+        </sect2>
+        <sect2>
+            <title>使用annotation进行测试<emphasis>（待研究）</emphasis></title>
+        </sect2>
+        <sect2>
+            <title>封装Spring Test</title>
+            <para>因为Spring的类名一贯清晰但超长，所以抽取了以下三个基类：</para>
+            <itemizedlist>
+                <listitem>
+                    <para>SpringAnnoatationCase：支持Spring的@IfProfileValue(符合条件才运行),@ExpectedException(期望异常),@Timed(超时控制) 等annotation。</para>
+                </listitem>
+                <listitem>
+                    <para>SpringContextTestCase：在SpringAnnotationContext的基础上，默认载入了/applicationContext.xml，在子类定义更多的applicationContext-*.xml文件时，SpringTestCase基类类定义的applicationContext.xml 会被默认继承。</para>
+                </listitem>
+                <listitem>
+                    <para>SpringTranscationTestCase：在SpringContextTest的基础上，支持事务回滚，另外还提供了一个flush()函数，因为Hibernate只有事务提交时才会执行 SQL，为了验证你的ORM正确性，必须常常执行flush强制hibernate执行SQL。不过只要不执行提交,sql执行的结果不会影响测试数据库的实际数据。</para>
+                </listitem>
+            </itemizedlist>
+        </sect2>
+    </sect1>
+
+    <sect1>
+        <title>显示层测试</title>
+        <para>倾向使用selenium，但是发展过于缓慢，至今为止也没有1.0发布的风吹草动。</para>
+    </sect1>
+
+    <sect1>
+        <title>压力测试</title>
+        <para>考虑用jmeter。</para>
+        <para>压力测试工具，貌似客户一般只认LoadRunner的结果，其他的开源工具结果都不怎么招人待见。</para>
+    </sect1>
+
+    <sect1>
+        <title>SoapUI<emphasis>（待研究）</emphasis></title>
+        <para>Soap UI可以作为开发人员、测试人员共用的开发调试与自动测试工具。在mini-service/src/test/soapui 存放着一个示例的项目文件，其中CRUDTest 是经典的测试写法：</para>
+        <orderedlist>
+            <listitem>
+                <para>先用Groovy生成一个随机的loginName(因为业务规则要求不能重复).</para>
+            </listitem>
+            <listitem>
+                <para>使用属性转换器将上一步Groovy脚本的结果，传给下一步的createUser的请求参数loginName.</para>
+            </listitem>
+            <listitem>
+                <para>执行createUser.</para>
+            </listitem>
+            <listitem>
+                <para>使用属性转换器将上一步createUser返回结果中的userID，传给下一步GetUser请求参数id.</para>
+            </listitem>
+            <listitem>
+                <para>执行getUser.</para>
+            </listitem>
+            <listitem>
+                <para>在getUser的Assert语句中加入对返回结果中的loginName的判断，要等于createUser的请求参数loginName</para>
+            </listitem>
+        </orderedlist>
+        <para>如果有条件，尽量使用Soap UI Pro，因为那些XPath写起来还是有些难度的，用了Pro，就能随时图形化的进行节点选择。比如对着一个返回结果的属性点右键，选assert Conent 就很方便。</para>
+    </sect1>
+
+</chapter>
+

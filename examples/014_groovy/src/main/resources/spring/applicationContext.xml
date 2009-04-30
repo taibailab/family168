@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans
+  xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:lang="http://www.springframework.org/schema/lang"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans
+  http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+  http://www.springframework.org/schema/lang
+  http://www.springframework.org/schema/lang/spring-lang-2.5.xsd">
+    <!--Groovy版本的Web Service Client-->
+    <lang:groovy id="userManager" refresh-check-delay="60000" script-source="classpath:com/family168/UserManagerImpl.groovy">
+        <lang:property name="name" value="username"/>
+    </lang:groovy>
+</beans>

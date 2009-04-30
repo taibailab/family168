@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter xml:id="practice">
+    <title>practice<emphasis>（待整理）</emphasis></title>
+
+    <sect1>
+        <title>开发过程定义</title>
+        <sect2>
+            <title>介绍</title>
+            <para>本文档基于Agile UP原则，从活动、工件、工具几方面定义本项目的开发过程。</para>
+            <para>本文档仅定义开发的方式，而非具体开发计划。</para>
+        </sect2>
+        <sect2>
+            <title>活动与工件</title>
+            <sect3>
+                <title>初始阶段</title>
+                <para>一次迭代，以形成系统目标基线为里程碑。</para>
+                <sect4>
+                    <title>定义开发过程</title>
+                    <para>开发团队成员习惯不同的过程流派，需要通过自由讨论，根据团队实际情况，在开发过程上取得统一， 编写《开发案例(Development Case)》(即本文档)。</para>
+                </sect4>
+                <sect4>
+                    <title>编写前景文档(Vision)</title>
+                    <para>Vision是RUP中最重要的一份文档，涉众与整个团队在系统的高层需求与特性上取得一致，编写《前景文档》并正式评审。</para>
+                </sect4>
+                <sect4>
+                    <title>获取初始需求</title>
+                    <para>使用用例或用户故事概括描述系统边界与系统用例，驱动接下来的设计与开发活动；</para>
+                    <para>甄别出架构与业务关键用例，同时开始编写《词汇表》与《业务规则》。</para>
+                </sect4>
+                <sect4>
+                    <title>制定整体项目计划</title>
+                    <para>制定初步的《整体项目计划》并正式评审，规划每个迭代的完成时间、里程碑与产出物。</para>
+                </sect4>
+                <sect4>
+                    <title>初始项目环境</title>
+                    <para>安装开发工具，初始化配置管理、需求管理、集成测试环境与团队交流机制。</para>
+                </sect4>
+                <sect4>
+                    <title>讨论备选架构(Optional)</title>
+                    <para>用任意格式的图与文档记录所采用的技术和系统架构；</para>
+                    <para>对高风险技术展开技术预研。</para>
+                </sect4>
+                <sect4>
+                    <title>风险管理(Optional)</title>
+                    <para>编写初步的《风险列表》，主动管理可能存在的风险及解决方案。</para>
+                </sect4>
+            </sect3>
+            <sect3>
+                <title>细化阶段</title>
+                <para>一次迭代，以形成可执行的架构基线为里程碑。</para>
+                <sect4>
+                    <title>细化架构，形成架构基线</title>
+                    <para>编写《系统架构文档》；</para>
+                    <para>开发可运行的架构；</para>
+                    <para>实现最关键用例(Optional)。</para>
+                </sect4>
+                <sect4>
+                    <title>细化需求模型</title>
+                    <para>按实际需要细化用例描述，编写《需求规格说明文档》。</para>
+                </sect4>
+                <sect4>
+                    <title>细化前景，项目计划，风险管理，开发环境等初始阶段的工件.</title>
+                </sect4>
+            </sect3>
+            <sect3>
+                <title>构建阶段</title>
+                <para>以一个月为周期多次迭代构建产品，每次迭代产出可运行的产品。</para>
+                <sect4>
+                    <title>程序设计</title>
+                    <para>开发人员编码前需要的设计工件包括：必要的需求文档，架构文档与可运行架构原型，UI原型，源码模块目录组织，关键数据库设计，关键系统间接口规范。</para>
+                    <para>开发人员可对架构师未细化的的部分提出建议，被架构师复核后执行。</para>
+                    <para>对少量的重要子系统可编写《子系统设计文档》，其他可采用可抛弃的设计工件(使用纸笔或不提交到版本管理系统的工件草稿)。</para>
+                </sect4>
+                <sect4>
+                    <title>单元测试</title>
+                    <para>约定基础框架函数和主要业务函数必须编写单元测试。</para>
+                </sect4>
+                <sect4>
+                    <title>持续集成</title>
+                    <para>持续集成服务器每天运行单元测试与其他检查，将结果Email通知用户。</para>
+                </sect4>
+                <sect4>
+                    <title>架构师、技术经理代码走查</title>
+                    <para>走查代码是否符合架构与编码规范(可使用工具辅助)，另阅读重要且易错的模块代码。</para>
+                </sect4>
+                <sect4>
+                    <title>日报填写</title>
+                    <para>所有队员每日填写工作记录。</para>
+                </sect4>
+            </sect3>
+            <sect3>
+                <title>交付阶段</title>
+                <sect4>
+                    <title>编写并审核部署/升级方案</title>
+                </sect4>
+                <sect4>
+                    <title>性能测试/集成功能测试</title>
+                </sect4>
+                <sect4>
+                    <title>用户文档编写</title>
+                </sect4>
+            </sect3>
+            <sect3>
+                <title>各阶段的持续活动</title>
+                <sect4>
+                    <title>迭代评估与下阶段迭代计划指定</title>
+                    <para>在每个迭代结束后，调整和定义下一个迭代的目标和详细计划，计划以周为时间粒度。</para>
+                </sect4>
+                <sect4>
+                    <title>配置管理</title>
+                    <para>约定每次为一个issue提交代码，必须为提交编写注释，提交的代码必须能正常编译。</para>
+                </sect4>
+                <sect4>
+                    <title>评审会议</title>
+                    <para>不定期按需展开，对需求、计划、设计、代码走查进行评审。</para>
+                </sect4>
+            </sect3>
+        </sect2>
+        <sect2>
+            <title>工具</title>
+            <itemizedlist>
+                <listitem>
+                    <para>IDE：Eclipse 3.4</para>
+                </listitem>
+                <listitem>
+                    <para>UML建模：EA 7</para>
+                </listitem>
+                <listitem>
+                    <para>单元测试：JUnit 3</para>
+                </listitem>
+                <listitem>
+                    <para>集成测试：soapUI(WebService)、Selenium(Web)</para>
+                </listitem>
+                <listitem>
+                    <para>构建管理：Maven2 (m2Eclipse、Nexus)</para>
+                </listitem>
+                <listitem>
+                    <para>持续集成：Hudson</para>
+                </listitem>
+                <listitem>
+                    <para>版本管理：Subversion(Subclipse、VisualSVN)</para>
+                </listitem>
+                <listitem>
+                    <para>代码质量：CheckStyle、Pmd</para>
+                </listitem>
+                <listitem>
+                    <para>项目计划、缺陷跟踪：Project、Jira(Subversion Plugin)、MS Excel</para>
+                </listitem>
+            </itemizedlist>
+        </sect2>
+    </sect1>
+
+    <sect1>
+        <title>项目管理架构</title>
+        <para>工具选用:</para>
+        <para>源码管理：Subversion</para>
+        <para>任务安排：JIRA</para>
+        <para>文档编写：Confluence wiki</para>
+        <para>团队通信：QQ IM + 论坛 + 团队日志Blog + Google Group Mail List</para>
+        <para>选秀依据</para>
+        <para>Subversion vs CVS</para>
+        <para>SubVersion已逐渐超越CVS，更适应于JavaEE的项目。Apache用了它很久后，Sourceforge刚刚推出SVN的支持。</para>
+        <para>JIRA</para>
+        <para>项目计划，任务安排，错误管理多面手，胜在工具爱好者们分门别类出越来越多的项目管理工具时，它一个Web Base界面就全包了。</para>
+        <para>Confluence wiki</para>
+        <para>选它一半因为对Jira的爱乌及乌，一半因为它有html编辑器而且没有编码问题，正准备从winchm切换。</para>
+        <para>Google group + QQ IM</para>
+        <para>在功能上，没什么PK对象。QQ的群聊天记录现在可以在群空间里观看了。</para>
+    </sect1>
+
+    <sect1>
+        <title>服务器选型</title>
+        <sect2>
+            <title>Tomcat 6</title>
+            <para>最简单通用的开源Web应用服务器，SpringSide自带的演示服务器，建议升级到6.0.x。</para>
+        </sect2>
+        <sect2>
+            <title>Glassfish 2</title>
+            <para>Glassfish2.0 即Sun的ApplicationServer 9.0 (完全相同的代码，只有服务上的差别)</para>
+            <para>与Tomcat相比，优势如下：</para>
+            <orderedlist>
+                <listitem>
+                    <para> 对某些苛刻的客户能提供有大公司的商业品质保证，可购买Sun的技术和背锅服务。</para>
+                </listitem>
+                <listitem>
+                    <para> 中文的Web管理控制台以及集群管理，应用部署能力，维护成本比Tomcat,JBoss们要低。</para>
+                </listitem>
+                <listitem>
+                    <para>开发中的Glassfish 3是一个很朝阳的项目。</para>
+                </listitem>
+            </orderedlist>
+        </sect2>
+        <sect2>
+            <title>Weblogic 10</title>
+            <para>有钱项目的第一选择。</para>
+        </sect2>
+        <para>常见问题</para>
+        <para>在Weblogic 10和Glassfish的classsloader比较特别，指向classpath中的文件时需要写成classpath*/your_file_path，如web.xml中的contextLocations的定义：</para>
+        <programlisting><![CDATA[
+<context-param>
+    <param-name>contextConfigLocation</param-name>
+    <param-value>classpath*:/applicationContext*.xml</param-value>
+</context-param>]]>
+        </programlisting>
+        <para>优化指南</para>
+        <para>所有应用服务器的优化都差不太多，SpringSide试以Tomcat举例，详情见servers/tomcat/production_config_sample 中的Tomcat 6生产环境配置</para>
+        <sect2>
+            <title>JVM优化</title>
+            <para>主要设定内存大小及垃圾收集参数，见bin/catalina.bat，注意目前使用CMS，一旦G1垃圾收集方法成熟，立马就可以切换过去。</para>
+            <programlisting><![CDATA[
+set MEMROY_OPTS=-server -Xms1024m -Xmx1024m -Xmn384m -XX:MaxPermSize=96m -XX:+UseConcMarkSweepGC
+set JAVA_OPTS=%JAVA_OPTS% %MEMROY_OPTS%]]>
+            </programlisting>
+        </sect2>
+        <sect2>
+            <title>Http连接器优化</title>
+            <para>主要设定连接器类型，线程池和排队长度， 见conf/server.xml。</para>
+            <para>http/https/ajp共享一个Executor线程池，不再单独设定以免浪费 ，AcceptCount设定线程池已满时的排队长度，enableLookups=false设定不进行DNS反查。</para>
+        </sect2>
+        <sect2>
+            <title>数据库连接池</title>
+            <para>为数据库连接池设置合适的大小。</para>
+            <para>Tomcat内置使用DBCP，在conf/server.xml的Global JNDI resources中设定连接池，在conf/ccontext.xml中设定ResourceLink，则spring中可以JNDI-lookup该 datasource。</para>
+        </sect2>
+        <sect2>
+            <title>负载均衡</title>
+            <para>基于Apache mod_balancer模块的负载衡。   见servers/apache/config-sample/httpd.conf</para>
+            <programlisting><![CDATA[
+LoadModule proxy_module modules/mod_proxy.so
+LoadModule proxy_ajp_module modules/mod_proxy_ajp.so
+LoadModule proxy_balancer_module modules/mod_proxy_balancer.so
+<Proxy balancer://tomcat>
+BalancerMember ajp://localhost:8009 route=cluster1 loadfactor=1
+BalancerMember ajp://localhost:8010 route=cluster2 loadfactor=1
+</Proxy>
+
+<Location /examples>
+    ProxyPass balancer://tomcat/examples stickysession=JSESSIONID nofailover=On
+</Location>
+
+<Location /balancer-manager>
+    SetHandler balancer-manager
+</Location>]]>
+            </programlisting>
+        </sect2>
+    </sect1>
+
+</chapter>
+

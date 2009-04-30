@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+<beans default-autowire="byName" default-lazy-init="false">
+
+    <!--从配置文件读取配置信息-->
+    <bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="locations">
+            <list>
+                <value>classpath*:conf/jdbc.properties</value>
+                <value>classpath*:test/hibernate.properties</value>
+            </list>
+        </property>
+    </bean>
+
+    <!--覆盖配置文件读取配置信息-->
+    <bean id="overrideConfigurer" class="org.springframework.beans.factory.config.PropertyOverrideConfigurer">
+        <property name="locations" value="classpath*:test/override.properties"/>
+        <property name="ignoreInvalidKeys" value="true"/>
+    </bean>
+
+    <bean id="aclClassAction" class="com.family168.security.web.AclClassAction" scope="prototype"/>
+    <bean id="aclEntryAction" class="com.family168.security.web.AclEntryAction" scope="prototype"/>
+    <bean id="aclObjectIdentityAction" class="com.family168.security.web.AclObjectIdentityAction" scope="prototype"/>
+    <bean id="aclSidAction" class="com.family168.security.web.AclSidAction" scope="prototype"/>
+    <bean id="deptAction" class="com.family168.security.web.DeptAction" scope="prototype"/>
+    <bean id="menuAction" class="com.family168.security.web.MenuAction" scope="prototype"/>
+    <bean id="rescAction" class="com.family168.security.web.RescAction" scope="prototype"/>
+    <bean id="roleAction" class="com.family168.security.web.RoleAction" scope="prototype"/>
+    <bean id="userAction" class="com.family168.security.web.UserAction" scope="prototype"/>
+
+</beans>

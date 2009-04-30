@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter xml:id="future">
+    <title>看到Spring Side或其他地方有了例子，但leona的技术选型里还没有实现的技术</title>
+
+    <sect1>
+        <title>群发邮件</title>
+    </sect1>
+
+    <sect1>
+        <title>jdk5类型的定时任务</title>
+    </sect1>
+
+    <sect1>
+        <title>Opensymphony的clickstream filter</title>
+    </sect1>
+
+    <sect1>
+        <title>URL Rewrite Filter</title>
+    </sect1>
+
+	<sect1>
+	    <title>Dozer Mapper</title>
+	</sect1>
+
+</chapter>
+
+

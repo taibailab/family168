@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>com.family168.leona</groupId>
+    <artifactId>leona-parent</artifactId>
+    <version>0.1-SNAPSHOT</version>
+    <relativePath>../../../parent/pom.xml</relativePath>
+  </parent>
+  <groupId>com.family168.leona.examples</groupId>
+  <artifactId>impl1</artifactId>
+  <packaging>bundle</packaging>
+  <name>examples - osgi</name>
+  <dependencies>
+    <dependency>
+      <groupId>org.apache.felix</groupId>
+      <artifactId>org.apache.felix.framework</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.osgi</groupId>
+      <artifactId>spring-osgi-core</artifactId>
+      <version>1.1.2</version>
+    </dependency>
+    <dependency>
+      <groupId>com.family168.leona.examples</groupId>
+      <artifactId>api</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <defaultGoal>package</defaultGoal>
+    <outputDirectory>target/classes</outputDirectory>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+        <version>2.0.0</version>
+        <extensions>true</extensions>
+        <configuration>
+          <instructions>
+            <Bundle-SymbolicName>impl1</Bundle-SymbolicName>
+            <Bundle-Name>impl1</Bundle-Name>
+            <Bundle-Description>OSGi R4 framework implementation.</Bundle-Description>
+            <Bundle-Vendor>family168</Bundle-Vendor>
+            <Export-Package>com.family168.impl</Export-Package>
+            <Import-Package>org.osgi.framework;version="1.3.0",org.osgi.service.startlevel;version="1.0.0",com.family168</Import-Package>
+            <Bundle-Activator>com.family168.impl.DemoActivator</Bundle-Activator>
+          </instructions>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>
+
+

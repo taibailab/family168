@@ -1,0 +1,374 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter xml:id="cache">
+    <title>缓存</title>
+
+    <sect1>
+        <title>Cache资料</title>
+        <sect2>
+            <title>概述</title>
+            <para>Cache有从前到后有很多个层次，越靠近客户，缓存的效果越明显：</para>
+            <itemizedlist>
+                <listitem>
+                    <para>数据库自身的缓存</para>
+                </listitem>
+                <listitem>
+                    <para>Data Access对数据对象及查询结果的二级缓存，典型如Hibernate。</para>
+                </listitem>
+                <listitem>
+                    <para>业务级缓存，包括Spring用AOP实现的方法级缓存。</para>
+                </listitem>
+                <listitem>
+                    <para>页面片段与页面内容的缓存。</para>
+                </listitem>
+            </itemizedlist>
+            <para>缓存是对获取代价较为昂贵资源的cache，意思是cache是可丢失的，因此通常会限制总量大小，然后采用先进先出，最近访问等算法在溢出时丢失部分缓存，或者采用max_idle_time，max_live_time时主动清除利用率偏低的缓存，客户在重新需要已被丢失的缓存时，会重新从资源处获取，这是和内存/HashMap最大的不同。</para>
+            <para>缓存又分有本地独立缓存与集群分布式缓存两种，目前大部分独立缓存方案都支持了分布式的扩展。</para>
+            <para>另外有个Jofti，能够对Ehcance，OSCache，JBoss Cache中的内容进行索引与查找，可惜不发展了。(Cache方案本身只支持以key查找)</para>
+        </sect2>
+        <sect2>
+            <title>分布式缓存</title>
+            <itemizedlist>
+                <listitem>
+                    <para>Give your DB a Break(TSS)</para>
+                </listitem>
+                <listitem>
+                    <para>The Essential Lessons of Distributed Caching(JavaZone 2006)</para>
+                </listitem>
+                <listitem>
+                    <para>Caching and Grid in a Nutshell(JavaZone 2006)</para>
+                </listitem>
+            </itemizedlist>
+            <para>缓存，用一个主键可以存放和获取数据。而分布式缓存，则实现了在数台机器间，用同一个主键能获得相等的对象。</para>
+            <para>除了用作缓存超大规模数据外，分布式缓存也是实现群集的重要手段。因为JavaEE的群集主要实现了HTTP Session、EJB、JMS的群集，但其实还有更多的普通Java对象需要被集群的，否则就会限于Stateless, Share Nothing的架构。</para>
+            <para>分布式缓存的方式有两种：</para>
+            <itemizedlist>
+                <listitem>
+                    <para>一种就是简单的各自保留自己的缓存对象，群发invalid通知。</para>
+                </listitem>
+                <listitem>
+                    <para>一种是实现数据复制的集群模式。</para>
+                </listitem>
+            </itemizedlist>
+            <para>分布式缓存的目的有两个：</para>
+            <itemizedlist>
+                <listitem>
+                    <para>Load Balance：所有的处理节点用相同的Key获得相同的数据，使得每个节点可以平等的领取任务处理而不必顾忌未被群集Share的私有State信息。</para>
+                </listitem>
+                <listitem>
+                    <para>HA：Failover的接手处理服务器能用Key获得前一台失效服务器中的所有数据。</para>
+                </listitem>
+            </itemizedlist>
+            <para>分布式缓存架构上最重要的就是复制策略：</para>
+            <itemizedlist>
+                <listitem>
+                    <para>全复制：每个节点拥有所有数据的备份。速度最快的方式，前提是节点不多，内存够大，写操作不频繁。</para>
+                </listitem>
+                <listitem>
+                    <para>分区：某一数据只存在于主备机上。但对使用者来说分区是透明的--线性扩展性最高的方式。</para>
+                </listitem>
+                <listitem>
+                    <para>Near：在分区的基础上，增加L1级缓存，本地缓存常用数据，以大幅增加读取性能。</para>
+                </listitem>
+                <listitem>
+                    <para>中央服务器：所有节点都把数据同步到中央节点。实现最简单的方式。</para>
+                </listitem>
+            </itemizedlist>
+            <para>可见，Memcached是中央服务器式，TerraCotta是透明的中央服务器集群式。Tangosol支持全复制/分区/Near架构。</para>
+            <para>而像Ehcache，OSCache，JBossCache这些轻量级的cache方案也基于JXTA/JGroups支持了分布式。</para>
+            <para>分布式缓存更新对象时，会使用自实现的Field级变化复制，而不是效率较低地让整个Java对象串行化传输也很重要。</para>
+            <para>另外分布式缓存还有一种需求，就是应用更改数据库数据后，可以通知所有缓存集群的节点，Ehcache的JMS Replicator提供了一种标准的方案，而无需大家自行用JMS实现。</para>
+        </sect2>
+        <sect2>
+            <title>Ehcache</title>
+            <para>Ehcache最近风头甚劲，逐步摆脱OSCache，JBossCache等老竞争对手。</para>
+        </sect2>
+        <sect2>
+            <title>TerraCotta</title>
+            <para>TerraCotta有趣的JVM级AOP的透明POJO集群方案。</para>
+        </sect2>
+        <sect2>
+            <title>Memcached</title>
+            <para>Memcached支持.Net，Java，C，Ruby，Php等语言的分布式缓存系统。本质就是建一组TCP Server，每个Server里面放一个HashMap。LiveJournal开发，Facebook等网站均使用。</para>
+            <para>Memcached的集群方案：每个服务实例间没有复制/HA的功能。在client端hash(key)决定存储在哪台，因为hash算法概率固定，所以硬件较好的服务器上可以多起几个实例。</para>
+            <para>客户端hash算法，传统是最简单的CRC32(key) mod N( N是实例数)，但如果加入或减少服务器，N改变会导致所有的缓存位置移位。所以新的Consistent Hashing，先选一定范围的数字组成一个圆圈，比如0...100，然后把server url hash成数字，key也hash成数字，cache就存放在hash(server)在hash(key)在顺时针方向上大一点的server里。这样增减服务实例，只会影响相邻的两个服务实例间的一些cache</para>
+            <itemizedlist>
+                <listitem>
+                    <para>使用memcached进行内存缓存</para>
+                </listitem>
+                <listitem>
+                    <para>Distributed Caching with Memcached</para>
+                </listitem>
+                <listitem>
+                    <para>memcached 说明part1，part2</para>
+                </listitem>
+                <listitem>
+                    <para>FAQ</para>
+                </listitem>
+            </itemizedlist>
+        </sect2>
+        <sect2>
+            <title>Others</title>
+            <itemizedlist>
+                <listitem>
+                    <para>Tangosol Coherence Oracle旗下，最贵最权威的分布式缓存方案。</para>
+                </listitem>
+                <listitem>
+                    <para>Gigaspaces Data Grid方案。</para>
+                </listitem>
+                <listitem>
+                    <para>GemFire 老牌厂商。</para>
+                </listitem>
+                <listitem>
+                    <para>JBossCache 传统的开源方案。</para>
+                </listitem>
+            </itemizedlist>
+        </sect2>
+    </sect1>
+
+    <sect1>
+        <title>Ehcache</title>
+        <sect2>
+            <title>Overview</title>
+            <para>Ehcache从Hibernate发展而来，逐渐涵盖了Cahce界的全部功能，是目前发展势头最好的一个项目。</para>
+            <itemizedlist>
+                <listitem>
+                    <para>标准缓存</para>
+                </listitem>
+                <listitem>
+                    <para>分布式缓存(基于RMI/JGroups/JMS)</para>
+                </listitem>
+                <listitem>
+                    <para>URL，页面片段缓存(类似OSCache的相关部分)</para>
+                </listitem>
+                <listitem>
+                    <para>中央缓存服务器(类似Memcached)</para>
+                </listitem>
+            </itemizedlist>
+        </sect2>
+        <sect2>
+            <title>基本功能与配置</title>
+            <para>Ehcache的基本功能，可以从配置文件中学习。详见Ehcache的文档。</para>
+            <para>总的来说，缓存与HashMap的最大不同，就是缓存设想内存是有限的，缓存的时效性也是有限的，所以可以设定内存数量的大小，可以执行失效算法，可以在内存满了的时候，按照最少访问等算法将缓存直接移除或切换到硬盘上。</para>
+            <para>另外注意，ehcache的CacheManager本身有一定的默认值。而在没有指定ehcache.xml的情况下，会使用ehcache.jar里自带的ehcache_failsafe.xml。</para>
+            <sect3>
+                <title>对象在内存中的最大数量</title>
+                <para>因为内存是有限的，所以必须用maxElementsInMemory(必填项)设置每类对象在内存中的最大数量。ehcache_failsafe.xml中为10000。</para>
+            </sect3>
+            <sect3>
+                <title>到达内存中最大量时的过期/移出算法</title>
+                <para>过期算法：如果缓存已经失效，人道毁灭之。失效算法由3个参数组成：</para>
+                <itemizedlist>
+                    <listitem>
+                        <para>eternal(必填项)：如果为true，则永不过期，忽略后两个参数的设置。ehcache_failsafe.xml 为false。</para>
+                    </listitem>
+                    <listitem>
+                        <para>timeToIdleSeconds：空闲无访问时间，默认为0，永不过时。ehcache_failsafe.xml设为120秒。</para>
+                    </listitem>
+                    <listitem>
+                        <para>timeToLiveSeconds：空闲无访问时间，默认为0，永不过时。ehcache_failsafe.xml 设为120秒。</para>
+                    </listitem>
+                </itemizedlist>
+                <para>移出算法：如果经过失效算法后，还是有很多有效的缓存，则执行清除算法。清除算法由两个参数组成：</para>
+                <itemizedlist>
+                    <listitem>
+                        <para>memoryStoreEvictionPolicy: 默认为LRU(最近最少访问),另有先进先出(FIFO)，最少访问次数(LFU)</para>
+                    </listitem>
+                    <listitem>
+                        <para>overflowToDisk(必填项) 为true，则将清除出来的缓存持久化到磁盘，否则人道毁灭之。</para>
+                    </listitem>
+                </itemizedlist>
+            </sect3>
+            <sect3>
+                <title>储存到硬盘</title>
+                <itemizedlist>
+                    <listitem>
+                        <para>maxElementsOnDisk：默认为0，无限多。ehcache_failsafe.xml为10000000。</para>
+                    </listitem>
+                    <listitem>
+                        <para>diskExpiryThreadIntervalSeconds：使用过期算法清除磁盘中失效对象的间隔，默认为120秒。</para>
+                    </listitem>
+                    <listitem>
+                        <para>diskSpoolBufferSizeMB，默认为30M。</para>
+                    </listitem>
+                </itemizedlist>
+            </sect3>
+            <sect3>
+                <title>重启时缓存持久化</title>
+                <para>diskPersistent当应用重启时，可将缓存先持久化到硬盘，重启后再行载入，节省大量的重新从数据库载入。但只适合那些缓存不怎么变化，或者有特殊机制保证重启后应用能接收到重启这段时间里缓存变化信息的情况。</para>
+            </sect3>
+        </sect2>
+        <sect2>
+            <title>分布式缓存</title>
+            <para>Ehcache有传统的RMI，1.5版的JGroups，1.6版的JMS，随大流还是先用RMI的好些。</para>
+            <sect3>
+                <title>设置自身</title>
+                <para>这里设置在localhost的40001端口上侦听。如果要互相同步的CahceManager不都在一台机器上的话，hostName应该是实际IP。)</para>
+                <programlisting><![CDATA[
+<cacheManagerPeerListenerFactory class="net.sf.ehcache.distribution.RMICacheManagerPeerListenerFactory"
+    properties="hostName=localhost,port=40001,socketTimeoutMillis=2000" />]]>
+                    </programlisting>
+            </sect3>
+            <sect3>
+                <title>设置需要同步的对方服务器及缓存对象</title>
+                <para>这里设置与40002端口上的CacheManager同步User与Role对象，如果还有第三台机器，则继续用|分割，继续往下列。同理，在40002端口上的cacheManager的ehcache.xml里，就需要配置与400001,40003的互通。</para>
+                <para>也有自动发现，广播的简单配法，但对广播天然恐惧，还是辛苦一点一个个静态列表配置文件的写了，虽然有点烦。</para>
+                <programlisting><![CDATA[
+<cacheManagerPeerProviderFactory class="net.sf.ehcache.distribution.RMICacheManagerPeerProviderFactory"
+    properties="peerDiscovery=manual,
+    rmiUrls=//localhost:40002/com.family168.User|//localhost:40002/com.family168.Role"/>]]>
+                </programlisting>
+            </sect3>
+            <sect3>
+                <title>缓存对象的配置</title>
+                <para>往每一个需要缓存的对象加入子对象cacheEventListenerFactory</para>
+                <programlisting><![CDATA[
+<cacheEventListenerFactory class="net.sf.ehcache.distribution.RMICacheReplicatorFactory"
+    properties="replicateAsynchronously=true,
+    replicatePuts=true,
+    replicateUpdates=true,
+    replicateUpdatesViaCopy=true,
+    replicateRemovals=true
+    asynchronousReplicationIntervalMillis=100"
+    propertySeparator="," />]]>
+                </programlisting>
+                <itemizedlist>
+                    <listitem>
+                        <para>replicateAsynchronously对象同步是否异步完成，默认为true。如果比较紧急就设为false。</para>
+                        <para>在一致性时间性要求不强的时候，设为异步可大大提供性能，因为它是异步立即返回的，而且可以批量提交。</para>
+                    </listitem>
+                    <listitem>
+                        <para>replicateUpdatesViaCopy 是否将对象变更复制到所有节点，还是只是发送一个失效信息，让对方该缓存失效，当对方需要该缓存时重新计算载入。</para>
+                        <para>默认为true。鉴于对象复制的消耗挺大的，又有锁的问题，而且对方也未必需要该对象，所以此属性建议设为false。如果业务上真的需要设为true时，就可考虑使用Terracotta了。</para>
+                    </listitem>
+                    <listitem>
+                        <para>replicatePuts、replicateUpdates、replicateRemovals增删改是否同步，默认都为true。但因为我们前面选择了失效算法，所以replicatePuts要设为false。</para>
+                    </listitem>
+                </itemizedlist>
+                <para>所以我们一般的设置如下：</para>
+                <programlisting><![CDATA[
+<cache name="com.family168.User"
+    maxElementsInMemory="500"
+    overflowToDisk="true"
+    eternal="true">
+    <cacheEventListenerFactory class="net.sf.ehcache.distribution.RMICacheReplicatorFactory"
+        properties="replicateAsynchronously=false,replicatePuts=false,replicateUpdatesViaCopy=false" />
+</cache>]]>
+                </programlisting>
+            </sect3>
+            <sect3>
+                <title>Shutdown</title>
+                <para>在分布式环境或持久化硬盘时，需要调用CacheManager的shutdown操作，Hibernate会自动shutdown它自己的cacheManager，如果在hibernate之外使用，你需要增加：</para>
+                <programlisting><![CDATA[
+<listener>
+    <listener-class>net.sf.ehcache.constructs.web.ShutdownListener</listener-class>
+</listener>]]>
+                </programlisting>
+            </sect3>
+        </sect2>
+        <sect2>
+            <title>JMS式并发同步</title>
+            <para>与其他同步方式相比，JMS同步支持了非Cache节点的程序对Cahce的修改。</para>
+            <para>在分布式缓存中有一种需求：应用节点更改数据库数据后，需要通知所有缓存集群的节点，通常大家都是自行通过JMS实现的，而Ehcache的JMS Replicator提供了一种标准的方案，提供PUT,REMOVE,REMOVE_ALL的标准操作。</para>
+        </sect2>
+    </sect1>
+
+    <sect1>
+        <title>Ehcache选型</title>
+        <para>Ehcache是最近发展势头最好的开源轻量级Cache方案，涵盖了普通缓存，轻量级缓存，URL/页面内容缓存，中央缓存服务器等方面，OSCahce没动静了，而JBossCache比较重大。</para>
+        <para>主要作为Hibernate的二级缓存，日后还会用到更多地方。</para>
+        <sect2>
+            <title>DefaultCache</title>
+            <para>对象的默认配置，相对于ehcache-safe.xml中的设置，加大了timeToIdleSeconds，timeToLiveSecond, diskExpiryThreadIntervalSeconds三项的值。</para>
+            <para>在内存中最多10000个对象，Idle空闲1小时，存在100000秒之后过期。对象达到10000个后，按最近访问算法切换到硬盘中，硬盘中最多10000000个对象，每600秒扫描一次磁盘中的过期对象。重启时内存不持久化到硬盘。</para>
+            <programlisting><![CDATA[
+<defaultCache maxElementsInMemory="10000"
+    overflowToDisk="true"
+    eternal="false"
+    memoryStoreEvictionPolicy="LRU"
+    maxElementsOnDisk="10000000"
+    diskExpiryThreadIntervalSeconds="600"
+    timeToIdleSeconds="3600"
+    timeToLiveSeconds="100000"
+    diskPersistent="false" />]]>
+            </programlisting>
+        </sect2>
+        <sect2>
+            <title>Cache</title>
+            <para>Cache一般会在默认配置基础上进行配置，比如User对象的配置，就因为用户对象原本就不多，所以设最多500个对象，永不过期，到达500后按默认的最近访问算法切换到硬盘中，硬盘大小无限。</para>
+            <para>同时，使用同步发送失效消息的方式实现服务器间二级缓存的同步。失效消息告诉对方该缓存已失效。如果需要时重新从数据库等地方载入。</para>
+            <programlisting><![CDATA[
+<cache name="org.springside.examples.miniweb.entity.user.User"
+    maxElementsInMemory="500"
+    overflowToDisk="true"
+    eternal="true">
+    <cacheEventListenerFactory class="net.sf.ehcache.distribution.RMICacheReplicatorFactory"
+        properties="replicatePuts=false,replicateUpdatesViaCopy=false" />
+</cache>]]>
+            </programlisting>
+        </sect2>
+        <sect2>
+            <title>分布式</title>
+            <para>见resources/ehcache/ehcache-cluster1.xml  和 resources/ehcache/ehcache-cluster2.xml，采用相对成熟的RMI机制，日后会切换到JGroups.</para>
+        </sect2>
+    </sect1>
+
+    <sect1>
+        <title>AOP式缓存</title>
+        <para>使用ehcache的截获方法的返回值，下次再调用该方法时，通过AOP截获其请求，直接返回Cache中的数值而不再重新执行方法是一个很不错的想法。而且通过AOP，可以使这一模式成为通用的方法，在配置文件中批量定义需要缓存的方法，无需更改代码。</para>
+        <para>cache方案中ehcache的API最为简单，而Spring AOP 2.0通过其配置文件的大幅简化，以及aspectJ pointcut语言的引入，也使批量定义AOP + Ehcache成为了可能。</para>
+        <para>我们在查询的时候缓存结果，在更新的时候刷新缓存。</para>
+        <sect2>
+            <title>准备工作</title>
+            <sect3>
+                <title>缓存查询结果</title>
+                <programlisting><![CDATA[
+public Object invoke(MethodInvocation invocation) throws Throwable {
+    Element element = methodCache.get(cacheKey);
+    if (element == null) {
+        result = invocation.proceed();
+        element = new Element(cacheKey, (Serializable) result);
+        methodCache.put(element);
+    }
+    return element.getValue();
+}]]>
+                </programlisting>
+            </sect3>
+            <sect3>
+                <title>刷新缓存</title>
+                <programlisting><![CDATA[
+public void afterReturning(Object returnValueObject, Method method,
+                        Object[] args, Object target) throws Throwable {
+    Element element = methodCache.get(cacheKey);
+    if (element != null) {
+        methodCache.remove(cacheKey);
+    }
+}]]>
+                </programlisting>
+            </sect3>
+            <sect3>
+                <title>配置Advice</title>
+                <programlisting><![CDATA[
+<bean id="lowStockBookFlushingAdvice" class="org.springside.framework.spring.aopcache.FlushingInterceptor">
+    <property name="cacheKeys" value="LowStockBooks"/>
+</bean>
+<bean id="lowStockBookCachingAdvice" class="org.springside.framework.spring.aopcache.CachingInterceptor">
+    <property name="cacheKey" value="LowStockBooks"/>
+</bean>]]>
+                </programlisting>
+            </sect3>
+        </sect2>
+        <sect2>
+            <title>使用AOP</title>
+            <para>Spring 2.0 结合AspectJ pointcut语法的大幅简化，对比我们以使用ProxyFactoryBean配置AOP，简直是一个天上一个地下啊。</para>
+            <programlisting><![CDATA[
+<aop:config proxy-target-class="true">
+    <aop:advisor pointcut="execution(* com.family168.*..UserManager.save(..))||execution(* com.family168.*..UserManager.remove(..))" advice-ref="lowStockBookFlushingAdvice"/>
+    <aop:advisor pointcut="execution(* *..UserStockChecker.getLowStockBooks())" advice-ref="lowStockBookCachingAdvice"/>
+</aop:config>]]>
+            </programlisting>
+            <para>以上几句定义使用cglib创建Proxy, 为UserManager的save()和remove()加上lowStockBookFlushingAdvice，为UserStockChecker.getLowStockBooks加上lowStockBookCachingAdvice.</para>
+        </sect2>
+    </sect1>
+
+</chapter>
+

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+
+<beans default-lazy-init="true" default-autowire="byName">
+  <bean id="aclClassManager" class="com.family168.security.manager.AclClassManager"/>
+  <bean id="aclEntryManager" class="com.family168.security.manager.AclEntryManager"/>
+  <bean id="aclObjectIdentityManager" class="com.family168.security.manager.AclObjectIdentityManager"/>
+  <bean id="aclSidManager" class="com.family168.security.manager.AclSidManager"/>
+  <bean id="deptManager" class="com.family168.security.manager.DeptManager"/>
+  <bean id="menuManager" class="com.family168.security.manager.MenuManager"/>
+  <bean id="rescManager" class="com.family168.security.manager.RescManager"/>
+  <bean id="roleManager" class="com.family168.security.manager.RoleManager"/>
+  <bean id="userManager" class="com.family168.security.manager.UserManager">
+    <property name="mutableAclService" ref="aclService"/>
+  </bean>
+
+  <bean id="aclClassAction" class="com.family168.security.web.AclClassAction" scope="request"/>
+  <bean id="aclEntryAction" class="com.family168.security.web.AclEntryAction" scope="request"/>
+  <bean id="aclObjectIdentityAction" class="com.family168.security.web.AclObjectIdentityAction" scope="request"/>
+  <bean id="aclSidAction" class="com.family168.security.web.AclSidAction" scope="request"/>
+  <bean id="deptAction" class="com.family168.security.web.DeptAction" scope="request"/>
+  <bean id="menuAction" class="com.family168.security.web.MenuAction" scope="request"/>
+  <bean id="rescAction" class="com.family168.security.web.RescAction" scope="request"/>
+  <bean id="roleAction" class="com.family168.security.web.RoleAction" scope="request"/>
+  <bean id="userAction" class="com.family168.security.web.UserAction" scope="request"/>
+</beans>

@@ -1,0 +1,304 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter xml:id="jms">
+    <title>JMS</title>
+
+    <sect1>
+        <title>JMS与ActiveMQ特性</title>
+        <para>JMS始终在JavaEE五花八门的协议里，WebService满天飞的时候占一位置，是因为：</para>
+        <itemizedlist>
+            <listitem>
+                <para>它可以把不影响用户执行结果又比较耗时的任务（比如发邮件通知管理员）异步的扔给JMS 服务端去做，而尽快的把屏幕返还给用户。 </para>
+            </listitem>
+            <listitem>
+                <para>服务端能够多线程排队响应高并发的请求，并保证请求不丢失。 </para>
+            </listitem>
+            <listitem>
+                <para>可以在Java世界里达到最高的解耦。客户端与服务端无需直连，甚至无需知晓对方是谁、在哪里、有多少人，只要对流过的信息作响应就行了，在企业应用环境复杂时作用明显。 </para>
+            </listitem>
+        </itemizedlist>
+        <para>ActiveMQ的特性：</para>
+        <itemizedlist>
+            <listitem>
+                <para>完全支持JMS1.1和J2EE 1.4规范的 JMS Provider实现，也是Apache Geronimo默认的JMS provider。</para>
+            </listitem>
+            <listitem>
+                <para>POJO withdout EJB Container，不需要实现EJB繁琐复杂的Message Bean接口和配置。</para>
+            </listitem>
+            <listitem>
+                <para>Spring Base，可以使用Spring的各种特性如IOC、AOP 。</para>
+            </listitem>
+            <listitem>
+                <para>Effective，基于Jencks的JCA Container实现 pool connection，control transactions and manage security。</para>
+            </listitem>
+        </itemizedlist>
+        <para>一个JMS场景通常需要三者参与：</para>
+        <itemizedlist>
+            <listitem>
+                <para>一个POJO的的Message Producer，负责使用Spring的JMS Template发送消息。 </para>
+            </listitem>
+            <listitem>
+                <para>一个Message Converter，负责把Java对象如订单(Order)转化为消息，使得Producer能够直接发送POJO。 </para>
+            </listitem>
+            <listitem>
+                <para>一个MDP Message Consumer，负责接收并处理消息。 </para>
+            </listitem>
+        </itemizedlist>
+    </sect1>
+
+    <sect1>
+        <title>使用ActiveMQ</title>
+        <para>ActiveMQ 5.2.0与Spring 2.0 集成有三个值得留意的地方，使得代码中几乎不见一丝JMS的侵入代码：</para>
+        <itemizedlist>
+            <listitem>
+                <para>采用Spring2.0的Schema式简化配置。 </para>
+            </listitem>
+            <listitem>
+                <para>实现Message Converter转化消息与对象，使得Producer能够直接发送POJO而不是JMS Message。 </para>
+            </listitem>
+            <listitem>
+                <para>使用了Spring2.0的DefaultMessageListenerContainer与MessageListenerAdapter，消息接收者不用实现MessageListener 接口。 </para>
+            </listitem>
+            <listitem>
+                <para>同时，Spring 2.0的DefaultMessageListenerContainer 代替了SS1.0M3中的Jenck(JCA Container)，充当MDP Container的角色。 </para>
+            </listitem>
+        </itemizedlist>
+        <sect2>
+            <title>引入ActiveMQ的XSD</title>
+            <para>在ApplicationContext.xml(Spring的配置文件)中引入ActiveMQ的XML Scheam 配置文件),如下:</para>
+            <programlisting><![CDATA[
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:amq="http://activemq.org/config/1.0"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+       http://activemq.org/config/1.0
+       http://people.apache.org/repository/org.apache.activemq/xsds/activemq-core-5.2.0.xsd">]]>
+            </programlisting>
+        </sect2>
+        <sect2>
+            <title>配置ActiveMQ Broker</title>
+            <para>采用在JVM中嵌入这种最简单的模式，当spring初始化时候，ActiveMQ embedded Broker就会启动了。</para>
+            <programlisting><![CDATA[
+<amq:broker useJmx="false" persistent="false">
+    <amq:transportConnectors>
+        <amq:transportConnector uri="tcp://localhost:0"/>
+    </amq:transportConnectors>
+</amq:broker>]]>
+            </programlisting>
+        </sect2>
+        <sect2>
+            <title>配置(A)ConnectionFactory</title>
+            <para>由于前面配置的Broker是JVM embedded 所以URL为:vm://localhost</para>
+            <programlisting><![CDATA[
+ <amq:connectionFactory id="jmsConnectionFactory" brokerURL="vm://localhost"/>]]>
+            </programlisting>
+        </sect2>
+        <sect2>
+            <title>配置(B)Queue</title>
+            <programlisting><![CDATA[
+<amq:queue name="destination" physicalName="org.apache.activemq.spring.Test.spring.embedded"/>]]>
+            </programlisting>
+        </sect2>
+        <sect2>
+            <title>配置(C)Converter</title>
+            <para>配置Conveter，使得Producer能够直接发送Order对象，而不是JMS的Message对象。</para>
+            <programlisting><![CDATA[
+<bean id="orderMessageConverter" class="org.springside.bookstore.components.activemq.OrderMessageConverter"/>]]>
+            </programlisting>
+        </sect2>
+        <sect2>
+            <title>发送端</title>
+            <sect3>
+                <title>配置JmsTemplate</title>
+                <para>Spring提供的Template，绑定了(A)ConnectionFactory与(C)Converter。</para>
+                <programlisting><![CDATA[
+<bean id="jmsTemplate" class="org.springframework.jms.core.JmsTemplate">
+    <property name="connectionFactory">
+        <bean class="org.springframework.jms.connection.SingleConnectionFactory">
+            <property name="targetConnectionFactory" ref="jmsConnectionFactory"/>
+        </bean>
+    </property>
+    <property name="messageConverter" ref="userMessageConverter"/>
+</bean>]]>
+                </programlisting>
+            </sect3>
+            <sect3>
+                <title>Producer</title>
+                <para>消息发送者，使用JmsTemplate发送消息，绑定了JmsTemplate (含A、C)与(B)Queue。</para>
+                <programlisting><![CDATA[
+<bean id="userMessageProducer" class="com.family168.UserMessageProducer">
+    <property name="template" ref="jmsTemplate"/>
+    <property name="destination" ref="destination"/>
+</bean>]]>
+                </programlisting>
+            </sect3>
+        </sect2>
+        <sect2>
+            <title>接收端</title>
+            <sect3>
+                <title>接收处理者(MDP)</title>
+                <para>使用Spring的MessageListenerAdapter，指定负责处理消息的POJO及其方法名，绑定(C)Converter。</para>
+                <programlisting><![CDATA[
+<bean id="messageListener" class="org.springframework.jms.listener.adapter.MessageListenerAdapter">
+    <constructor-arg>
+        <bean class="com.family168.MessageConsumer"/>
+    </constructor-arg>
+    <property name="defaultListenerMethod" value="sendMessage"/>
+    <property name="messageConverter" ref="userMessageConverter"/>
+</bean>]]>
+                </programlisting>
+            </sect3>
+            <sect3>
+                <title>listenerContainer</title>
+                <para>负责调度MDP，绑定(A) connectionFactory, (B)Queue和MDP。</para>
+                <programlisting><![CDATA[
+<bean id="listenerContainer" class="org.springframework.jms.listener.DefaultMessageListenerContainer">
+    <property name="connectionFactory" ref="jmsConnectionFactory"/>
+    <property name="destination" ref="destination"/>
+    <property name="messageListener" ref="messageListener"/>
+</bean>]]>
+                </programlisting>
+            </sect3>
+        </sect2>
+        <para>互相绑定的关系有点晕，发送端和接收端都以不同形式绑定了(A) connectionFactory, (B)Queue和 (C)Converter。</para>
+    </sect1>
+
+    <sect1>
+        <title>持久化消息</title>
+        <sect2>
+            <title>给Broker加入Persistence 配置</title>
+            <programlisting><![CDATA[
+<amq:persistenceAdapter>
+    <amq:jdbcPersistenceAdapter id="jdbcAdapter" dataSource="#hsql-ds" createTablesOnStartup="true" useDatabaseLock="false"/>
+</amq:persistenceAdapter>]]>
+            </programlisting>
+            <para>请注意MSSQL(2000/2005)和HSQL由于不支持[SELECT * ACTIVEMQ_LOCK FOR UPDATE]语法,因此不能使用默认的userDatabaseLock="true",只能设置成useDatabaseLock="false"</para>
+        </sect2>
+        <sect2>
+            <title>配置多种数据源</title>
+            <para>使用的内嵌HSQL</para>
+            <programlisting><![CDATA[
+<bean id="hsql-ds" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+    <property name="driverClassName" value="org.hsqldb.jdbcDriver"/>
+    <property name="url" value="jdbc:hsqldb:res:db/activemq"/>
+    <property name="username" value="sa"/>
+    <property name="password" value=""/>
+</bean>]]>
+            </programlisting>
+        </sect2>
+    </sect1>
+
+    <sect1>
+        <title>Jenck(JCA Container)</title>
+        <para>Spring 2.0本身使用DefaultMessageListenerContainer 可以充当MDP中的Container角色，但是鉴于Jencks是JCA标准的，它不仅仅能够提供jms的jca整合，包括其他资源比如jdbc都可以做到jca管理</para>
+        <para>所以，同时完成了这个ActiveMQ + Spring + Jencks配置演示，更多的针对生产系统的JCA特性展示，会在稍后的开发计划讨论中确定。</para>
+        <para>此文档适用于说明使用Jencks和使用Spring 2.0(DefaultMessageListenerContainer)充当MDP Container时的区别，同时演示Jenck的Spring 2.0新配置实例。</para>
+        <sect2>
+            <title>引入ActiveMQ ResourceAdapter和Jencks的XSD</title>
+            <para>在ApplicationContext.xml(Spring的配置文件)中引入ActiveMQ ResourceAdapter和Jencks的XML Scheam配置文件)，如下：</para>
+            <programlisting><![CDATA[
+<beans
+  xmlns="http://www.springframework.org/schema/beans"
+  xmlns:amq="http://activemq.apache.org/schema/core"
+  xmlns:amqra="http://activemq.apache.org/schema/ra"
+  xmlns:jencks="http://jencks.org/2.1"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+  http://activemq.apache.org/schema/core
+  http://activemq.apache.org/schema/core/activemq-core-5.2.0.xsd
+  http://activemq.apache.org/schema/ra
+  http://activemq.apache.org/schema/ra/activemq-ra-5.2.0.xsd
+  http://jencks.org/2.1
+  http://repository.codehaus.org/org/jencks/jencks/2.1/jencks-2.1.xsd">]]>
+            </programlisting>
+            <para>配置ActiveMQ Broker参见ActiveMQ + Spring</para>
+            <para>Jencks提供的那个xsd有点儿问题，不支持标签嵌套(是xs:any元素引起的错误)，所以我们把它的xsd修改一下，可以让配置文件里显得更紧凑一些。</para>
+            <para>在classpath/META-INF目录下放置jencks需要的services目录，jencks.xsd，spring.handlers和spring.schemas。</para>
+        </sect2>
+        <sect2>
+            <title>配置ActiveMQ Resource Adapter</title>
+            <programlisting><![CDATA[
+<amqra:resourceAdapter id="resourceAdapter" serverUrl="vm://localhost" />
+<amqra:managedConnectionFactory id="jmsManagedConnectionFactory" resourceAdapter="#resourceAdapter"/>]]>
+            </programlisting>
+        </sect2>
+        <sect2>
+            <title>配置Jencks基础配置</title>
+            <para>具体的配置可以参见Jencks的XSD</para>
+            <programlisting><![CDATA[
+<jencks:transactionManager id="transactionManager"/>
+
+<jencks:connectionManager id="connectionManager" transactionManager="#transactionManager"/>]]>
+            </programlisting>
+            <para>配置给JmsTemplate使用的connectionFactory (主要是生成者/发送者 使用)</para>
+            <para>这里注意下,在配置jmsTemplate的使用的targetConnectionFactory就是使用jencks配置的connectionManager</para>
+            <programlisting><![CDATA[
+<bean id="jmsManagerConnectionFactory" class="org.springframework.jca.support.LocalConnectionFactoryBean">
+    <property name="managedConnectionFactory" ref="jmsManagedConnectionFactory"/>
+    <property name="connectionManager" ref="connectionManager"/>
+</bean>
+
+<bean id="jmsTemplate" class="org.springframework.jms.core.JmsTemplate">
+    <property name="connectionFactory">
+        <bean class="org.springframework.jms.connection.SingleConnectionFactory">
+            <property name="targetConnectionFactory" ref="jmsManagerConnectionFactory"/>
+        </bean>
+    </property>
+    <property name="messageConverter" ref="userMessageConverter"/>
+</bean>]]>
+            </programlisting>
+            <para>配置Spring 2.0的MessageListenerAdapter,保证不需要用户实现MessageListener</para>
+        </sect2>
+        <sect2>
+            <title>配置Jencks充当MDP的Container</title>
+            <para>就是把上面的MessageListenerAdapter配置到Jencks里面,完成整个MDP的配置</para>
+            <programlisting><![CDATA[
+<jencks:connector ref="messageListener">
+    <jencks:activationSpec>
+        <amqra:activationSpec destination="org.apache.activemq.spring.Test.spring.embedded"
+                              destinationType="javax.jms.Queue"/>
+    </jencks:activationSpec>
+    <jencks:jcaContainer>
+        <jencks:jcaContainer resourceAdapter="#resourceAdapter">
+            <jencks:bootstrapContext>
+                <jencks:bootstrapContext threadPoolSize="25" transactionManager="#transactionManager"/>
+            </jencks:bootstrapContext>
+        </jencks:jcaContainer>
+    </jencks:jcaContainer>
+</jencks:connector>]]>
+            </programlisting>
+        </sect2>
+    </sect1>
+
+    <sect1>
+        <title>Lingo</title>
+        <para>Lingo是进一步封装JMS细节的Pure POJO远程调用框架，提供一种远程调用，尤其是它的异步调用(包括异步回调)可以帮助构建强大的异步事件通知系统。</para>
+        <para>其工作流程如下所示：</para>
+        <screen>
+非常繁重的工作队列 -------> 业务A(必须要调用远程业务B[而且B业务这里非常耗时])
+                                                |
+                                                | callBack池(每个callBack可以独立,也可以使用一个callBack)
+                                                |
+                                                | 使用异步回调(callBack,参数)
+                                                |
+                                                |
+                                                v
+                               远程业务B(耗时的IO/DAO调用,然后回调callBack)
+
+        </screen>
+        <para>lingo实际上是把无状态，不同步的jms封装成同步调用的形式来使用，它先给客户端生成一个基于服务端的proxy，在客户端调用proxy的时候发送jms消息，同时在客户端生成一个会调用的临时queue，这样服务器端在处理了数据之后会向客户端的临时queue发送消息，在服务器端进行计算的时候，lingo使用concurrent包中的api一直堵塞监听，直到服务器端返回了数据，才将数据返回。以此方式来模拟同步调用。</para>
+        <para>如果是异步调用，客户端会直接发送jms请求，这时需要在调用方法的参数中加入一个实现了EventListener的参数，lingo会自动把这个参数作为远程对象，在客户端生成临时queue，服务器端在获得消息后也为这个EventListener生成对应的proxy，并服务器端调用proxy的时候，发送jms消息，客户端监听到消息的返回，就实现了异步回调。</para>
+        <para>使用时需要注意几点：</para>
+        <orderedlist>
+            <listitem>
+                <para>首先继承JmsServiceExporter，修改createRemoteProxy()方法，把oneway=true的MetadataStrategy放到JmsProxyFactoryBean中，如果使用它默认提供的JmsServiceExporter作为服务端，会一直报超时错误。</para>
+                <para>这是因为lingo的原理是使用proxy，把方法调用的请求封装到ObjectMessage中，发送给服务器，如果方法调用的参数为Remote或EventListener类型，就会先在客户端准备一个临时的queue，等待消息传递给服务器后，再次生成对应的proxy，在服务器端调用proxy的时候，发送消息给客户端的临时queue，这样形成了callback回调。但是从服务器到本地的jms是不会有响应的，如果不把服务器端的oneway设置为true，服务器端会以为客户端还要返回一条jms消息，就会造成等待，一直等待不到结果，就会出现超时错误。</para>
+            </listitem>
+            <listitem>
+                <para>其次，从lingo-1.1之后的所有版本都存在一个问题，默认的Requestor不支持回调，在执行send()的时候没有把客户端生成的临时queue名称放到jms消息中，造成callback的时候一直报错。</para>
+                <para>需要继承MultiplexingRequestor，在doSend()方法中添加populateHeaders(message);设置客户端生成的临时queue，才能实现回调。</para>
+            </listitem>
+        </orderedlist>
+    </sect1>
+
+</chapter>

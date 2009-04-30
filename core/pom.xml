@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>com.family168.leona</groupId>
+    <artifactId>leona-parent</artifactId>
+    <version>0.1-SNAPSHOT</version>
+    <relativePath>../parent/pom.xml</relativePath>
+  </parent>
+  <groupId>com.family168.leona</groupId>
+  <artifactId>leona-core</artifactId>
+  <packaging>jar</packaging>
+  <name>The core of leona</name>
+  <scm>
+    <connection>scm:svn:svn://localhost/leona/trunk/core</connection>
+    <developerConnection>scm:svn:svn://localhost/leona/trunk/core</developerConnection>
+    <url>svn://localhost/leona/trunk/core</url>
+  </scm>
+  <dependencies>
+    <dependency>
+      <groupId>com.family168.leona</groupId>
+      <artifactId>component-test</artifactId>
+      <scope>test</scope>
+      <version>0.1-SNAPSHOT</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.family168.leona</groupId>
+      <artifactId>component-j2ee</artifactId>
+      <version>0.1-SNAPSHOT</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.family168.leona</groupId>
+      <artifactId>component-hibernate</artifactId>
+      <version>0.1-SNAPSHOT</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.family168.leona</groupId>
+      <artifactId>component-spring</artifactId>
+      <version>0.1-SNAPSHOT</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.family168.leona</groupId>
+      <artifactId>component-struts2</artifactId>
+      <version>0.1-SNAPSHOT</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.family168.leona</groupId>
+      <artifactId>component-utils</artifactId>
+      <version>0.1-SNAPSHOT</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.family168.leona</groupId>
+      <artifactId>component-db</artifactId>
+      <version>0.1-SNAPSHOT</version>
+    </dependency>
+
+    <!--servlet-2.4和jsp-2.0规范 start-->
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>servlet-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>jsp-api</artifactId>
+    </dependency>
+    <!--servlet-2.4和jsp-2.0规范 end-->
+
+  </dependencies>
+
+  <build>
+    <outputDirectory>target/classes</outputDirectory>
+  </build>
+
+</project>
+
+

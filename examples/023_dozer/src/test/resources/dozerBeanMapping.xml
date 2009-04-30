@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mappings PUBLIC "-//DOZER//DTD MAPPINGS//EN" "http://dozer.sourceforge.net/dtd/dozerbeanmapping.dtd">
+<mappings>
+    <configuration>
+        <stop-on-errors>false</stop-on-errors>
+        <date-format>MM/dd/yyyy HH:mm</date-format>
+        <wildcard>true</wildcard>
+    </configuration>
+    <mapping>
+        <class-a>com.family168.Bean1</class-a>
+        <class-b>com.family168.Bean2</class-b>
+        <field>
+            <a>name</a>
+            <b>name2</b>
+        </field>
+        <field>
+            <a>id</a>
+            <b>id2</b>
+        </field>
+    </mapping>
+</mappings>

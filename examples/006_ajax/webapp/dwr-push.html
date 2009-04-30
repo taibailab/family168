@@ -1,0 +1,18 @@
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <script type="text/javascript" src="dwr/interface/NoticeService.js"></script>
+    <script type="text/javascript" src="dwr/engine.js"></script>
+    <script type="text/javascript" src="dwr/util.js"></script>
+  </head>
+  <body onload="DWREngine.setActiveReverseAjax(true);">
+    <script type="text/javascript">
+function receiveMessages(message) {
+    $('result').innerHTML += "<p>收到消息：" + message + "</p>";
+}
+    </script>
+    <div id="result"></div>
+    <button onclick="NoticeService.send('hello')">send</button>
+  </body>
+</html>
+

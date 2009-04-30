@@ -1,0 +1,87 @@
+<beans
+  xmlns="http://www.springframework.org/schema/beans"
+  xmlns:amq="http://activemq.apache.org/schema/core"
+  xmlns:amqra="http://activemq.apache.org/schema/ra"
+  xmlns:jencks="http://jencks.org/2.1"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+  http://activemq.apache.org/schema/core
+  http://activemq.apache.org/schema/core/activemq-core-5.2.0.xsd
+  http://activemq.apache.org/schema/ra
+  http://activemq.apache.org/schema/ra/activemq-ra-5.2.0.xsd
+  http://jencks.org/2.1
+  http://repository.codehaus.org/org/jencks/jencks/2.1/jencks-2.1.xsd">
+
+    <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="org.hsqldb.jdbcDriver"/>
+        <property name="url" value="jdbc:hsqldb:res:db/activemq"/>
+        <property name="username" value="sa"/>
+        <property name="password" value=""/>
+    </bean>
+
+    <amq:broker useJmx="false" persistent="true">
+        <amq:persistenceAdapter>
+            <amq:jdbcPersistenceAdapter id="jdbcAdapter" dataSource="#dataSource" createTablesOnStartup="true" useDatabaseLock="false"/>
+        </amq:persistenceAdapter>
+        <amq:transportConnectors>
+            <amq:transportConnector uri="tcp://localhost:0" />
+        </amq:transportConnectors>
+    </amq:broker>
+
+    <amq:connectionFactory id="jmsNormalConnectionFactory" brokerURL="vm://localhost"/>
+
+    <amqra:resourceAdapter id="resourceAdapter" serverUrl="vm://localhost"/>
+
+    <amqra:managedConnectionFactory id="jmsManagedConnectionFactory" resourceAdapter="#resourceAdapter"/>
+
+    <bean id="jmsManagerConnectionFactory" class="org.springframework.jca.support.LocalConnectionFactoryBean">
+        <property name="managedConnectionFactory" ref="jmsManagedConnectionFactory"/>
+        <property name="connectionManager" ref="connectionManager"/>
+    </bean>
+
+    <amq:queue name="destination" physicalName="org.apache.activemq.spring.Test.spring.embedded"/>
+
+    <bean id="userMessageConverter" class="com.family168.UserMessageConverter"/>
+
+    <bean id="jmsTemplate" class="org.springframework.jms.core.JmsTemplate">
+        <property name="connectionFactory">
+            <bean class="org.springframework.jms.connection.SingleConnectionFactory">
+                <property name="targetConnectionFactory" ref="jmsManagerConnectionFactory"/>
+            </bean>
+        </property>
+        <property name="messageConverter" ref="userMessageConverter"/>
+    </bean>
+
+    <bean id="userMessageProducer" class="com.family168.UserMessageProducer">
+        <property name="template" ref="jmsTemplate"/>
+        <property name="destination" ref="destination"/>
+    </bean>
+
+    <bean id="messageListener" class="org.springframework.jms.listener.adapter.MessageListenerAdapter">
+        <constructor-arg>
+            <bean class="com.family168.UserMessageConsumer"/>
+        </constructor-arg>
+        <property name="defaultListenerMethod" value="sendMessage"/>
+        <property name="messageConverter" ref="userMessageConverter"/>
+    </bean>
+
+    <jencks:transactionManager id="transactionManager"/>
+
+    <jencks:connectionManager id="connectionManager" transactionManager="#transactionManager"/>
+
+    <jencks:connector ref="messageListener">
+        <jencks:activationSpec>
+            <amqra:activationSpec destination="org.apache.activemq.spring.Test.spring.embedded"
+                                  destinationType="javax.jms.Queue"/>
+        </jencks:activationSpec>
+        <jencks:jcaContainer>
+            <jencks:jcaContainer resourceAdapter="#resourceAdapter">
+                <jencks:bootstrapContext>
+                    <jencks:bootstrapContext threadPoolSize="25" transactionManager="#transactionManager"/>
+                </jencks:bootstrapContext>
+            </jencks:jcaContainer>
+        </jencks:jcaContainer>
+    </jencks:connector>
+
+</beans>
+

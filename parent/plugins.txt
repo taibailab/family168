@@ -1,0 +1,127 @@
+
+2008-11-26
+插件说明
+
+
+build插件
+
+* org.apache.maven.plugins.maven-clean-plugin删除
+  除了删除target和output以外，还删除EditPlus生成.bak文件，windows对图片的Thumbs.db缓存，以及log4j生成的*.log.*日志
+  但是不删除build.log，因为这个文件是shitty插件用来输出日志的文件，把这个删除的话，shitty的集成测试一定会失败
+  在process-sources阶段，只删除.bak文件
+
+* org.apache.maven.plugins.maven-compiler-plugin编译
+  源代码使用UTF-8编码，JDK版本为1.5
+
+* org.apache.maven.plugins.maven-install-plugin部署
+  createCheckSum，在install到本地repo的时候，生成sha1和md5完整性摘要
+
+* org.apache.maven.plugins.maven-source-plugin源代码管理插件
+  install的时候，将源代码打包成jar文件，发布到repo中
+
+* org.apache.maven.plugins.maven-war-plugin打包war
+  warSourceDirectory默认为src/main/webapp，修改为webapp
+
+* org.mortbay.jetty.maven-jetty-plugin服务器jetty
+  scanIntervalSeconds热部署时间间隔10s
+  webDefaultXml使用自定义的webdefault.xml，解决静态资源被锁定的问题
+  webAppSourceDirectory默认为src/main/webapp，修改为webapp
+
+* org.codehaus.mojo.tomcat-maven-plugin服务器tomcat
+  warSourceDirectory默认为src/main/webapp，修改为webapp
+
+* org.codehaus.mojo.jalopy-maven-plugin美化源代码
+  convention格式化配置文件
+  encoding源代码使用UTF-8编码
+  history使用file记录历史信息
+  在process-sources阶段执行format功能
+
+* org.codehaus.mojo.dashboard-maven-plugin报表白板
+  使用hsqldb数据库保存历史报表记录
+
+
+reporting报表插件
+
+* org.apache.maven.plugins.maven-site-plugin生成site报表
+  inputEncoding输入信息的编码
+  outputEncoding输出html的编码
+
+* org.apache.maven.plugins.maven-project-info-reports-plugin项目信息保存
+  inputEncoding输入信息的编码
+  outputEncoding输出html的编码
+  dependencyLocationsEnabled不检测依赖的位置，可以避免出现内存溢出的问题，因为检测依赖性的报表太占内存了
+  默认提示如下的报表，可以自行配置显示哪些报表项目
+  最费时的就是dependencies相关的三个报表，平常开发可以考虑去掉
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-project-info-reports-plugin</artifactId>
+        <configuration>
+          <inputEncoding>UTF-8</inputEncoding>
+          <outputEncoding>UTF-8</outputEncoding>
+          <dependencyLocationsEnabled>false</dependencyLocationsEnabled>
+        </configuration>
+        <reportSets>
+          <reportSet>
+            <reports>
+              <report>cim</report>
+              <report>dependencies</report>
+              <report>dependency-convergence</report>
+              <report>dependency-management</report>
+              <report>index</report>
+              <report>issue-tracking</report>
+              <report>license</report>
+              <report>mailing-list</report>
+              <report>plugin-management</report>
+              <report>plugins</report>
+              <report>project-team</report>
+              <report>scm</report>
+              <report>summary</report>
+            </reports>
+          </reportSet>
+        </reportSets>
+      </plugin>
+
+* org.apache.maven.plugins.maven-jxr-plugin源代码位置引用
+  注意把这个插件放在taglist的前面，否则可能出现超链接错误的问题
+  inputEncoding源代码编码
+  outputEncoding输出html编码
+
+* org.apache.maven.plugins.maven-checkstyle-plugin检测编码规范
+  configLocation编码规范配置文件checkstyle.xml
+  encoding源代码的编码
+  excludes不检测哪些代码，可以使用*通配符，多个条件之间使用,分隔
+
+* org.apache.maven.plugins.maven-pmd-plugin代码检测
+  sourceEncoding源代码编码
+  targetJdk使用jdk-1.5版本
+  excludes对于generated包下的代码不需要检测
+
+* org.codehaus.mojo.findbugs-maven-plugin动态代码检测
+  targetJdk使用jdk-1.5
+  xmlOutput输出xml
+  excludeFilterFile制定哪些代码或者哪些bug不要提示出来
+
+* org.codehaus.mojo.cobertura-maven-plugin测试覆盖率
+  ignores或者excludes可以把某些类的测试覆盖率，排除到总数量之外
+
+* org.codehaus.mojo.taglist-maven-plugin标签列表
+  encoding源代码编码
+  tags检测TODO, FIXME, todo三个标签
+
+* org.codehaus.mojo.javancss-maven-plugin统计代码行数
+
+* org.codehaus.mojo.jdepend-maven-plugin计算包和类的依赖性稳定性
+
+* org.apache.maven.plugins.maven-javadoc-plugin生成javadoc
+
+* org.apache.maven.plugins.maven-changelog-plugin修改日志
+  配置scm访问svn，输出一个月内的更新日志，统计文件更新频率和开发者活动频率
+
+* org.apache.maven.plugins.maven-surefire-report-plugin单元测试报表
+
+* org.codehaus.mojo.dashboard-maven-plugin报表白板
+
+* com.googlecode.maven-overview-plugin.maven-overview-plugin生成项目的依赖图
+
+* net.sf.stat-scm基于scm(cvs,svn)生成的报表
+

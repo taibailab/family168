@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter xml:id="introduce">
+    <title>介绍</title>
+
+    <sect1>
+        <title>概述</title>
+        <para>J2EE社区在抵受了ROR的强烈冲击后，所有的同志们都开始怒吼着我们要最简单的全站式开发框架。可是面对Java界这么多林林种种的开源框架，没有任何一个人有那种疯劲抛弃已有的所有框架，重新再搞一套东西出来，所以我们最终看到的还是一个新瓶装旧酒的样子。Spring还是那个Spring，Hibernate还是那个Hibernate，Struts还是那个Struts。</para>
+        <para>就这样，我们努力的方向终于从邯郸学步变成了另辟蹊径，毕竟咱们每天都在加班，没时间研究ROR究竟怎样解决企业业务流程中的那些复杂逻辑，我们最需要的还是一个可以拿来就用的，可以解决大多数问题的，也比较好用的一套框架。</para>
+        <para>我们所期望的这套框架，是一套整合了诸多开源组件的全站式平台，包括了WebService, JMS, Workflow, Security, Report, Rule, Search, Timer等企业应用可能用到的特性，并且是以构架式进行开发，配合脚本，工具与IDE，最终这组合成一套一站式的快速开发框架。</para>
+        <para>在这个平台上，我们还要提供对应的实例代码，演示在实际开发中总结出的，Java企业领域方面的最佳实践。</para>
+        <para>还需要注意的一点是，软件开发不仅仅是一个技术问题，也与开发过程中的流程管理，质量管理有着千丝万缕的联系，所以我们不只要演示技术架构，文档，设计，测试，演示都将包括在我们的研究范围内。</para>
+    </sect1>
+
+    <sect1>
+        <title>架构</title>
+        <para>在进行J2EE的企业开发时，我们已经渐渐开始减少分层，减少设计，不再追求最完美的设计与架构，而是一切以实际为主让咱们的东西做得越快越好，毕竟老板经常说咱们要应付的是灵活多变的业务，是不断变化的市场，如果跟不上变化的脚步就不行了。</para>
+        <para>这样，我们就需要尽量减少学习成本，选择最常用的框架组装我们的平台，我们还需要减少配置和代码，毕竟手写的越少，犯错的机会也就越小。我们还要制定编码规范，加强测试和代码质量检测，免得以后维护、修改的时候出现问题。</para>
+        <para>那我们怎么才能编写最少代码就完成CRUD功能呢？</para>
+        <sect2>
+            <title>核心设计</title>
+            <para>以JDK5和Spring做最基本的架构。</para>
+        </sect2>
+        <sect2>
+            <title>领域模型</title>
+            <para>领域模型采用hibernate3支持的jpa方式实现ORM数据持久化。这方面利用了jdk5的annotation注解和spring提供的AnnotationSessionFactoryBean，实现零配置文件。</para>
+        </sect2>
+        <sect2>
+            <title>Manager层</title>
+            <para>服务层不使用接口，也省略DAO层，让Manager直接继承封装好的超类，依靠泛型获得对应领域模型的各种功能。</para>
+        </sect2>
+        <sect2>
+            <title>Web层</title>
+            <para>Struts部分需要规范一套惯用的命名规则，便于规范开发过程和开发结构。</para>
+            <para>因为web层的灵活性，即使封装BaseAction，超类中也不会包含太多逻辑。</para>
+        </sect2>
+        <sect2>
+            <title>View层</title>
+            <para>表现层部分有多种选择。</para>
+            <itemizedlist>
+                <listitem>
+                    <para>JSP-2.0是最容易入手的途径，但是功能最弱。</para>
+                </listitem>
+                <listitem>
+                    <para>Freemarker功能强劲，但有学习门槛。</para>
+                </listitem>
+                <listitem>
+                    <para>选择One Application One Page的Ajax组件与传统开发方式相差太大，风险太大。</para>
+                </listitem>
+                <listitem>
+                    <para>究竟是选择JSP-2.0或Freemarker，外加一些Ajax小组件，还是选择全套的Ajax组件，是个很大的问题。</para>
+                </listitem>
+            </itemizedlist>
+        </sect2>
+        <sect2>
+            <title>测试</title>
+            <para>测试采用mock实现单元测试，集成测试采用selenium先录制后自动回放的方式，功能测试使用Spring-test提供的测试超类加载所有xml资源进行测试。考虑使用jmeter进行压力测试。</para>
+        </sect2>
+        <sect2>
+            <title>权限模型</title>
+            <para>采用Spring Security，实现基于RBAC（Role Based Access Control基于角色的访问控制）的权限模型管理。</para>
+            <para>Spring Security本身自带多种验证方式，这里仿效springside-2.0中的security模块，对其数据模型进行了扩展，通过User用户 - Role角色 - Resource资源三者之间的多对多关系实现权限管理，附加Role角色与Menu菜单之间的关联，日常调度时，只需要为用户选择角色，就可以获得对应的访问权限。</para>
+            <para>URL资源的访问使用filter过滤器拦截，METHOD资源的访问使用AOP拦截器拦截。</para>
+            <para>ACL（Access Control List访问控制列表）尚未实现。</para>
+        </sect2>
+        <sect2>
+            <title>特定功能的封装</title>
+            <para>为实现特定功能，提供一系列基类与帮助类。</para>
+            <orderedlist>
+                <listitem>
+                    <para>NamedManager用于处理数据字典，提供createOrGet()方法，实现功能为先在数据库查找同名记录，如果存在则返回这条记录，如果记录不存在，则将名称保存进数据库，并返回保存记录对应的对象。</para>
+                </listitem>
+                <listitem>
+                    <para>TreeManager用户处理自关联树形结构，如菜单，组织结构，提供getTops()方法，获得顶级节点的集合。</para>
+                    <para>TreeHelper提供检测parent与child之间是否存在循环关联的checkDeadLock()方法。</para>
+                    <para>进一步到达表示层，使用extjs封装的树形控件，少量代码即可实现树形的常用功能。</para>
+                </listitem>
+            </orderedlist>
+        </sect2>
+        <para>除了上述最基本的架构，我们还需要结合Jbpm工作流，Drools规则引擎，JasperReport报表引擎，Compass/Lucene搜索引擎，CXF WebService，ActiveMQ JMS，OSGI插件架构，并在实例中一一演示。</para>
+    </sect1>
+
+    <sect1>
+        <title>为啥不用其他架构</title>
+        <para>讨论一下使用其他架构的可能，比较一下与我们选用架构的优缺点，希望大家可以根据自己的情况选择适合自己的方式。</para>
+        <sect2>
+            <title>为啥不用传统的五层DAO形式</title>
+            <para>传统情况是Manager Interface : Manager Implement : DAO Interface : DAO Implement : POJO。而我们采用的是Manager Impl + POJO两层搞定。传统形式据说是最大限度的顾及到设计与实现的灵活程度，将最基本的操作都放到DAO层，Manager层中可以集合多个DAO进行复杂业务操作，而每一层之间的接口可以保证分层之间对实现进行随意更换。</para>
+            <para>我们讨论的对象更多面向于中小型项目，这样就很可能缺乏详尽的设计和业务分析，开发中更倾向于实用与快捷。</para>
+            <para>首先是DAO层被我们去掉了，因为Hibernate基本等于实现了DAO中的基本操作，可以说有了Hibernate就不需要使用DAO了。其次是接口被我们省略了，因为在实际开发过程中很少出现多种实现的情况，经常是开发一套实现都嫌时间不够，哪儿有时间去预备多套实现呢？这种情况下接口完全是一个累赘，所谓为了更快的开发，更快的修改，我们没必要在先行设计时加上这么一层。</para>
+            <para>实际上我们只是在先行设计时省略了不常用的DAO和接口，一旦遇到复杂的业务情况，我们随时都可以拆分Manager层，抽离出DAO层或者接口层。这样我们在保持快速开发的过程中也可以顾及到扩展性。</para>
+        </sect2>
+        <sect2>
+            <title>为啥不直接使用Spring-Test</title>
+            <para>我们采用mock仿造所有依赖进行单元测试，这样做的好处是速度快，一切的依赖都是自己mock仿造出来的，开发者更容易实现测试的各种情况。使用mock的坏处是没有在真实环境进行测试，仿造的环境很可能有瑕疵，这样测试通过了实际中也可能出现问题。还有就是在测试Hibernate这种管理层时，需要仿造的条件太复杂，让人不堪重负。</para>
+            <para>与此对应的一种方法是在单元测试时，直接加载所有配置文件，打造一个与真实运行环境一样的测试环境进行测试，这样的好处是省去了每次mock依赖条件的麻烦，但是问题是速度慢了，即使使用Spring-Test缓存配置文件，这样的测试速度也还是慢了很多。</para>
+            <para>我们不使用Spring-Test进行单元测试的最主要原因是，单元测试应该不受外部环境干扰，如果像这样加载所有配置文件，如果是因为别人写的代码造成自己的单元测试失败，实际工作中就会出现推卸责任的问题了。因为我们还是希望先使用mock仿造所有环境，保证本身代码实现没有问题，而且单元测试也应该在最短的时间内运行完。</para>
+        </sect2>
+    </sect1>
+
+</chapter>

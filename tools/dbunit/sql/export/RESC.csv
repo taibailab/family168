@@ -1,0 +1,8 @@
+ID, NAME, RES_TYPE, RES_STRING, DESCN
+"1","index","URL","/security/index.jsp","index"
+"2","user","URL","/security/user*","user"
+"3","role","URL","/security/role*","role"
+"4","resc","URL","/security/resc*","resc"
+"5","menu","URL","/security/menu*","menu"
+"6","dept","URL","/security/dept*","dept"
+"7","login","URL","/islogin.jsp","login"

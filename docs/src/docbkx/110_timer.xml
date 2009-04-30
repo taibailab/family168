@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter xml:id="timer">
+    <title>任务调度</title>
+
+    <sect1>
+        <title>概述 </title>
+        <para> Quartz(http://www.opensymphony.com/quartz/)是最常用的定时执行任务框架，可以自行用API设定调度，也可以集成到Spring里面，以配置文件调度POJO文件的方法执行。</para>
+        <para>参考资料</para>
+        <para>《Quartz Job Scheduling Framework》 2006年新书，可以Emule得到，很多原来文档不详细的地方如clustering等都可以在里面看到。 </para>
+    </sect1>
+
+    <sect1>
+        <title>与Spring集成</title>
+        <sect2>
+            <title>Scheduler总入口</title>
+            <programlisting><![CDATA[
+<bean name="quartzScheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+    <property name="triggers">
+        <list>
+            <ref bean="cronTrigger"/>
+        </list>
+    </property>
+    <!--<property name="dataSource" ref="dataSource"/> -->
+    <property name="configLocation" value="classpath:quartz.properties"/>
+</bean>]]>
+            </programlisting>
+            <para>quartz的详细配置在quartz.properties文件，具体配置见其注释或参考参考文档，一般默认即为JVM嵌入式Scheduler。也可以配置把任务执行情况存储于数据库中，即使服务器重起，也能保证任务计划正确执行。</para>
+            <para>比如定义12点运行任务的，如果12:05运行了一次，然后服务器在12:30重启，如果没有持久化，那还会重新运行一次。</para>
+            <para>可惜hsqldb不支持select * from foo for update 这样的行锁定sql语法，无法demo。</para>
+        </sect2>
+        <sect2>
+            <title>Trigger</title>
+            <programlisting><![CDATA[
+<bean id="cronTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+    <property name="jobDetail" ref="jobDetail"/>
+    <!--朝九晚五工作时间内每半小时执行一次-->
+    <property name="cronExpression" value="0 0/30 9-17 *,* * ?"/>
+</bean>]]>
+            </programlisting>
+            <para>强大的cronTrigger，类似著名的cron表达式，方便我们任意的job控制的想法。</para>
+            <para>当然quartz也有简单的simpleTrigger，实现的东西就和jdk中的timer差不多了，另还有好几个其他的timer。详细请参考quartz 的文档。</para>
+        </sect2>
+        <sect2>
+            <title>小心陷阱</title>
+            <para>启动计划的FactoryBean们不要lazy-load，否则计划无法启动。</para>
+            <para>Scheduler不要Autowire，否则会传入一个DataSource/SessionFactory给Scheduler，Scheduler就会认为是许要持久化任务执行情况，而其实你是JVM形式执行的，就会报没有建立Quartz持久化表，Table or View not Found。</para>
+        </sect2>
+    </sect1>
+
+    <sect1>
+        <title>Quartz相对于JDK Timer Task的进步 </title>
+        <itemizedlist>
+            <listitem>
+                <para>首先是细致的Cron语法</para>
+            </listitem>
+            <listitem>
+                <para>然后是可以把任务执行情况存储于数据库中，即使服务器重起，也能保证任务计划正确执行。可惜hsqldb不支持select * from foo for update 这样的行锁定sql语法，无法demo。</para>
+            </listitem>
+            <listitem>
+                <para>线程池并发执行的能力</para>
+            </listitem>
+            <listitem>
+                <para>群集执行的能力</para>
+            </listitem>
+        </itemizedlist>
+        <para>以上特征都可以在quartz的配置文件quartz.properties里看出样貌。</para>
+    </sect1>
+
+    <sect1>
+        <title>常见问题</title>
+        <para>如何在Spring配置文件里如何设定定时执行函数的参数？</para>
+        <para>这是个伪问题，定时执行的函数应该是无参的。正确的方法设定该POJO的成员变量，或者由POJO自行去读取某个配置文件。</para>
+    </sect1>
+
+</chapter>
+

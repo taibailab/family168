@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter xml:id="jbpm">
+    <title>JBPM工作流</title>
+    <para>目前在jboss的repo上只能得到Alpha-1的发布包。我们使用的jBPM-4.0.0.Beta1是使用svn中的tag构建而成的，幸好现在jBPM的工程都是基于maven2开发的，因此很容易打包发布到本地repo中使用。</para>
+    <para>jBPM-4.0.0.Beta1主要由以下几部分内容构成。</para>
+    <sect1>
+        <title>流程定义Process Definition</title>
+        <para>流程定义是记录在xml文件中的对流程的描述，它包含唯一的流程开始节点和多个流程功能节点，每个节点之间使用transition进行连接。</para>
+        <para>Process Definition使用id, key和version进行标识，jBPM中可能包含多个key值相同的Process Definition，key值相同的Process Definition会拥有不同的version值，而id是使用key-version的形式用来表示唯一的Process Definition的。</para>
+        <para>jBPM中使用RepositoryService来控制流程定义的发布，浏览，删除等操作。</para>
+    </sect1>
+
+    <sect1>
+        <title>流程实例Process Instance</title>
+        <para>以流程定义为蓝本生成的流程实例，在jBPM属于Execution的一种。</para>
+        <para>当我们执行start时，会根据流程定义启动一个新的流程实例，然后它会根据流程定义里的节点运行，在遇到state或task时停顿，等待外部用户调用signal，最后会执行到end节点，结束整个流程。</para>
+        <para>jBPM中只允许有一个start节点，所以每个流程都是单一入口的，jBPM4中可以允许有多个end节点，所以我们可以在任意位置结束流程。</para>
+        <para>jBPM中使用ExecutionService来控制流程实例的启动，浏览，执行，删除等操作</para>
+    </sect1>
+
+    <sect1>
+        <title>state节点</title>
+        <para>state节点是等待节点，它必须等待用户执行signal才能让流程实例进行到下一步。</para>
+        <para>除了state之外，其他的节点都不需要用户执行signal就可以直接向下运行，感觉state就是一个异类，不清楚在xpdl里是如何定义这类节点的概念的。</para>
+        <para>jBPM中使用ExecutionService来控制对state的signal操作。</para>
+    </sect1>
+
+    <sect1>
+        <title>task节点</title>
+        <para>task节点是任务节点，可以使用assignee, swimelane等方式为任务定义分配到某个人或者某个组，对应的用户可以执行completeTask()结束任务，并控制任务结束后流程实例向哪个方向前进。</para>
+        <para>jBPM中使用TaskService控制task的各项操作。</para>
+    </sect1>
+
+    <sect1>
+        <title>Identity身份验证</title>
+        <para>jBPM中的身份验证分为User, Group和Membership三部分，用户表示登陆用户，Group表示用户组，用户和用户组之间的关联关系保存在Membership中。User和Group与Task中的assignee和swimelane是息息相关的。</para>
+        <para>jBPM中使用IdentityService控制身份的各项操作。</para>
+    </sect1>
+
+</chapter>

@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter xml:id="struts2">
+    <title>Struts2</title>
+
+    <sect1>
+        <title>简介</title>
+        <para>使用struts2的意义在于，它承接了struts1的名气，所以不难宣传。它继承了webwork2的体钵，强大实用。</para>
+        <para>它的问题就在于太灵活，有待于在工作中摸索各种各样的用法。</para>
+        <para>因为struts2本很已经具有了强大的功能，很难再封装出更强大，更灵活的超类了，随便写一个Action就很好用。不过它提供的零配置方案和各种插件还有待考察。</para>
+    </sect1>
+
+    <sect1>
+        <title>命名规范</title>
+        <para>因为struts2很灵活，所以必须严格限制命名规范，让代码保持在可控范围内。常用命名如下：</para>
+        <itemizedlist>
+            <listitem>
+                <para>list 显示对象列表的页面</para>
+            </listitem>
+            <listitem>
+                <para>create 新增对象的输入界面（考虑与edit合并为input）</para>
+            </listitem>
+            <listitem>
+                <para>edit 修改对象的输入界面（考虑与edit合并为input）</para>
+            </listitem>
+            <listitem>
+                <para>show 只读显示对象细节的页面</para>
+            </listitem>
+            <listitem>
+                <para>save 新增对象的保存（考虑与update合并为save）</para>
+            </listitem>
+            <listitem>
+                <para>update 修改对象的保存（考虑合并入save）</para>
+            </listitem>
+            <listitem>
+                <para>remove 删除单个对象</para>
+            </listitem>
+            <listitem>
+                <para>removeAll 批量删除对象</para>
+            </listitem>
+            <listitem>
+                <para>query 查询</para>
+            </listitem>
+        </itemizedlist>
+    </sect1>
+
+    <sect1>
+        <title>struts2的特长</title>
+        <itemizedlist>
+            <listitem>
+                <para>类型转换，把HTTP请求中的字符串转换成POJO中实际的java类型，struts2支持多种默认的类型转换，还支持用户自定义类型转换。</para>
+            </listitem>
+            <listitem>
+                <para>强大的OGNL表达式，支持嵌套映射，自动取值赋值，注意在ModelDriven模式下取值时可能出现重名的问题。</para>
+            </listitem>
+            <listitem>
+                <para>简易配置的插件机制，struts2比较出色的一面是不需要额外配置，只要把plugin的jar文件放到lib下就可以注册使用插件。</para>
+            </listitem>
+            <listitem>
+                <para>拦截器机制，提供了多种高级功能，功能强大的同时，让人感觉有点儿难懂。</para>
+            </listitem>
+            <listitem>
+                <para>支持多种视图，JSP, Freemarker等。</para>
+            </listitem>
+            <listitem>
+                <para>模块化配置，支持使用包和命名空间管理众多Action。</para>
+            </listitem>
+        </itemizedlist>
+    </sect1>
+
+    <sect1>
+        <title>Convention Plugin实现零配置文件</title>
+        <para>Convention Plugin是2.1.6最新提供的零配置Plugin，取代了原来的CodeBehind等插件。</para>
+        <para>能自动扫描所有Action类(默认为struts,action package下的子package和类，也可以在struts.xml中定义其他父package名)</para>
+        <para>Convention会对扫描到的Action自动配置NameSpace，如com.family168.struts.user.ListAction的路径为/user/list.do，N也可以在action中用@Namespace指定自定义的命名空间。</para>
+        <para>之后会利用Result寻找对应的的jsp，实现了struts.xml的零配置。</para>
+        <para>如果有特殊的结果指向(如redirect类型的结果)，在Action处用@Result配置。</para>
+        <para>如有package级的配置(如使用非默认的Interceptor栈)，还是需要在struts.xml中定义package，再通过Action中的@ParentPackage指定。也可以使用Convention Plugin提供的其他annotation进行配置。</para>
+    </sect1>
+
+    <sect1>
+        <title>Prepareable与ModelDriven接口</title>
+        <para>CRUD的Action全部使用Prepareable与ModelDriven接口，两个接口都是CRUD界面必备，详见Struts2笔记。而非CRUD的action是否使用这两个接口就看具体情况了。</para>
+        <para>因为只有input() 和 save()两个函数需要二次绑定，而list()等函数并不需要，所以实现了prepareInput(),prepareSave()两个函数进行二次绑定，而prepare()函数则内容为空，详见BaseAction基类.</para>
+    </sect1>
+
+    <sect1>
+        <title>view</title>
+        <para>View页面规则：</para>
+        <orderedlist>
+            <listitem>
+                <para>完整简单的html页面，</para>
+            </listitem>
+            <listitem>
+                <para>采用JSP2.0 EL，</para>
+            </listitem>
+            <listitem>
+                <para>不使用Sitemesh/Tiles，</para>
+            </listitem>
+            <listitem>
+                <para>Struts2 Taglib使用规则详见View/Taglib，</para>
+            </listitem>
+            <listitem>
+                <para><![CDATA[Stuts2 Taglib中的<s:actionmessage/>使用了新的theme，详见Struts2笔记。]]></para>
+            </listitem>
+            <listitem>
+                <para>JSP放在WEB-INF/content中保证文件不可读，使SpringSecurity专心的只过滤*.do。</para>
+                <para>实际上，Convention Plugin默认把jsp放到WEB-INF/content，现在还不知道怎么修改这个位置。</para>
+            </listitem>
+        </orderedlist>
+    </sect1>
+
+    <sect1>
+        <title>输入校验，国际化，信息与异常显示</title>
+        <sect2>
+            <title>Validate</title>
+            <para>Struts2的validate框架优点是可以在客户端和服务端同时进行校验。</para>
+            <para>但是因为JQuery的validate plugin客户端检测更加好用，而且客户千方百计绕开客户端，直接发送一个邮箱格式不正确的请求意义不是很大，真的很紧要校验，还可以在服务层进行(参考hibernate validator)。</para>
+        </sect2>
+        <sect2>
+            <title>I18N</title>
+            <para>因为国际化式的开发是有成本的，挺麻烦的，不是每个项目都需要国际化的能力。</para>
+            <para>所以暂不考虑。</para>
+        </sect2>
+        <sect2>
+            <title>Message and Error</title>
+            <para>配置使用store interceptor，可以在redirect页面时，将信息存储在session中。</para>
+            <para>尽量使用addActionMessage来添加信息, 如果用addActionError会自动跳到input页。</para>
+        </sect2>
+    </sect1>
+
+    <sect1>
+        <title>BaseAction的流程</title>
+        <para>还需要提供一些便捷的功能，比如直接输出text, html, json这类格式的方法。直接获取request, response, session的方法。</para>
+        <sect2>
+            <title>显示用户列表</title>
+            <para>访问user.do</para>
+            <para>执行execute()方法，execute()中实际调用了list()方法</para>
+            <para>list()方法中获得用户列表信息，然后返回SUCCESS，默认跳转至user.jsp。</para>
+            <para>在user.jsp中显示用户列表。</para>
+        </sect2>
+        <sect2>
+            <title>新增或修改用户</title>
+            <para>访问user!input.do</para>
+            <para>如果是新增，id就为空，prepareInput()方法中执行的是model = new User()，在这里创建了一个新的用户。（感觉这一步完全是在浪费，create的时候就应该是什么也不做，直接显示jsp才对。）</para>
+            <para>如果是修改，id不为空，prepareInput()方法中执行model = userManager.get(id)，从数据中获得对应id的用户信息。</para>
+            <para>input()方法，实际执行create()或edit()方法，这里准备一些新增页面应该显示的数据，然后返回INPUT，默认跳转到user-input.jsp.</para>
+            <para>user-input.jsp页面中，执行action的getModel()方法就可以得到user实例。</para>
+        </sect2>
+        <sect2>
+            <title>保存用户（包含新增和修改）</title>
+            <para>访问user!save.do</para>
+            <para>如果是新增，id就为空，prepareSave()方法创建新用户。</para>
+            <para>如果是修改，id不为空，prepareSave()方法获得数据库中对应的用户信息。</para>
+            <para>在为model赋值后，将请求中的信息绑定到model变量中。</para>
+            <para>执行save()方法，保存model，然后使用addActionMessage()保存操作信息，返回RELOAD。</para>
+            <para>RELOAD会以redirect的方式重新访问user.do。</para>
+        </sect2>
+    </sect1>
+
+</chapter>
+

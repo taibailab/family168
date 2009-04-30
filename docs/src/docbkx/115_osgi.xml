@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter xml:id="osgi">
+    <title>OSGI</title>
+    <sect1>
+        <title>felix-1.6.0支持OSGi-4.2</title>
+        <para>选择felix的原因</para>
+        <orderedlist>
+            <listitem>
+                <para>因为小，felix只要300多k，equinox需要1m多。</para>
+            </listitem>
+            <listitem>
+                <para>因为大家都用equinox，但是equinox又不告诉我怎么做嵌入式osgi，所有人说的都是一套太大的osgi平台，这样大换血的改变我们承受不起，而felix的文档里至少提到了怎么自己启动一个嵌入式的felix，所以离我们的实际需求又近了一步。</para>
+            </listitem>
+            <listitem>
+                <para>felix提供了maven-plugin对bundle进行配置打包，比绑定到eclipse上方便很多。</para>
+            </listitem>
+            <listitem>
+                <para>felix是apache的产品，与eclipse社区相比，对apache社区更亲近。</para>
+            </listitem>
+        </orderedlist>
+        <para>暂时没看懂spring-osgi是如何运作的，所以写了一个factory bean提供felix环境。console实现起来比想象中简单。暂时没有使用osgi的可能，留待以后再进行校验。</para>
+        <para>看了spring-dm那本书之后，才发觉osgi里还有很多东西，比如expander可以扩展osgi的service引用，比如fragmen可以再不改变原来的bundle的情况下为原来的bundle添加功能。比如spring-osgi可以把bundle直接发布成ctx里的一个bean。</para>
+        <para>希望以后真的可以把OA切成模块。</para>
+    </sect1>
+
+    <sect1>
+        <title>传说felix与equinox相比有缺陷</title>
+        <para>在Spring Dynamic Modules那本书里，作者提出选择equinox而不选择felix的原因是felix不支持framement，似乎又有人提到了felix还不支持扩展点功能。又从网上了解到equinox的某个扩展点功能要被放入OSGi规范中了，心里不由得对eclipse有一种肃然起敬的感觉，不愧是大项目，可以影响到OSGi联盟制订的规范，真心希望felix可以赶上来。不奢求像equinox那样拥有特性独立的功能，至少可以满足OSGi-4.2中提到的那些规范，应该也就足够了。</para>
+    </sect1>
+
+</chapter>

@@ -1,0 +1,123 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping default-access="field">
+
+  <!-- subclass name="org.jbpm.jpdl.internal.model.JpdlProcessDefinition" 
+            extends="org.jbpm.pvm.internal.model.ProcessDefinitionImpl"
+            discriminator-value="jpdl">
+    <map name="swimlaneDefinitions"
+         cascade="all-delete-orphan">
+      <key foreign-key="FK_SWLDEF_PROCESS">
+         <column name="PROCESS_SWL_" index="IDX_SWLDEF_PROCESS"/>
+      </key>
+      <map-key type="string" column="NAME_" />
+      <one-to-many class="org.jbpm.pvm.internal.task.SwimlaneDefinitionImpl" />
+    </map>
+    <map name="taskDefinitions"
+         cascade="all-delete-orphan">
+      <key foreign-key="FK_TSKDEF_PROCESS">
+         <column name="PROCESS_" index="IDX_TSKDEF_PROCESS"/>
+      </key>
+      <map-key type="string" column="NAME_" />
+      <one-to-many class="org.jbpm.pvm.internal.task.TaskDefinitionImpl" />
+    </map>
+  </subclass -->
+
+  <subclass name="org.jbpm.jpdl.internal.model.JpdlExecution" 
+            extends="org.jbpm.pvm.internal.model.ExecutionImpl"
+            discriminator-value="jpdl">
+
+    <map name="swimlanes"
+         cascade="all-delete-orphan">
+      <key foreign-key="FK_SWIMLANE_EXEC">
+         <column name="EXECUTION_" index="IDX_SWIMLANE_EXEC"/>
+      </key>
+      <map-key type="string" column="NAME_" />
+      <one-to-many class="org.jbpm.pvm.internal.task.SwimlaneImpl" />
+    </map>
+  </subclass>
+
+  <!-- class name="org.jbpm.jpdl.internal.activity.JpdlActivity" table="JBPM_JPDL_ACTIVITY"  abstract="true" discriminator-value="X">
+    <id name="dbid" column="DBID_">
+      <generator class="native" />
+    </id>
+    <discriminator column="CLASS_" />
+    <subclass name="org.jbpm.jpdl.internal.activity.StartActivity" discriminator-value="start" />
+    <subclass name="org.jbpm.jpdl.internal.activity.ExclusiveConditionActivity" discriminator-value="excl-cond" />
+    <subclass name="org.jbpm.jpdl.internal.activity.ExclusiveExpressionActivity" discriminator-value="excl-expr">
+      <property name="expr" column="TEXT_" />
+      <property name="lang" column="TEXT2_" />
+    </subclass>
+    <subclass name="org.jbpm.jpdl.internal.activity.ExclusiveHandlerActivity" discriminator-value="excl-handler">
+      <property name="exclusiveHandlerName" column="TEXT_" />
+      <many-to-one name="exclusiveHandlerDescriptor"
+                   column="EXCLDESCR_" 
+                   cascade="all"
+                   class="org.jbpm.pvm.internal.wire.descriptor.AbstractDescriptor"
+                   foreign-key="FK_ACT_EXCLDESCR"
+                   index="IDX_ACT_EXCLDESCR" />
+    </subclass>
+    <subclass name="org.jbpm.jpdl.internal.activity.StateActivity" discriminator-value="state" />
+    <subclass name="org.jbpm.jpdl.internal.activity.EndActivity" discriminator-value="end">
+      <property name="endProcessInstance" column="ENDPI_" />
+      <property name="state" column="TEXT_" />
+    </subclass>
+    <subclass name="org.jbpm.jpdl.internal.activity.ForkActivity" discriminator-value="fork" />
+    <subclass name="org.jbpm.jpdl.internal.activity.JoinActivity" discriminator-value="join" />
+    <subclass name="org.jbpm.jpdl.internal.activity.HqlActivity" discriminator-value="hql">
+      <property name="query" column="TEXT_" />
+      <property name="resultVariableName" column="TEXT2_" />
+      <property name="isResultUnique" column="ISUNIQ_" />
+      <many-to-one name="parametersDescriptor"
+                   column="PARAMDESCR_" 
+                   cascade="all"
+                   class="org.jbpm.pvm.internal.wire.descriptor.ListDescriptor"
+                   foreign-key="FK_ACT_PARAMDESCR"
+                   index="IDX_ACT_PARAMDESCR" />
+      
+      <subclass name="org.jbpm.jpdl.internal.activity.SqlActivity" discriminator-value="sql" />
+    </subclass>
+    <subclass name="org.jbpm.jpdl.internal.activity.JavaActivity" discriminator-value="java">
+      <property name="methodName" column="TEXT_" />
+      <property name="variableName" column="TEXT2_" />
+      <many-to-one name="descriptor"
+                   column="JAVADESCR_" 
+                   cascade="all"
+                   class="org.jbpm.pvm.internal.wire.descriptor.AbstractDescriptor"
+                   foreign-key="FK_ACT_JAVADESCR"
+                   index="IDX_ACT_JAVADESCR" />
+      <many-to-one name="invokeOperation"
+                   column="INVOPER_" 
+                   cascade="all"
+                   class="org.jbpm.pvm.internal.wire.operation.InvokeOperation"
+                   foreign-key="FK_ACT_INVKOPER"
+                   index="IDX_ACT_INVKOPER" />
+    </subclass>
+    <subclass name="org.jbpm.jpdl.internal.activity.ScriptActivity" discriminator-value="script">
+      <property name="script" column="TEXT_" />
+      <property name="language" column="TEXT2_" />
+      <property name="variableName" column="TEXT3_" />
+    </subclass>
+    <subclass name="org.jbpm.jpdl.internal.activity.EsbActivity" discriminator-value="esb">
+      <property name="service" column="TEXT_" />
+      <property name="category" column="TEXT2_" />
+      <many-to-one name="partsListDescriptor"
+               column="PARTSDESCR_" 
+               cascade="all"
+               class="org.jbpm.pvm.internal.wire.descriptor.ListDescriptor"
+               foreign-key="FK_ACT_PARTSDESCR"
+               index="IDX_ACT_PARTSDESCR" />
+    </subclass>
+    <subclass name="org.jbpm.jpdl.internal.activity.TaskActivity" discriminator-value="task">
+      <many-to-one name="taskDefinition"
+               column="TASKDEF_" 
+               cascade="all"
+               class="org.jbpm.pvm.internal.task.TaskDefinitionImpl"
+               foreign-key="FK_ACT_TASKDEF"
+               index="IDX_ACT_TASKDEF" />
+    </subclass>
+  </class>
+   -->
+
+</hibernate-mapping>

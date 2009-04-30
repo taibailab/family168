@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter xml:id="database">
+    <title>数据维护</title>
+
+    <para>基于数据库的应用系统需要考虑两个问题：如何保证数据库中数据结构的稳定，如何保证数据库中测试/演示数据的稳定。</para>
+
+    <sect1>
+        <title>DBDeploy维护表结构</title>
+        <para>由thoughtwork公司发起的项目，可以对数据库的表结构进行基于版本的管理，支持生成升级和回滚脚本。在2007年赢得了Jolt生产力大奖后就销声匿迹了，最近又开始从google code上重建了项目，期待能有进一步的发展。</para>
+        <para>官网：<ulink url="http://dbdeploy.com/"/>，google code首页：<ulink url="http://code.google.com/p/dbdeploy/"/></para>
+        <para>DBDeploy只支持生成一份output和undo脚本，无法指定升级或回滚到特定版本，所以自己在以前的dbdeploy上增加了一些功能，可以通过版本号来生成特定版本的升级和回滚脚本。</para>
+    </sect1>
+
+    <sect1>
+        <title>DBUnit备份测试数据</title>
+        <para>DBUnit是为了给单元测试准备数据的工具，它可以把XML或EXCEL中的数据添加到数据库中，通常都是在单元测试前，自动清空数据表，然后插入准备好的测试数据，以此来保证干净的测试环境。</para>
+        <para>实际中，我们使用DBUnit来备份数据库中的测试数据。</para>
+        <orderedlist>
+            <listitem>
+                <para>测试过程中，对某一阶段的数据进行备份，在测试出现问题时可以保留现场，反复导回数据进行测试。</para>
+            </listitem>
+            <listitem>
+                <para>使用csv格式的数据，每张表生成一个csv文件，可以使用Excel编辑csv文件，假造数据。</para>
+            </listitem>
+            <listitem>
+                <para>数据录入完成后，可以使用DBUnit备份数据，可以考虑使用flat，xml或xls格式，导出成一个文件进行保存。</para>
+            </listitem>
+        </orderedlist>
+        <para>在表间有外键引用的情况下，一般来说可以使用order对表进行排序，DBUnit会自动判断关联关系，按顺序导出和插入数据。但是使用了order会大大降低执行效率，自表关联的情况也无法生成正确的数据循序。</para>
+        <para>DBUnit也无法处理表间循环引用的情况，这是使用了order会抛出异常，不使用order则导出的数据无法导入到表中。我们的解决方法是，在执行数据导入之前，先删除所有外键关联，再数据导入完成后再重建外键关系。算是没有办法的办法。</para>
+    </sect1>
+
+</chapter>

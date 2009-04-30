@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+    xmlns:beans="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+                        http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-2.0.xsd"
+    default-autowire="byName" default-lazy-init="true">
+
+    <http auto-config="true">
+        <form-login login-page="/login.jsp" authentication-failure-url="/login.jsp?login_error=1" default-target-url="/security/index.jsp" />
+        <logout logout-success-url="/login.jsp" />
+        <remember-me user-service-ref="userDetailsService"/>
+    </http>
+
+    <authentication-provider user-service-ref="userDetailsService">
+        <password-encoder hash="md5"/>
+    </authentication-provider>
+
+    <authentication-manager alias="authenticationManager"/>
+
+    <beans:bean id="httpSessionContextIntegrationFilter"
+       class="org.springframework.security.context.HttpSessionContextIntegrationFilter">
+        <beans:property name="contextClass" value="org.springframework.security.captcha.CaptchaSecurityContextImpl"/>
+        <custom-filter position="FIRST"/>
+    </beans:bean>
+
+    <beans:bean id="captchaValidationProcessingFilter"
+          class="org.springframework.security.captcha.CaptchaValidationProcessingFilter">
+        <beans:property name="captchaService" ref="captchaService"/>
+        <custom-filter before="CHANNEL_FILTER"/>
+    </beans:bean>
+
+    <beans:bean id="channelProcessingFilter" class="org.springframework.security.securechannel.ChannelProcessingFilter">
+        <beans:property name="channelDecisionManager" ref="channelDecisionManager"/>
+        <beans:property name="filterInvocationDefinitionSource">
+            <beans:value>
+                CONVERT_URL_TO_LOWERCASE_BEFORE_COMPARISON
+                PATTERN_TYPE_APACHE_ANT
+                /j_spring_security_check=REQUIRES_CAPTCHA_ONCE_ABOVE_THRESHOLD_REQUESTS
+            </beans:value>
+        </beans:property>
+        <custom-filter position="CHANNEL_FILTER"/>
+    </beans:bean>
+
+</beans:beans>
