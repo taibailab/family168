@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter xml:id="spring">
+    <title>Spring</title>
+    <para>有了spring，我们就不用再写工厂方法，不用发愁怎么把写出来的各个代码装配在一起，不过我们选择Spring的原因也不光是为了IOC，而是考虑到现在JavaEE中很多开源项目都提供了Spring整合使用的方法，可以为我们节省相当多的精力和时间。</para>
+
+    <sect1>
+        <title>在项目中使用Spring</title>
+        <sect2>
+            <title>直接构造ApplicationContext</title>
+            <para>如果我们可以applicationContext.xml放到classpath下，我们可以使用ClasspathXmlApplicationContext。这里传入参数的路径是相对于classpath的配置的，对于web项目就是WEB-INF/classes这个目录，或者WEB-INF/lib下任意一个jar文件下了。</para>
+            <programlisting><![CDATA[
+ApplicationContext ctx = new ClasspathXmlApplicationContext("applicationContext.xml");]]>
+            </programlisting>
+        </sect2>
+        <sect2>
+            <title>使用ContextLoaderListener</title>
+            <para>从ServletContext取得web.xml中初始化的ApplicationContext</para>
+            <para>首先在web.xml中配置listener。</para>
+            <programlisting><![CDATA[
+<context-param>
+    <param-name>contextConfigLocation</param-name>
+    <param-value>classpath*:spring/*.xml</param-value>
+</context-param>
+<listener>
+    <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+</listener>]]>
+            </programlisting>
+            <para>然后从ServletContext中获得ApplicationContext。</para>
+            <programlisting><![CDATA[
+ApplicationContext context = WebApplicationContextUtils.getWebApplicationContext(application);]]>
+            </programlisting>
+        </sect2>
+        <para>对于无法获得ServletContext的环境，最好自定义一个listener，将生成的ApplicationContext放入一个单例中，以便日后使用。</para>
+    </sect1>
+
+    <sect1>
+        <title>Spring配置要点</title>
+
+        <sect2>
+            <title>在xml中使用spring-2.x的DTD。</title>
+            <para><programlisting><![CDATA[<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">]]></programlisting></para>
+            <para>相比schema真是方便了很多，这样可以在必须使用特定schema的时候，再让他重装上阵。</para>
+            <para>spring-2.x中去掉了singleton属性，使用scope属性做替代。如果还想使用singleton属性，必须配置成spring-1.x格式的DTD。</para>
+            <tip>spring中已不再推荐使用singleton属性，因为单例在多jvm，远程调用，集群的情况下难以掌控，还是为实例指明生存的scope比较好。</tip>
+        </sect2>
+
+        <sect2>
+            <title>default-lazy-init</title>
+            <para>懒惰加载，系统启动的时候并不加载xml中定义的bean，而是等到实际调用的时候才去加载，这样可以缩短系统初始化时间，在测试系统部分功能的情况下有极大的好处。</para>
+            <para>注意，PropertityPlaceHolderConfigurer，springmvc，xfire，quartz等的配置文件不能声明为懒惰加载，否则会出问题。</para>
+        </sect2>
+
+        <sect2>
+            <title>default-autowire="byName"</title>
+            <para>按名称自动绑定。设置了这个，只要定义bean的时候名称与需要绑定的属性名相同，在实例化对象的时候，spring就会将这些实例自动绑定，不需要再去声明绑定哪些property。减少xml代码量，使得结构更清晰。</para>
+            <para>在使用compass的时候要注意，不能使用按名称自动绑定，会自动为compass绑定dataSource导致错误。</para>
+        </sect2>
+
+        <sect2>
+            <title>import</title>
+            <para>将xml统一放在classpath下，这样更有利于进行单元测试，对于多个模块的xml使用import进行导入，层次更清晰。</para>
+            <programlisting><![CDATA[
+<import resource="classpath:jbpm/applicationContext-jbpm4.xml"/>]]>
+            </programlisting>
+        </sect2>
+
+        <sect2>
+            <title>CharacterEncodingFilter</title>
+            <para>spring提供的编码过滤器，好处一是不用自己动手写了，好处二是保证每次请求只过滤一次。配置如下：（web.xml）</para>
+            <para><programlisting><![CDATA[
+<filter>
+    <filter-name>encodingFilter</filter-name>
+    <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+    <init-param>
+        <param-name>encoding</param-name>
+        <param-value>UTF-8</param-value>
+    </init-param>
+</filter>
+<filter-mapping>
+    <filter-name>encodingFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+</filter-mapping>]]>
+            </programlisting></para>
+        </sect2>
+
+        <sect2>
+            <title>IntrospectorCleanupListener</title>
+            <para>spring提供的监听器，避免Struts，Quartz的内存泄露导致ClassLoader不能加载。配置如下：（web.xml）</para>
+            <para><programlisting><![CDATA[
+<listener>
+    <listener-class>org.springframework.web.util.IntrospectorCleanupListener</listener-class>
+</listener>]]>
+            </programlisting></para>
+        </sect2>
+
+        <sect2>
+            <title>PropertyPlaceholderConfigurer</title>
+            <para>读取properties中的变量，在xml中可以通过${变量名}的方式调用。配置如下：</para>
+            <para><programlisting><![CDATA[
+<bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+    <property name="locations">
+        <list>
+            <value>classpath*:conf/jdbc.properties</value>
+        </list>
+    </property>
+</bean>
+
+<bean id="userManager" class="com.family168.manager.UserManager">
+    <property name="username" value="${jdbc.username}"/>
+</bean>]]>
+            </programlisting></para>
+        </sect2>
+
+        <sect2>
+            <title>PropertyOverrideConfigurer</title>
+            <para>与PropertyPlaceholderConfigurer不同，PropertyOverrideConfigurer会在ApplicationContext初始化后，根据properties中的定义，修改对应属性的值。配置如下：</para>
+            <para><programlisting><![CDATA[
+<bean id="testPropertyConfigurer" class="org.springframework.beans.factory.config.PropertyOverrideConfigurer">
+    <property name="locations" value="classpath*:override.properties"/>
+    <property name="ignoreInvalidKeys" value="true"/>
+</bean>]]>
+            </programlisting></para>
+            <para>用来在测试环境下覆盖已有的配置，比如在override.properties中有userManager.username=111，那么id="userManager"的bean的username属性就会被修改为111。</para>
+        </sect2>
+    </sect1>
+
+    <sect1>
+        <title>Spring-2.x对AOP和事务管理的简化配置</title>
+        <orderedlist>
+            <listitem>
+                <para>首先要使用schema</para>
+                <para><programlisting><![CDATA[
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:aop="http://www.springframework.org/schema/aop"
+    xmlns:tx="http://www.springframework.org/schema/tx"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
+        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">]]>
+                    </programlisting></para>
+                </listitem>
+                <listitem>
+                    <para>然后要声明标记（不知道是不是必要的）</para>
+                    <para><programlisting><![CDATA[
+<!-- 支持 @Transactional 标记 -->
+<tx:annotation-driven/>
+
+<!-- 支持 @AspectJ 标记-->
+<aop:aspectj-autoproxy/>]]>
+                </programlisting></para>
+            </listitem>
+            <listitem>
+                <para>配置aop</para>
+                <para><programlisting><![CDATA[
+<aop:config proxy-target-class="true">
+    <aop:advisor pointcut="execution(* com.family168.manager..*Manager.*(..))" advice-ref="txAdvice"/>
+</aop:config>]]>
+                </programlisting></para>
+            </listitem>
+            <listitem>
+                <para>配置txAdvice处理事务</para>
+                <para><programlisting><![CDATA[
+<tx:advice id="txAdvice">
+    <tx:attributes>
+        <tx:method name="get*" read-only="true"/>
+        <tx:method name="find*" read-only="true"/>
+        <tx:method name="pagedQuery*" read-only="true"/>
+        <tx:method name="load*" read-only="true"/>
+        <tx:method name="*"/>
+    </tx:attributes>
+</tx:advice>]]>
+                </programlisting></para>
+            </listitem>
+        </orderedlist>
+        <tip>
+          <para>name-pattern千万不要写成*..*Manager ，这样子会把所有第三方类库的Manager比如Spring的PlatformTranstationManager 也加入aop，非常危险。所以最好还是加上项目的package前缀，如"com.family168.manager..*Manager"</para>
+          <para> 因为有*，会修饰所有方法，有些hibernateTemplate的final的方法不能被cglib修改，会抛warning，无害。</para>
+        </tip>
+        <para>事务定义一般默认的PROPAGATION_REQUIRED即可，另提供的几个选择很少使用。值得注意的是一个PROPAGATION_NESTED，嵌入式事务的意义在于多级事务，如果出错只rollback子事务自己，不rollback主事务的所有操作。这需要JDBC3.0 SavePoint功能的支持。 而一般service间互相嵌入调用时，如果都定义为PROPAGATION_REQUIRED，有其中一个操作出错，rollback全部操作。</para>
+        <tip><para>tx这个命名空间会要求咱们提供一个名字为transactionManager的bean，用这个来作为默认的事务管理器。</para></tip>
+        <para>Spring参考文档 7.3 chema-based AOP support 提供了aspect,advisor,advide三种组装方法的解释，其中aspect是aspectJ原装，但稍复杂，</para>
+        <para>这里唯一有点难懂的是pointcut里的语法，其实也很好学，Spring参考文档7.2.3.4里有完整说明 ，其实一排子过去是</para>
+        <programlisting><![CDATA[
+execution(modifiers-pattern? ret-type-pattern declaring-type-pattern? name-pattern(param-pattern)
+      throws-pattern?)]]>
+        </programlisting>
+        <para>其中modifiers-pattern?(public/protected) 和 declaring-type-pattern? throws-pattern? 可以不填</para>
+        <para>可见execution(* *..BookManager.save(..))</para>
+        <itemizedlist>
+            <listitem>
+                <para>第一颗* 代表ret-type-pattern 返回值可任意，</para>
+            </listitem>
+            <listitem>
+                <para>*..*Manager 代表任意Package里的以Manager结尾的类。</para>
+                <para>如果写成com.xyz.service.* 则代表com.xyz.service下的任意类</para>
+                <para>com.xyz.service..* com.xyz.service则代表com.xyz.service及其子package下的任意类</para>
+            </listitem>
+            <listitem>
+                <para>save代表save方法，也可以写save* 代表saveBook()等方法</para>
+                <para>(..) 匹配0个参数或者多个参数的，任意类型</para>
+                <para>(x,..) 第一个参数的类型必须是X</para>
+                <para>(x,*,*,s,..) 匹配至少4个参数，第一个参数必须是x类型，第二个和第三个参数可以任意，第四个必须是s类型。</para>
+            </listitem>
+        </itemizedlist>
+    </sect1>
+
+    <sect1>
+        <title>Spring中的零配置</title>
+        <para>其实也不是完全的零配置，我们需要在xml中制定规范，然后在java中使用注解进行标注。</para>
+        <para>首先要在xml中配置如下标记：</para>
+        <programlisting><![CDATA[
+<context:component-scan base-package="com.family168.manager" />]]>
+        </programlisting>
+        <para>这里需要使用Spring的schema命名空间进行配置，例子中使用的是springside中提供的例子，指定了默认在哪个包下查找需要进行注入的类。在Service类中使用@Service注释， Dao类中使用@Repository注释，通过pacakge扫描加入Spring的applicationContext。</para>
+        <para>在私有属性或注入方法(不需要严格按setter命名)上 使用@Autowired 注释 进行byType注入，如果需要byName注入，增加@Qualifier注释。另@auwowired默认隐含了@Required特性</para>
+        <para>使用@Required注释非@Autowired的属性，保证autowired下对象必然被注入，如果对象没有被注入则报错。使用JSR250的@PostConstruct来定义在执行完所有setter注入后必须执行的函数，比以往的实现接口或者在applicationContext.xml中配置init-method的方式更为标准。</para>
+        <para>为提高效率，还是需要在xml中默认配置default-lazy-load和default-autowire byName。</para>
+    </sect1>
+
+    <sect1>
+        <title>Spring中的资源访问</title>
+        <sect2>
+            <title>ResourceLoader</title>
+            <para>ResourceLoader 可以获得ClassPath, File,URL中的文件，返回类型为Resource的统一资源定义。</para>
+            <para>ApplicationContext中就拥有ResourceLoader。</para>
+            <para>实现resourceLoaderAware接口可以获得ResourceLoader。</para>
+        </sect2>
+        <sect2>
+            <title>ResourcePatternResolver</title>
+            <para>ResourcePatternResolver 是ResourceLoader的升级版子接口，能解决ant-style的文件模糊批量定义，如applicationContext-*.xml。</para>
+            <para>ApplicationContext中的ResourceLoader其实是ResourcePatternResolver ，可以通过强制转型获得，友好一点的做法是使用ResourcePatternUtils来转换。</para>
+            <programlisting><![CDATA[
+public class RescManager implements InitializingBean, BeanNameAware,
+    ResourceLoaderAware {
+    private ResourceLoader resourceLoader;
+
+    public void demo() throws IOException {
+        ResourcePatternResolver resolver = ResourcePatternUtils
+            .getResourcePatternResolver(resourceLoader);
+        Resource[] rescs = resolver.getResources(
+                "classpath*:spring/applicationContext*.xml");
+        System.out.println(rescs);
+    }]]>
+            </programlisting>
+        </sect2>
+    </sect1>
+
+    <sect1>
+        <title>Spring的微内核与FactoryBean扩展机制</title>
+        <sect2>
+            <title>微内核的功能</title>
+            <sect3>
+                <title>DI(依赖注入)与Singleton管理</title>
+                <para>利用POJO setter的DI机制，估计每位同学随手都能写一个简单版本，不多说了。</para>
+                <para>Singleton管理说白了就是先到一个map中按id找找看有没有已存在的实例。</para>
+            </sect3>
+            <sect3>
+                <title>BeanName与BeanFactory注入</title>
+                <para>除了DI注入的属性，微内核还有什么能卖给POJO呢？就是Bean在xml 定义里的id和BeanFactory自己了。</para>
+                <para>卖的机制是让POJO 实现 BeanNameAware和BeanFactoryAware接口。BeanFactory用 if(pojo instance of BeanFactoryAware)判断到POJO需要注入BeanFactory,就调用setBeanFactory(this)将自己注入。</para>
+            </sect3>
+            <sect3>
+                <title>DI后的初始化函数调用</title>
+                <para>比如属性A,B注入之后，需要同时根据A和B来对A,B进行加工或者装配一个内部属性C，这样就需要在所有属性注入后再跑一个init()函数。</para>
+                <para>Spring提供两种方式，一种是和上面的原理一样，实现InitializingBean接口的afterPropertiesSet()函数供Spring调用。</para>
+                <para>一种是在xml定义文件里面自行定义init函数名。</para>
+                <para>懒得每次在xml文件里定义的就采用第1种方式，不想与spring耦合的pojo就采用第2种方式。本来就是为了扩展Spring而存在的FactoryBean多采用第一种。</para>
+            </sect3>
+            <para>所谓微内核，就是仅提供以上三种功能的DI容器。</para>
+        </sect2>
+        <para>但作为轻量级容器，还需要以下两种方式，向容器内的POJO 附加各种服务。</para>
+        <sect2>
+            <title>FactoryBean扩展机制</title>
+            <para>Spring的AOP、ORM、事务管理、JMX、Quartz、Remoting、Freemarker、Velocity，都靠FacotryBean的扩展，FacotryBean几乎遍布地上：</para>
+            <programlisting><![CDATA[
+<bean id="sessionFactory" class="org.springframework.orm.hibernate3.LocalSessionFactoryBean"/>
+<bean id="baseDAOService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean"/>]]>
+            </programlisting>
+            <para>这原理说出来好简单，所有FactoryBean 实现FactoryBean接口的getObject()函数。Spring容器getBean(id)时见到bean的定义是普通class时，就会构造该class的实例来获得bean，而如果发现是FactoryBean接口的实例时，就通过调用它的getObject()函数来获得bean，仅此而以.......可见，很重要的思想，可以用很简单的设计来实现。</para>
+            <para>考察一个典型的FactoryBean：</para>
+            <para>一般会有两个变量，三个接口：</para>
+            <para>一个setter函数注入需要改装的pojo，一个内部变量保持装配后的对象returnOjbect。</para>
+            <para>implements三个接口 ：FactoryBean,InitializingBean和BeanFactoryAware 。</para>
+            <para>各接口的意义之前都讲过了。factoryBean会在afterPropertiesSet()里把pojo改装成returnObject，需要用到beanfactory进行天马行空的动作时就靠BeanFactoryAware注入。最后在getObject()里把returnObject返回。</para>
+        </sect2>
+        <sect2>
+            <title>Bean Post-Processor扩展机制</title>
+            <para>如果说FactoryBean 是一种Factory、Wrapper式的扩展，Bean Post-Processor就是另一种AOP、visitor式的机制，所以也多用于spring的AOP架构。</para>
+            <para>Post-Processor的原理就是BeanFactory在前文里的调用afterPropertiesSet()/init-method前后，调用在工厂里注册了的post-processor的postProcessBeforeInitialization()和postProcessAfterInitialization()。</para>
+            <para>那怎么注册登记呢？又分请不请礼仪公司两类。如果是ApplicationContext，你把继承BeanPostProcessor 的bean往xml里一搁就行了,application context自会打理。如果是BeanFacotry，就要显式的注册，代码大概像：</para>
+            <programlisting><![CDATA[
+XmlBeanFactory factory = new XmlBeanFactory("C:/beans.xml");
+BeanPostLogger logger = new BeanPostLogger();
+factory.addBeanPostProcessor(logger);]]>
+            </programlisting>
+        </sect2>
+    </sect1>
+
+</chapter>

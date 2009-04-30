@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE dwr PUBLIC
+    "-//GetAhead Limited//DTD Direct Web Remoting 2.0//EN"
+    "http://getahead.org/dwr/dwr20.dtd">
+<dwr>
+    <allow>
+        <create javascript="UserService" creator="new">
+            <param name="class" value="com.family168.UserService" />
+        </create>
+        <convert match="com.family168.User" converter="bean"/>
+
+        <create javascript="NoticeService" creator="new">
+            <param name="class" value="com.family168.NoticeService"/>
+        </create>
+
+        <!-- upload start -->
+        <create creator="new" javascript="UploadMonitor">
+            <param name="class" value="com.family168.ajaxupload.UploadMonitor"/>
+        </create>
+        <convert converter="bean" match="com.family168.ajaxupload.UploadInfo"/>
+        <!-- upload end -->
+
+    </allow>
+</dwr>

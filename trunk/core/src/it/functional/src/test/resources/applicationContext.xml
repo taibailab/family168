@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd
+           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd"
+       default-autowire="byName" default-lazy-init="false">
+
+    <!--从配置文件读取配置信息-->
+    <bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="locations">
+            <list>
+                <value>classpath*:jdbc.properties</value>
+                <value>classpath*:hibernate.properties</value>
+            </list>
+        </property>
+    </bean>
+
+    <!-- 支持 @Transactional 标记 -->
+    <tx:annotation-driven/>
+
+    <!-- 支持 @AspectJ 标记-->
+    <aop:aspectj-autoproxy/>
+
+    <!-- 以AspectJ方式 定义 AOP -->
+    <aop:config proxy-target-class="true">
+        <aop:advisor pointcut="execution(* com.family168..*Dao.*(..))" advice-ref="txAdvice"/>
+        <aop:advisor pointcut="execution(* com.family168..*Manager.*(..))" advice-ref="txAdvice"/>
+    </aop:config>
+
+
+    <!--
+      | 基本事务定义,使用transactionManager作事务管理
+      | 默认get*方法的事务为readonly,其余方法按默认设置
+      | 默认的设置请参考Spring文档事务一章
+      -->
+    <tx:advice id="txAdvice">
+        <tx:attributes>
+            <tx:method name="get*" read-only="true"/>
+            <tx:method name="load*" read-only="true"/>
+            <tx:method name="find*" read-only="true"/>
+            <tx:method name="pagedQuery*" read-only="true"/>
+            <tx:method name="*"/>
+        </tx:attributes>
+    </tx:advice>
+
+    <!--
+      | ehcache缓存管理器.
+      -->
+    <bean id="cacheManager"
+       class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">
+        <property name="configLocation" value="classpath:ehcache.xml"/>
+        <property name="shared" value="true"/>
+    </bean>
+
+    <!--springframwork自带的测试用dataSource，别用在生产环境下-->
+    <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="${jdbc.driverClassName}"/>
+        <property name="url" value="${jdbc.url}"/>
+        <property name="username" value="${jdbc.username}"/>
+        <property name="password" value="${jdbc.password}"/>
+    </bean>
+
+    <!--
+      | session factory
+      -->
+    <bean id="sessionFactory" class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="annotatedClasses">
+            <list>
+                <value>com.family168.security.domain.Dept</value>
+                <value>com.family168.security.domain.Menu</value>
+                <value>com.family168.security.domain.Resc</value>
+                <value>com.family168.security.domain.Role</value>
+                <value>com.family168.security.domain.User</value>
+                <value>com.family168.core.Employee</value>
+                <value>com.family168.core.hibernate.Employee2</value>
+            </list>
+        </property>
+        <property name="hibernateProperties">
+            <props>
+                <prop key="hibernate.cache.provider_class">${hibernate.cache.provider_class}</prop>
+                <prop key="hibernate.cache.use_query_cache">${hibernate.cache.use_query_cache}</prop>
+                <prop key="hibernate.dialect">${hibernate.dialect}</prop>
+                <prop key="hibernate.hbm2ddl.auto">${hibernate.hbm2ddl.auto}</prop>
+                <prop key="hibernate.jdbc.fetch_size">${hibernate.jdbc.fetch_size}</prop>
+                <prop key="hibernate.jdbc.batch_size">${hibernate.jdbc.batch_size}</prop>
+                <prop key="hibernate.show_sql">${hibernate.show_sql}</prop>
+                <prop key="hibernate.format_sql">${hibernate.format_sql}</prop>
+                <prop key="hibernate.use_sql_comments">${hibernate.use_sql_comments}</prop>
+            </props>
+        </property>
+    </bean>
+
+    <!--
+      | 事务管理
+      -->
+    <bean id="transactionManager" class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+        <property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
+
+    <bean id="userDao" class="com.family168.core.UserDao"/>
+    <bean id="employeeManager" class="com.family168.core.EmployeeManager"/>
+    <bean id="user2Dao" class="com.family168.core.hibernate.UserDao"/>
+    <bean id="employee2Manager" class="com.family168.core.hibernate.EmployeeManager"/>
+
+</beans>

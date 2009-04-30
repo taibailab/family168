@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:jaxws="http://cxf.apache.org/jaxws"
+    xmlns:cxf="http://cxf.apache.org/core"
+    xsi:schemaLocation="http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd
+        http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd"
+    default-autowire="byType" default-lazy-init="true">
+
+    <import resource="classpath:META-INF/cxf/cxf.xml" />
+    <import resource="classpath:META-INF/cxf/cxf-servlet.xml" />
+    <import resource="classpath:META-INF/cxf/cxf-extension-soap.xml" />
+
+    <!-- jax-ws endpoint定义  -->
+    <jaxws:endpoint id="helloWorldEP" address="/HelloWorld">
+        <jaxws:implementor ref="helloWorld" />
+    </jaxws:endpoint>
+
+    <!-- WebService的实现Bean定义 -->
+    <bean id="helloWorld" class="com.family168.HelloWorldImpl" />
+
+</beans>

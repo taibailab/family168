@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans default-autowire="byName" default-lazy-init="true">
+    <bean id="pricingTemplate" class="com.family168.drools.support.RuleTemplateImpl">
+        <property name="ruleBaseLoader">
+            <bean class="com.family168.drools.support.DSLRuleBaseLoader">
+                <property name="ruleFiles" value="/rules/orderPricing.dsl=classpath*:rules/**.drl"/>
+            </bean>
+        </property>
+    </bean>
+
+    <!-- demo Excel决策树的loader -->
+    <bean id="xlsRuleBaseLoader" class="com.family168.drools.support.ExcelRuleBaseLoader">
+        <property name="ruleFiles" value="classpath*:rules/**.xls"/>
+    </bean>
+    <bean id="xlsRuleTemplate" class="com.family168.drools.support.RuleTemplateImpl">
+        <property name="ruleBaseLoader" ref="xlsRuleBaseLoader"/>
+    </bean>
+</beans>

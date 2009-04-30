@@ -1,0 +1,34 @@
+<types>
+
+  <!-- types stored in a native column -->
+  <type name="string" class="java.lang.String" variable-class="org.jbpm.pvm.internal.type.variable.StringVariable" />
+  <type name="long"   class="java.lang.Long" variable-class="org.jbpm.pvm.internal.type.variable.LongVariable" />
+  <type name="double" class="java.lang.Double" variable-class="org.jbpm.pvm.internal.type.variable.DoubleVariable" />
+
+  <!-- types converted to a string -->
+  <type name="date"    class="java.util.Date" converter="org.jbpm.pvm.internal.type.converter.DateToStringConverter" variable-class="org.jbpm.pvm.internal.type.variable.StringVariable" />
+  <type name="boolean" class="java.lang.Boolean" converter="org.jbpm.pvm.internal.type.converter.BooleanToStringConverter" variable-class="org.jbpm.pvm.internal.type.variable.StringVariable" />
+  <type name="char"    class="java.lang.Character" converter="org.jbpm.pvm.internal.type.converter.CharacterToStringConverter" variable-class="org.jbpm.pvm.internal.type.variable.StringVariable" />
+
+  <!-- types converted to a long -->
+  <type name="byte"    class="java.lang.Byte" converter="org.jbpm.pvm.internal.type.converter.ByteToLongConverter" variable-class="org.jbpm.pvm.internal.type.variable.LongVariable" />
+  <type name="short"   class="java.lang.Short" converter="org.jbpm.pvm.internal.type.converter.ShortToLongConverter" variable-class="org.jbpm.pvm.internal.type.variable.LongVariable" />
+  <type name="integer" class="java.lang.Integer" converter="org.jbpm.pvm.internal.type.converter.IntegerToLongConverter" variable-class="org.jbpm.pvm.internal.type.variable.LongVariable" />
+
+  <!-- types converted to a double -->
+  <type name="float" class="java.lang.Float" converter="org.jbpm.pvm.internal.type.converter.FloatToDoubleConverter" variable-class="org.jbpm.pvm.internal.type.variable.DoubleVariable" />
+
+  <!-- byte[] and char[] -->
+  <type name="byte[]" class="[B" variable-class="org.jbpm.pvm.internal.type.variable.BlobVariable" />
+  <type name="char[]" class="[C" variable-class="org.jbpm.pvm.internal.type.variable.ClobVariable" />
+
+  <type name="hibernate-long-id"   class="hibernate" id-type="long" variable-class="org.jbpm.pvm.internal.type.variable.HibernateLongVariable" />
+  <type name="hibernate-string-id" class="hibernate" id-type="string" variable-class="org.jbpm.pvm.internal.type.variable.HibernateStringVariable" />
+
+  <type name="serializable" class="serializable" converter="org.jbpm.pvm.internal.type.converter.SerializableToBytesConverter" variable-class="org.jbpm.pvm.internal.type.variable.BlobVariable" />
+
+  <!-- TODO: add ejb3 entity bean support -->
+  <!-- TODO: add JCR activity support -->
+  <!-- TODO: add collection support -->
+  
+</types>

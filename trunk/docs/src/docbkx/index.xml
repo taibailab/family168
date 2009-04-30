@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<book version="5.0"
+    xml:id="leona-reference-guide"
+    xmlns="http://docbook.org/ns/docbook"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <info>
+    <title>Leona</title>
+    <subtitle>参考文档</subtitle>
+    <author>
+      <personname>Lingo</personname>
+    </author>
+    <releaseinfo>0.1-SNAPSHOT</releaseinfo>
+    <copyright>
+      <year>2009</year>
+      <holder>Lingo</holder>
+    </copyright>
+    <legalnotice>
+      <para> 首页: <ulink url="http://www.family168.com/"/></para>
+      <para>EMAIL: echo_o@163.com</para>
+      <para> Q Q : 416529445</para>
+      <para> QQ群: 3038490</para>
+    </legalnotice>
+    <pubdate>2009-01-29</pubdate>
+  </info>
+
+  <toc/>
+
+  <xi:include href="001_preface.xml" />
+
+  <xi:include href="002_introduce.xml" />
+
+  <xi:include href="003_technique.xml" />
+
+  <xi:include href="100_spring.xml" />
+
+  <xi:include href="101_hibernate.xml" />
+
+  <xi:include href="102_spring_security.xml" />
+
+  <xi:include href="103_struts2.xml" />
+
+  <xi:include href="104_view.xml" />
+
+  <xi:include href="105_ajax.xml" />
+
+  <xi:include href="106_webservice.xml" />
+
+  <xi:include href="107_drools.xml" />
+
+  <xi:include href="108_jms.xml" />
+
+  <xi:include href="109_search.xml" />
+
+  <xi:include href="110_timer.xml" />
+
+  <xi:include href="111_jbpm.xml" />
+
+  <xi:include href="112_report.xml" />
+
+  <xi:include href="113_groovy.xml" />
+
+  <xi:include href="114_jmx.xml" />
+
+  <xi:include href="115_osgi.xml" />
+
+  <xi:include href="116_logger.xml" />
+
+  <xi:include href="117_cache.xml" />
+
+  <xi:include href="118_test.xml" />
+
+  <xi:include href="119_etc.xml" />
+
+  <xi:include href="120_future.xml" />
+
+  <xi:include href="201_selenium.xml" />
+
+  <xi:include href="300_practice.xml" />
+
+  <xi:include href="400_problem.xml" />
+
+  <xi:include href="501_database.xml" />
+
+  <xi:include href="502_check.xml" />
+
+  <xi:include href="503_env.xml" />
+
+  <xi:include href="900_history.xml" />
+
+</book>

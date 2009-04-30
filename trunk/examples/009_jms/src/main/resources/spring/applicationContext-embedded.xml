@@ -1,0 +1,50 @@
+<beans
+  xmlns="http://www.springframework.org/schema/beans"
+  xmlns:amq="http://activemq.apache.org/schema/core"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+  http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core-5.2.0.xsd">
+
+    <amq:broker useJmx="false" persistent="false">
+        <amq:transportConnectors>
+            <amq:transportConnector uri="tcp://localhost:0" />
+        </amq:transportConnectors>
+    </amq:broker>
+
+    <amq:connectionFactory id="jmsConnectionFactory" brokerURL="vm://localhost"/>
+
+    <amq:queue name="destination" physicalName="org.apache.activemq.spring.Test.spring.embedded"/>
+
+    <bean id="userMessageConverter" class="com.family168.UserMessageConverter"/>
+
+
+    <bean id="jmsTemplate" class="org.springframework.jms.core.JmsTemplate">
+        <property name="connectionFactory">
+            <bean class="org.springframework.jms.connection.SingleConnectionFactory">
+                <property name="targetConnectionFactory" ref="jmsConnectionFactory"/>
+            </bean>
+        </property>
+        <property name="messageConverter" ref="userMessageConverter"/>
+    </bean>
+
+    <bean id="userMessageProducer" class="com.family168.UserMessageProducer">
+        <property name="template" ref="jmsTemplate"/>
+        <property name="destination" ref="destination"/>
+    </bean>
+
+    <bean id="messageListener" class="org.springframework.jms.listener.adapter.MessageListenerAdapter">
+        <constructor-arg>
+            <bean class="com.family168.UserMessageConsumer"/>
+        </constructor-arg>
+        <property name="defaultListenerMethod" value="sendMessage"/>
+        <property name="messageConverter" ref="userMessageConverter"/>
+    </bean>
+
+    <bean id="listenerContainer" class="org.springframework.jms.listener.DefaultMessageListenerContainer">
+        <property name="connectionFactory" ref="jmsConnectionFactory"/>
+        <property name="destination" ref="destination"/>
+        <property name="messageListener" ref="messageListener"/>
+    </bean>
+
+</beans>
+

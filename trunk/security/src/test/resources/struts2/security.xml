@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+        "http://struts.apache.org/dtds/struts-2.0.dtd">
+
+<struts>
+    <package name="security" extends="default" namespace="/security">
+        <action name="user" class="userAction">
+            <result>/security/user.jsp</result>
+            <result name="redirect" type="redirectAction">/security/user!list.do</result>
+            <result name="forward" type="chain">
+                <param name="actionName">user</param>
+                <param name="method">list</param>
+            </result>
+            <result name="rolesByUser">/security/rolesByUser.jsp</result>
+            <result name="auth-end" type="redirect">/security/user!rolesByUser.do?id=${id}</result>
+        </action>
+        <action name="role" class="roleAction">
+            <result>/security/role.jsp</result>
+            <result name="redirect" type="redirectAction">/security/role!list.do</result>
+            <result name="forward" type="chain">
+                <param name="actionName">role</param>
+                <param name="method">list</param>
+            </result>
+            <result name="rescsByRole">/security/rescsByRole.jsp</result>
+            <result name="auth-resc-end" type="redirect">/security/role!rescsByRole.do?id=${id}</result>
+            <result name="menusByRole">/security/menusByRole.jsp</result>
+            <result name="auth-menu-end" type="redirect">/security/role!menusByRole.do?id=${id}</result>
+        </action>
+        <action name="dept" class="deptAction">
+            <result>/security/dept.jsp</result>
+            <result name="redirect" type="redirectAction">/security/dept!list.do</result>
+            <result name="forward" type="chain">
+                <param name="actionName">dept</param>
+                <param name="method">list</param>
+            </result>
+        </action>
+        <action name="menu" class="menuAction">
+            <result>/security/menu.jsp</result>
+            <result name="redirect" type="redirectAction">/security/menu!list.do</result>
+            <result name="forward" type="chain">
+                <param name="actionName">menu</param>
+                <param name="method">list</param>
+            </result>
+        </action>
+        <action name="resc" class="rescAction">
+            <result>/security/resc.jsp</result>
+            <result name="redirect" type="redirectAction">/security/resc!list.do</result>
+            <result name="forward" type="chain">
+                <param name="actionName">resc</param>
+                <param name="method">list</param>
+            </result>
+        </action>
+
+        <action name="aclClass" class="aclClassAction">
+        </action>
+        <action name="aclEntry" class="aclEntryAction">
+        </action>
+        <action name="aclObjectIdentity" class="aclObjectIdentityAction">
+        </action>
+        <action name="aclSid" class="aclSidAction">
+        </action>
+    </package>
+
+</struts>

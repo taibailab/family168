@@ -1,0 +1,93 @@
+
+/** */
+x-accordion-hd img.add,
+.x-tree-node-leaf img.add,
+.x-tree-node-expanded img.add,
+.x-tree-node-collapsed img.add {
+    background: url('../images/icons/add.gif');
+}
+
+x-accordion-hd img.go,
+.x-tree-node-leaf img.go,
+.x-tree-node-expanded img.go,
+.x-tree-node-collapsed img.go {
+    background: url('../images/icons/application_go.png');
+}
+
+x-accordion-hd img.delete,
+.x-tree-node-leaf img.delete,
+.x-tree-node-expanded img.delete,
+.x-tree-node-collapsed img.delete {
+    background: url('../images/icons/delete.gif');
+}
+
+x-accordion-hd img.edit,
+.x-tree-node-leaf img.edit,
+.x-tree-node-expanded img.edit,
+.x-tree-node-collapsed img.edit {
+    background: url('../images/icons/cog_edit.png');
+}
+
+x-accordion-hd img.refresh,
+.x-tree-node-leaf img.refresh,
+.x-tree-node-expanded img.refresh,
+.x-tree-node-collapsed img.refresh {
+    background: url('../images/icons/table_refresh.png');
+}
+
+x-accordion-hd img.expand,
+.x-tree-node-leaf img.expand,
+.x-tree-node-expanded img.expand,
+.x-tree-node-collapsed img.expand {
+    background: url('../images/icons/folder_go.png');
+}
+
+x-accordion-hd img.collapse,
+.x-tree-node-leaf img.collapse,
+.x-tree-node-expanded img.collapse,
+.x-tree-node-collapsed img.collapse {
+    background: url('../images/icons/folder_wrench.png');
+}
+
+x-accordion-hd img.config,
+.x-tree-node-leaf img.config,
+.x-tree-node-expanded img.config,
+.x-tree-node-collapsed img.config {
+    background: url('../images/icons/plugin.gif');
+}
+
+x-accordion-hd img.save,
+.x-tree-node-leaf img.save,
+.x-tree-node-expanded img.save,
+.x-tree-node-collapsed img.save {
+    background: url('save.gif');
+}
+
+x-accordion-hd img.cog,
+.x-tree-node-leaf img.cog,
+.x-tree-node-expanded img.cog,
+.x-tree-node-collapsed img.cog {
+    background: url('../images/icons/cog.png');
+}
+
+x-accordion-hd img.student,
+.x-tree-node-leaf img.student,
+.x-tree-node-expanded img.student,
+.x-tree-node-collapsed img.student {
+    background: url('../images/icons/user.gif');
+}
+
+x-accordion-hd img.wrench,
+.x-tree-node-leaf img.wrench,
+.x-tree-node-expanded img.wrench,
+.x-tree-node-collapsed img.wrench {
+    background: url('../images/icons/folder_wrench.png');
+}
+
+x-accordion-hd img.user_delete,
+.x-tree-node-leaf img.user_delete,
+.x-tree-node-expanded img.user_delete,
+.x-tree-node-collapsed img.user_delete {
+    background: url('../images/icons/user_delete.png');
+}
+

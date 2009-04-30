@@ -1,0 +1,13 @@
+<task-lifecycle initial="open">
+  <state name="open">
+    <transition name="complete" to="completed" />
+    <transition name="suspend" to="suspended" />
+    <transition name="cancel" to="cancelled" />
+  </state>
+  <state name="suspended">
+    <transition name="resume" to="open" />
+    <transition name="cancel" to="cancelled" />
+  </state>
+  <state name="cancelled" />
+  <state name="completed" />
+</task-lifecycle>

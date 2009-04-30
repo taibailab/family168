@@ -1,0 +1,99 @@
+
+* 生成maven2工程
+  mvn archetype:create -DgroupId=com.mycompany.app -DartifactId=my-webapp -DarchetypeArtifactId=maven-archetype-webapp
+
+* 生成eclipse工程，并下载对应的源代码
+  mvn eclipse:eclipse -DdownloadSources=true
+
+* 为了eclipse可以使用maven2的repo，为eclipse添加M2_REPO变量
+  mvn -Declipse.workspace=<path-to-eclipse-workspace> eclipse:add-maven-repo
+
+* 将jar文件添加到repo中
+  mvn install:install-file -Dfile=X:/path/mail-1.3.jar -DartifactId=javamail -Dversion=1.3.1 -Dpackaging=jar -DgroupId=javamail
+
+* 建立内部仓库
+  <repository>
+    <id>companyName</id>
+    <url>http:// ${ip}/maven</url>
+  </repository>
+
+* 部署
+  <project>
+    [...]
+    <distributionManagement>
+      <repository>
+        <id>proficio-repository</id>
+        <name>Proficio Repository</name>
+        <url>file://${basedir}/target/deploy</url>
+      </repository>
+    </distributionManagement>
+    [...]
+  </project>
+
+* SSH2方式部署
+  <project>
+    [...]
+    <distributionManagement>
+      <repository>
+        <id>proficio-repository</id>
+        <name>Proficio Repository</name>
+        <url>scp://sshserver.yourcompany.com/deploy</url>
+      </repository>
+    </distributionManagement>
+  </project>
+
+* FTP方式部署
+  <project>
+    [...]
+    <distributionManagement>
+      <repository>
+        <id>proficio-repository</id>
+        <name>Proficio Repository</name>
+        <url>sftp://ftpserver.yourcompany.com/deploy</url>
+      </repository>
+    </distributionManagement>
+  </project>
+
+* SSH方式部署
+  <project>
+    [...]
+    <distributionManagement>
+      <repository>
+        <id>proficio-repository</id>
+        <name>Proficio Repository</name>
+        <url>scpexe://sshserver.yourcompany.com/deploy</url>
+      </repository>
+    </distributionManagement>
+   <build>
+     <extensions>
+       <extension>
+         <groupId>org.apache.maven.wagon</groupId>
+         <artifactId>wagon-ssh-external</artifactId>
+         <version>1.0-alpha-6</version>
+       </extension>
+     </extensions>
+   </build>
+  </project>
+
+* FTP方式部署
+  <project>
+    [...]
+    <distributionManagement>
+      <repository>
+        <id>proficio-repository</id>
+        <name>Proficio Repository</name>
+        <url><a href="ftp://ftpserver.yourcompany.com/deploy%3C/url%3E" target="_blank">ftp://ftpserver.yourcompany.com/deploy</url></a>
+      </repository>
+    </distributionManagement>
+    <build>
+      <extensions>
+        <extension>
+          <groupId>org.apache.maven.wagon</groupId>
+          <artifactId>wagon-ftp</artifactId>
+          <version>1.0-alpha-6</version>
+        </extension>
+      </extensions>
+    </build>
+    [...]
+  </project>
+

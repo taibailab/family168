@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+
+<beans default-lazy-init="true" default-autowire="byName">
+  <bean id="aclClassManager" class="com.family168.security.manager.AclClassManager"/>
+  <bean id="aclEntryManager" class="com.family168.security.manager.AclEntryManager"/>
+  <bean id="aclObjectIdentityManager" class="com.family168.security.manager.AclObjectIdentityManager"/>
+  <bean id="aclSidManager" class="com.family168.security.manager.AclSidManager"/>
+  <bean id="deptManager" class="com.family168.security.manager.DeptManager"/>
+  <bean id="menuManager" class="com.family168.security.manager.MenuManager"/>
+  <bean id="rescManager" class="com.family168.security.manager.RescManager"/>
+  <bean id="roleManager" class="com.family168.security.manager.RoleManager"/>
+  <bean id="userManager" class="com.family168.security.manager.UserManager">
+    <property name="mutableAclService" ref="aclService"/>
+  </bean>
+
+  <bean id="afficeManager" class="com.family168.leona.manager.AfficeManager"/>
+  <bean id="employeeManager" class="com.family168.leona.manager.EmployeeManager"/>
+  <bean id="bumfManager" class="com.family168.leona.manager.BumfManager"/>
+  <bean id="departmentManager" class="com.family168.leona.manager.DepartmentManager"/>
+  <bean id="jobManager" class="com.family168.leona.manager.JobManager"/>
+  <bean id="stateManager" class="com.family168.leona.manager.StateManager"/>
+  <bean id="messageManager" class="com.family168.leona.manager.MessageManager"/>
+  <bean id="signManager" class="com.family168.leona.manager.SignManager"/>
+  <bean id="signStateManager" class="com.family168.leona.manager.SignStateManager"/>
+</beans>

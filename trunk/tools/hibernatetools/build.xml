@@ -1,0 +1,86 @@
+
+<project name="hibernate" default="run" basedir=".">
+    <!--使用自定义变量-->
+    <property file="config.properties"/>
+
+    <!--默认不处理EditPlus2生成的.bak文件-->
+    <defaultexcludes add="**/*.bak"/>
+
+    <!--使用系统设置的环境变量-->
+    <property environment="env"/>
+    <!--这里设置的是maven2默认使用的类库目录-->
+<!--
+    <property name="repo" location="${env.USERPROFILE}/.m2/repository/"/>
+-->
+    <property name="repo" location="D:/.m2/repository/"/>
+
+    <!--依赖类库-->
+    <path id="build.lib">
+        <pathelement location="${target.dir}/classes"/>
+        <pathelement location="${target.dir}/gen-classes"/>
+        <!--excel-->
+        <pathelement location="${repo}/net/sourceforge/jexcelapi/jxl/2.6/jxl-2.6.jar"/>
+        <!--hsqldb-->
+        <pathelement location="${repo}/hsqldb/hsqldb/1.8.0.7/hsqldb-1.8.0.7.jar"/>
+        <!--oracle-->
+        <pathelement location="${repo}/oracle/ojdbc/10.2.0.1.0/ojdbc-10.2.0.1.0.jar"/>
+        <!--dbunit-->
+        <pathelement location="${repo}/org/dbunit/dbunit/2.2/dbunit-2.2.jar"/>
+        <pathelement location="${repo}/poi/poi/2.5.1-final-20040804/poi-2.5.1-final-20040804.jar"/>
+
+        <!--hibernatetools-->
+        <path location="${repo}/org/hibernate/hibernate-tools/3.2.2.GA-20081116/hibernate-tools-3.2.2.GA-20081116.jar"/>
+        <path location="${repo}/org/hibernate/hibernate/3.2.6.ga/hibernate-3.2.6.ga.jar"/>
+        <path location="${repo}/org/freemarker/freemarker/2.3.10/freemarker-2.3.10.jar"/>
+        <path location="${repo}/dom4j/dom4j/1.6.1/dom4j-1.6.1.jar"/>
+        <path location="${repo}/cglib/cglib-nodep/2.1_3/cglib-nodep-2.1_3.jar"/>
+        <path location="${repo}/commons-collections/commons-collections/3.2/commons-collections-3.2.jar"/>
+        <path location="${repo}/antlr/antlr/2.7.7/antlr-2.7.7.jar"/>
+        <path location="${repo}/net/sf/ehcache/ehcache/1.3.0/ehcache-1.3.0.jar"/>
+        <path location="${repo}/org/hibernate/jtidy/r8-20060801/jtidy-r8-20060801.jar"/>
+        <path location="${repo}/commons-logging/commons-logging/1.0.4/commons-logging-1.0.4.jar"/>
+        <!--hibernate-annonation-->
+        <path location="${repo}/org/hibernate/hibernate-annotations/3.3.0.ga/hibernate-annotations-3.3.0.ga.jar"/>
+        <path location="${repo}/org/hibernate/hibernate-commons-annotations/3.3.0.ga/hibernate-commons-annotations-3.3.0.ga.jar"/>
+        <path location="${repo}/javax/persistence/persistence-api/1.0/persistence-api-1.0.jar"/>
+        <!--spring-->
+        <path location="${repo}/org/springframework/spring/2.0.7/spring-2.0.7.jar"/>
+    </path>
+
+    <!--清除所有生成临时文件和上次生成的文件-->
+    <target name="clean" depends="cleanbak">
+        <delete dir="${target.dir}"/>
+    </target>
+
+    <!--删除editplus2生成的.bak文件-->
+    <target name="cleanbak">
+        <defaultexcludes remove="**/*.bak"/>
+        <delete>
+            <fileset dir=".">
+               <include name="**/*.bak"/>
+            </fileset>
+        </delete>
+        <defaultexcludes add="**/*.bak"/>
+    </target>
+
+    <!--执行反向生成-->
+    <target name="run">
+        <mkdir dir="${target.dir}/gen"/>
+        <taskdef name="hibernatetool"
+                 classname="org.hibernate.tool.ant.HibernateToolTask"
+                 classpathref="build.lib"/>
+        <taskdef name="format"
+                classname="org.hibernate.tool.ant.JavaFormatterTask"
+                classpathref="build.lib"/>
+        <hibernatetool destdir="${gen.dir}"
+                       templatepath="templates">
+            <jdbcconfiguration configurationfile="${src.dir}/hibernate.cfg.xml"
+                               packagename="${package.name}"
+                               revengfile="${src.dir}/hibernate.reveng.xml"
+                               detectmanytomany="true"/>
+            <hbm2java jdk5="true" ejb3="true"/>
+        </hibernatetool>
+    </target>
+
+</project>
+

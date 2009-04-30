@@ -1,0 +1,2 @@
+[when]order price larger than {topPrice}=order : Order( totalPrice >= {topPrice} )
+[then]do {discountRate} discount=order.setTotalPrice(new Double(new BigDecimal(order.getTotalPrice().doubleValue() * {discountRate}).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue()));

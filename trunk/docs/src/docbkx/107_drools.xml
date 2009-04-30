@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter xml:id="drools">
+    <title>drools规则引擎</title>
+
+    <sect1>
+        <title>框架介绍</title>
+        <para>在<ulink url="http://www.jboss.org/drools"/>里赫然提到了人工神经网络，模糊逻辑，决策树这些AI名词，难道规则引擎就是人工智能么。是不是那些复杂的，经常改变的业务逻辑就可以直接扔到里边不用管了呢？还是他有什么超能力可以解决我们的问题？</para>
+        <para>drools是附属于jboss的，好处是拥有多种规则语法，可以使用DSL语言映射，还可以基于Excel决策树。</para>
+    </sect1>
+
+    <sect1>
+        <title>一次Drools的规则运算通常如下：</title>
+        <itemizedlist>
+            <listitem>
+                <para>从Drl规则文件编译得到RuleBase，编译后的规则集。</para>
+            </listitem>
+            <listitem>
+                <para>从RuleBase生成本次规则运算的场地，WorkingMemory。</para>
+            </listitem>
+            <listitem>
+                <para>将规则运算用到的事实放入WorkingMemory。</para>
+            </listitem>
+            <listitem>
+                <para>FireAll Rules，对事实进行规则运算。</para>
+            </listitem>
+        </itemizedlist>
+    </sect1>
+
+    <sect1>
+        <title>Drools的规则语法</title>
+        <para>一个完整的drl文件如下：</para>
+        <programlisting><![CDATA[
+package com.family168.dsl
+
+import com.family168.Order
+import java.lang.Double
+import java.math.BigDecimal
+
+expander orderPricing.dsl
+
+rule " order 0.9 discount"
+    when
+        order price larger than 100
+    then
+        do 0.9 discount
+        #加入 > 就可以在drl/dsl 中直接写入drl 语法
+        >System.out.println("original price:"
+                + order.getOriginalPrice() + " discount price:" + order.getTotalPrice());
+end]]>
+        </programlisting>
+    </sect1>
+
+    <sect1>
+        <title>Drools的规则文件</title>
+        <programlisting><![CDATA[
+package com.family168.helloworld
+
+import com.family168.Message
+
+rule "Hello World"
+    when
+        m : Message(status == Message.HELLO)
+    then
+        m.setMessage("Goodbye cruel world");
+        m.setStatus(Message.GOODBYE);
+end]]>
+        </programlisting>
+        <para>简单解释：</para>
+        <itemizedlist>
+            <listitem>
+                <para>这个规则是找出WorkingMemory里status=HELLO的Message对象，将他们的状态改为GOODBYE。</para>
+            </listitem>
+            <listitem>
+                <para>注意每条的处理方式就是这样，找出类型与属性符合的实体，对它进行处理。</para>
+            </listitem>
+            <listitem>
+                <para>[package]是命名空间，Drools提供Package级的管理API。</para>
+            </listitem>
+            <listitem>
+                <para>[import]导入规则引擎里用到的Java对象。</para>
+            </listitem>
+            <listitem>
+                <para>[when]的语法是Drools自定义的(简化了Java的API)，m代表status=Message.HELLO的Message对象。</para>
+                <para>冒号（:）部分可以看做赋值语句，冒号后的Message表示类型，括号中的比较条件。</para>
+            </listitem>
+            <listitem>
+                <para>[then]的语法是正宗Java 语法，每句以;分号结束，里面用到的对象必须在when语句或Gobal语句声明。</para>
+                <para>也可以使用其它语言如Groovy来编写，但需要在编译规则时设定语言。</para>
+            </listitem>
+        </itemizedlist>
+    </sect1>
+
+    <sect1>
+        <title>Drools的平民级DSL语法映射</title>
+        <para>Drools的DSL采用了直接映射的方式，这DSL还能获得Eclipse插件的支持</para>
+        <para>只要声明一个DSL映射文件：</para>
+        <programlisting><![CDATA[
+[when]order price larger than {topPrice}=order : Order( totalPrice >= {topPrice} )
+#如果多行，可以在第一行用"/" 进行换行
+[then]do {discountRate}discount=  order.setDiscountPrice/(new Double(order.getTotalPrice().doubleValue() * {discountRate}));]]>
+        </programlisting>
+        <para>就可以在drl中使用：</para>
+        <programlisting><![CDATA[
+expander orderPricing.dsl
+
+rule "discount order"
+when
+    order price larger than 100
+then
+    do 0.9 discount
+end]]>
+        </programlisting>
+    </sect1>
+
+    <sect1>
+        <title>决策树（Excel 文件）的使用</title>
+        <para>drools读取Excel文件，把每一行决策作为一个规则，然后把Excel文件转换成drl格式的文本来使用，再将文本转换为规则调用。</para>
+        <para>在Excel文件中定义的规则是有执行顺序的，它会按照行数由上自下依次执行。</para>
+    </sect1>
+
+    <sect1>
+        <title>JBossRules的Java API</title>
+        <para> JBossRules的Java API大概分两类：</para>
+        <para>一类是编译规则构建WorkingMemory。</para>
+        <para>一类是运行规则的，来去主要是insert()放入事实，setGlobal()两个准备函数和fireAllRules()执行函数。</para>
+    </sect1>
+
+    <sect1>
+        <title>Drools' Performance</title>
+        <para>对于执行效率，有几点需要注意的地方：</para>
+        <para>Condition 的排放顺序。如果你的规则中Condition不只一个的话，那么把哪个Condition 放在前面是很有讲究的，这直接关系到规则引擎的执行效率。</para>
+        <para>例如下面，有上万个如下类型的facts将同时assert进入规则引擎中参与计算。而这些facts中绝大部分facts的type为1，name却各不相同：</para>
+        <programlisting><![CDATA[
+/*
+ * fact class
+ */
+public class FactObject {
+    private int type;
+    private String name;
+    // 省去getter/setter Methods
+}]]>
+        </programlisting>
+        <para>规则文件如下定义：</para>
+        <programlisting><![CDATA[
+when
+    fact : FactObject(type == 1, name == "test")]]>
+        </programlisting>
+        <para>和这样定义：</para>
+        <programlisting><![CDATA[
+when
+    fact : FactObject(name == "test", type == 1)]]>
+        </programlisting>
+        <para>后面这种定义相对于前面，单单是换了一个顺序，在执行效率方面相差几十倍！其原理和数据库索引的原因相似。</para>
+        <para>还是如上面的这个例子，对于字符串，如果在比较之前使用intern()的话，那么效率也会部分提升。</para>
+        <para>参见JBoss Wiki：http://www.jboss.org/community/docs/DOC-12329</para>
+    </sect1>
+
+    <sect1>
+        <title>可以使用global设置全局对象</title>
+            <programlisting><![CDATA[
+global com.family168.OrderPricingService pricingService;
+
+rule
+  when
+    o : Order(totalPrice >= 100)
+  then
+    pricingService.discount(o, 90);
+end]]>
+            </programlisting>
+            <para>封装的Service一般以gobal形式存在。</para>
+            <para>在调用规则时以wm.setGlobal("pricingService", pricingService); 放入，命名为pricingService.</para>
+            <para>在规则中以global com.family168.OrderPricingService pricingService; 声明，名称必须与放入时相同，则处理函数里就能以pricingService操作。</para>
+    </sect1>
+
+</chapter>
+
+
+

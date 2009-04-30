@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+<beans default-lazy-init="true">
+
+    <bean id="channelDecisionManager"
+          class="org.springframework.security.securechannel.ChannelDecisionManagerImpl">
+        <property name="channelProcessors">
+            <list>
+                <ref local="testOnceAfterMaxRequestsCaptchaChannelProcessor"/>
+                <ref local="alwaysTestAfterTimeInMillisCaptchaChannelProcessor"/>
+                <ref local="alwaysTestAfterMaxRequestsCaptchaChannelProcessor"/>
+                <ref local="alwaysTestBelowAverageTimeInMillisBetweenRequestsChannelProcessor"/>
+            </list>
+        </property>
+    </bean>
+
+    <!-- REQUIRES_CAPTCHA_ONCE_ABOVE_THRESOLD_REQUESTS -->
+    <bean id="testOnceAfterMaxRequestsCaptchaChannelProcessor"
+          class="org.springframework.security.captcha.TestOnceAfterMaxRequestsCaptchaChannelProcessor">
+        <property name="threshold" value="0"/>
+        <property name="entryPoint" ref="captchaEntryPoint"/>
+    </bean>
+
+    <!-- REQUIRES_CAPTCHA_ABOVE_THRESOLD_REQUESTS -->
+    <bean id="alwaysTestAfterMaxRequestsCaptchaChannelProcessor"
+          class="org.springframework.security.captcha.AlwaysTestAfterMaxRequestsCaptchaChannelProcessor">
+        <property name="threshold" value="5"/>
+        <property name="entryPoint" ref="captchaEntryPoint"/>
+    </bean>
+
+    <!-- REQUIRES_CAPTCHA_AFTER_THRESOLD_IN_MILLIS -->
+    <bean id="alwaysTestAfterTimeInMillisCaptchaChannelProcessor"
+       class="org.springframework.security.captcha.AlwaysTestAfterTimeInMillisCaptchaChannelProcessor">
+        <property name="threshold" value="5000"/>
+        <property name="entryPoint" ref="captchaEntryPoint"/>
+    </bean>
+
+    <!-- REQUIRES_CAPTCHA_BELOW_AVERAGE_TIME_IN_MILLIS_REQUESTS -->
+    <bean id="alwaysTestBelowAverageTimeInMillisBetweenRequestsChannelProcessor"
+       class="org.springframework.security.captcha.AlwaysTestBelowAverageTimeInMillisBetweenRequestsChannelProcessor">
+        <property name="threshold" value="20000"/>
+        <property name="entryPoint" ref="captchaEntryPoint"/>
+    </bean>
+
+    <bean id="captchaEntryPoint"
+          class="org.springframework.security.captcha.CaptchaEntryPoint">
+        <property name="captchaFormUrl" value="/captchaError.jsp"/>
+        <property name="includeOriginalRequest" value="false"/>
+        <property name="includeOriginalParameters" value="false"/>
+    </bean>
+
+    <!-- imageCaptchaService is injected into captchaImageCreateController as well as to captchaService beans -->
+    <bean id="captchaService" class="com.family168.security.jcaptcha.JCaptchaServiceProxyImpl">
+        <property name="jcaptchaService" ref="imageCaptchaService"/>
+    </bean>
+
+    <bean id="imageCaptchaService" class="com.octo.captcha.service.image.DefaultManageableImageCaptchaService">
+        <constructor-arg type="com.octo.captcha.service.captchastore.CaptchaStore" index="0" ref="fastHashMapCaptchaStore"/>
+        <!-- (1) which captcha Engine you use -->
+        <constructor-arg type="com.octo.captcha.engine.CaptchaEngine" index="1" ref="simpleCaptchaEngine"/>
+        <constructor-arg index="2" value="180"/>
+        <constructor-arg index="3" value="100000"/>
+        <constructor-arg index="4" value="75000"/>
+    </bean>
+
+    <bean id="fastHashMapCaptchaStore"
+       class="com.octo.captcha.service.captchastore.FastHashMapCaptchaStore"/>
+
+    <!-- (2) you can define more than one captcha engine here -->
+    <bean id="springSideCaptchaEngineEx"
+       class="com.family168.security.jcaptcha.engine.SpringSideCaptchaEngineEx"/>
+
+    <bean id="springSideCaptchaEngine"
+       class="com.family168.security.jcaptcha.engine.SpringSideCaptchaEngine"/>
+
+    <bean id="simpleCaptchaEngine" class="com.family168.security.jcaptcha.engine.SimpleCaptchaEngine"/>
+
+</beans>
+

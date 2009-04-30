@@ -1,0 +1,563 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter xml:id="search">
+    <title>全文检索</title>
+
+    <sect1>
+        <title>Lucene 基础指南</title>
+        <para>Lucene是apache下的一个采用java实现的全文搜索引擎，功能非常强大，而它的API又比较简单，主要就做两件事：建立索引和进行搜索。</para>
+        <sect2>
+            <title>建立索引的术语</title>
+            <itemizedlist>
+                <listitem>
+                    <para>Document：一个需要进行索引的单元，相当于数据库的一行纪录，任何想要被索引的数据，都必须转化为Document对象存放。</para>
+                </listitem>
+                <listitem>
+                    <para>Field：Document中的一个字段，相当于数据库中的Column ，Field是lucene中含义比较多的一个术语，详情见后。</para>
+                </listitem>
+                <listitem>
+                    <para>IndexWriter：负责将Document写入索引文件。通常情况下,IndexWriter的构造函数包括了以下3个参数：索引存放的路径，分析器和是否重新创建索引。特别注意的一点，当IndexWriter执行完addDocument方法后，一定要记得调用自身的close方法来关闭它。只有在调用了close方法后，索引器才会将存放在内在中的所有内容写入磁盘并关闭输出流。</para>
+                </listitem>
+                <listitem>
+                    <para>Analyzer：分析器，主要用于文本分词。常用的有StandardAnalyzer分析器，StopAnalyzer分析器，WhitespaceAnalyzer分析器等。</para>
+                </listitem>
+                <listitem>
+                    <para>Directory：索引存放的位置。lucene提供了两种索引存放的位置，一种是磁盘，一种是内存。一般情况将索引放在磁盘上；相应地lucene提供了FSDirectory和RAMDirectory两个类。</para>
+                </listitem>
+                <listitem>
+                    <para>段：Segment,是Lucene索引文件的最基本的一个单位。Lucene说到底就是不断加入新的Segment，然后按一定的规则算法合并不同的Segment以合成新的Segment。</para>
+                </listitem>
+            </itemizedlist>
+            <para>lucene建立索引的过程就是将待索引的对象转化为Lucene的Document对象，使用IndexWriter将其写入lucene自定义格式的索引文件中。</para>
+            <para>待索引的对象可以来自文件、数据库等任意途径，用户自行编码遍历目录读取文件或者查询数据库表取得ResultSet，Lucene的API只负责和字符串打交道。</para>
+            <sect3>
+                <title>Field的含义</title>
+                <para>Field的构造方法如下：</para>
+                <programlisting><![CDATA[
+Field(String name, byte[] value, Field.Store store)
+Field(String name, Reader reader)
+Field(String name, Reader reader, Field.TermVector termVector)
+Field(String name, String value, Field.Store store, Field.Index index)
+Field(String name, String value, Field.Store store, Field.Index index, Field.TermVector termVector)]]>
+                </programlisting>
+                <para>在Field当中有三个内部类：Field.Index，Field.Store，Field.TermVector。其中</para>
+                <itemizedlist>
+                    <listitem>
+                        <para>Field.Index有五个属性，分别是：</para>
+                        <itemizedlist>
+                            <listitem>
+                                <para>Field.Index.ANALYZED：分词索引</para>
+                            </listitem>
+                            <listitem>
+                                <para>Field.Index.NOT_ANALYZED：分词进行索引，如作者名，日期等，Rod Johnson本身为一单词，不再需要分词。</para>
+                            </listitem>
+                            <listitem>
+                                <para>Field.Index.NO：不进行索引，存放不能被搜索的内容如文档的一些附加属性如文档类型, URL等。</para>
+                            </listitem>
+                            <listitem>
+                                <para>Field.Index.NOT_ANALYZED_NO_NORMS：不使用分词索引，不使用存储规则。</para>
+                            </listitem>
+                            <listitem>
+                                <para>Field.Index.ANALYZED_NO_NORMS：使用分词索引，不使用存储规则。</para>
+                            </listitem>
+                        </itemizedlist>
+                    </listitem>
+                    <listitem>
+                        <para>Field.Store有三个属性</para>
+                        <itemizedlist>
+                            <listitem>
+                                <para>Field.Store.YES：索引文件本来只存储索引数据, 此设计将原文内容直接也存储在索引文件中，如文档的标题。</para>
+                            </listitem>
+                            <listitem>
+                                <para>Field.Store.NO：原文不存储在索引文件中，搜索结果命中后，再根据其他附加属性如文件的Path，数据库的主键等，重新连接打开原文，适合原文内容较大的情况。</para>
+                            </listitem>
+                            <listitem>
+                                <para>Field.Store.COMPRESS：压缩存储。</para>
+                            </listitem>
+                        </itemizedlist>
+                    </listitem>
+                    <listitem>
+                        <para>termVector是Lucene 1.4.3新增的它提供一种向量机制来进行模糊查询，不太常用。</para>
+                    </listitem>
+                </itemizedlist>
+                <para>上面所说的Field属性与lucene1.4.3版本的有比较大的不同，在旧版的1.4.3里lucene是通过Field.Keyword(...)，FieldUnIndexed(...)，FieldUnstored(...)和Field.Text(...)来设置不同字段的类型以达到不同的用途，而当前版本由Field.Index和Field.Store两个字段的不同组合来达到上述效果。</para>
+                <para>还有一点说明，其中的两个构造函数其默认的值为Field.Store.NO和Field.Index.TOKENIZED。</para>
+                <programlisting><![CDATA[
+Field(String name, Reader reader)
+Field(String name, Reader reader, Field.TermVector termVector)]]>
+                </programlisting>
+            </sect3>
+            <sect3>
+                <title>限制Field的长度</title>
+                <para>IndexWriter类提供了一个setMaxFieldLength的方法来对Field的长度进行限制，看一下源代码就知道其默认值为10000；我们可以在使用时重新设置此参数。如果使用默认值，那么Lucene就仅仅对文档的前面的10000个term进行索引，超过这一个数的文档就不会被建立索引。 </para>
+            </sect3>
+            <sect3>
+                <title>索引的合并、删除、优化</title>
+                <itemizedlist>
+                    <listitem>
+                        <para>IndexWriter中的addIndexes方法将索引进行合并，当在不同的地方创建了索引后，如果需要将索引合并，这时候使用addIndexes方法就显得很有意义。</para>
+                    </listitem>
+                    <listitem>
+                        <para>可以通过IndexReader类从索引中进行文档的删除。IndexReader是很特别的一个类，看源代码就知道它主要是通过自身的静态方法来完成构造的。示例：</para>
+                        <programlisting><![CDATA[
+IndexReader reader = IndexReader.open("d:/lucene/index");
+reader.deleteDocument(X); //这里的X是一个int的常数；不推荐这一种删除方法
+reader.deleteDocument(new Term("name", "oa")); //这是另一种删除索引的方法，按字段来删除，推荐使用这一种做法
+reader.close();]]>
+                        </programlisting>
+                    </listitem>
+                </itemizedlist>
+                <para>优化索引：可以使用IndexWriter类的optimize方法来进行优先，它会将多个Segment进行合并，组成一个新的Segment,可以加快建立索引后搜索的速度。另外需要注意的一点，optimize方法会降低建立索引的速度，而且要求的磁盘空间会增加。 </para>
+            </sect3>
+        </sect2>
+        <sect2>
+            <title>进行搜索时的术语</title>
+            <itemizedlist>
+                <listitem>
+                    <para>IndexSearcher：是lucene中最基本的检索工具，所有的检索都会用到IndexSearcher工具。初始化IndexSearcher需要设置索引存放的路径，让查询器能定位索引而进行搜索。</para>
+                </listitem>
+                <listitem>
+                    <para>Query：查询，lucene中支持模糊查询，语义查询，短语查询，组合查询等等，如有TermQuery，BooleanQuery，RangeQuery，WildcardQuery等一些类。</para>
+                </listitem>
+                <listitem>
+                    <para>QueryParser:：是一个解析用户输入的工具，可以通过扫描用户输入的字符串，生成Query对象。 </para>
+                </listitem>
+                <listitem>
+                    <para>Hits：在搜索完成之后，需要把搜索结果返回并显示给用户，只有这样才算是完成搜索的目的。在lucene中，搜索的结果的集合是用Hits类的实例来表示的。Hits对象中主要方法有： </para>
+                    <programlisting><![CDATA[
+length(): 返回搜索结果的总数,下面简单的用法中有用到Hit的这一个方法
+doc(int n): 返回第n个文档
+iterator(): 返回一个迭代器]]>
+                    </programlisting>
+                    <para>这里再提一下Hits，这也是Lucene比较精彩的地方，熟悉hibernate的朋友都知道hibernate有一个延迟加载的属性，同样，Lucene也有。Hits对象也是采用延迟加载的方式返回结果的，当要访问某个文档时，Hits对象就在内部对Lucene的索引又进行一次检索，最后才将结果返回到页面显示。</para>
+                </listitem>
+            </itemizedlist>
+        </sect2>
+        <sect2>
+            <title>一个简单的实例</title>
+            <para>首先把lucene的包放在classpath路径中去，写下面一个简单的类：</para>
+            <programlisting><![CDATA[
+public class FSDirectoryTest {
+    //建立索引的路径
+    public static final String path = "d:/index2";
+
+    public static void main(String[] args) throws Exception {
+        Document doc1 = new Document();
+        doc1.add(new Field("name", "www family168 com", Field.Store.YES,
+                Field.Index.TOKENIZED));
+
+        Document doc2 = new Document();
+        doc2.add(new Field("name", "family168 blog bbs", Field.Store.YES,
+                Field.Index.TOKENIZED));
+
+        IndexWriter writer = new IndexWriter(FSDirectory.getDirectory(
+                    path, true), new StandardAnalyzer(), true);
+        writer.addDocument(doc1);
+        writer.addDocument(doc2);
+        writer.close();
+
+        IndexSearcher searcher = new IndexSearcher(path);
+        Hits hits = null;
+        Query query = null;
+        QueryParser qp = new QueryParser("name", new StandardAnalyzer());
+
+        query = qp.parse("family168");
+        hits = searcher.search(query);
+        System.out.println("查找\"family168\" 共" + hits.length() + "个结果");
+
+        query = qp.parse("bbs");
+        hits = searcher.search(query);
+        System.out.println("查找\"bbs\" 共" + hits.length() + "个结果");
+    }
+}]]>
+            </programlisting>
+            <para>执行的结果：</para>
+            <programlisting><![CDATA[
+查找"family168" 共2个结果
+查找"bbs" 共1个结果]]>
+            </programlisting>
+        </sect2>
+        <sect2>
+            <title>复杂一点的实例</title>
+            <itemizedlist>
+                <listitem>
+                    <para>在windows系统下的的C盘，建一个名叫s的文件夹，在该文件夹里面随便建三个txt文件，随便起名啦，就叫"1.txt"，"2.txt"和"3.txt"。</para>
+                    <para>其中1.txt的内容如下： </para>
+                    <programlisting><![CDATA[
+family168
+文档，资料
+2009]]>
+                    </programlisting>
+                    <para>而"2.txt"和"3.txt"的内容也可以随便写几写，这里懒写，就复制一个和1.txt文件的内容一样吧</para>
+                </listitem>
+                <listitem>
+                    <para>下载lucene包，放在classpath路径中，然后建立索引: </para>
+                    <programlisting><![CDATA[
+public class LuceneExample {
+    public static void main(String[] args) throws Exception {
+        File fileDir = new File("D:/lucene");     // 指明要索引文件夹的位置,这里是C盘的S文件夹下
+        File indexDir = new File("D:/lucene/index"); // 这里放索引文件的位置
+        File[] textFiles = fileDir.listFiles();
+
+        Analyzer luceneAnalyzer = new StandardAnalyzer();
+        IndexWriter indexWriter = new IndexWriter(indexDir,luceneAnalyzer,true);
+          indexFile(luceneAnalyzer,indexWriter, textFiles);
+        indexWriter.optimize(); // optimize()方法是对索引进行优化
+        indexWriter.close();
+    }
+
+    public static void indexFile(Analyzer luceneAnalyzer,IndexWriter indexWriter,File[] textFiles) throws Exception {
+        // 增加document到索引去
+        for (int i = 0; i < textFiles.length; i++) {
+            if (textFiles[i].isFile() && textFiles[i].getName().endsWith(".txt")) {
+                String temp = FileReaderAll(textFiles[i].getCanonicalPath(),"GBK");
+                Document document = new Document();
+                Field FieldBody = new Field("body", temp, Field.Store.YES,Field.Index.TOKENIZED);
+                document.add(FieldBody);
+                indexWriter.addDocument(document);
+            }
+        }
+    }
+    public static String FileReaderAll(String FileName, String charset)throws IOException {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(
+                new FileInputStream(FileName), charset));
+        String line = "";
+        String temp = "";
+        while ((line = reader.readLine()) != null) {
+            temp += line;
+        }
+        reader.close();
+        return temp;
+    }
+}]]>
+                    </programlisting>
+                </listitem>
+                <listitem>
+                    <para>执行查询：</para>
+                    <programlisting><![CDATA[
+public class TestQuery {
+    public static void main(String[] args)
+        throws IOException, ParseException {
+        Hits hits = null;
+        String queryString = "family168";
+        Query query = null;
+        IndexSearcher searcher = new IndexSearcher("D:/lucene/index");
+
+        Analyzer analyzer = new StandardAnalyzer();
+
+        try {
+            QueryParser qp = new QueryParser("body", analyzer);
+            query = qp.parse(queryString);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        if (searcher != null) {
+            hits = searcher.search(query);
+
+            if (hits.length() > 0) {
+                System.out.println("找到:" + hits.length() + " 个结果!");
+            }
+        }
+    }
+}]]>
+                    </programlisting>
+                </listitem>
+                <listitem>
+                    <para>执行结果： </para>
+                    <para>找到：3 个结果!</para>
+                </listitem>
+            </itemizedlist>
+        </sect2>
+        <sect2>
+            <title>Hibernate与lucene的结合使用:</title>
+            <para>参考这一篇文章,里面讲得很详细</para>
+            <para>http://wiki.redsaga.com/confluence/display/HART/Hibernate+Lucene+Integration</para>
+        </sect2>
+    </sect1>
+
+    <sect1>
+        <title>Compass</title>
+        <sect2>
+            <title>概述</title>
+            <para>compass官方网站: <ulink url="http://www.compass-project.org/"/></para>
+            <para>Compass是一流的JAVA搜索框架，可以快速修饰你的应用，使其具备Searchable的能力。</para>
+            <para>在没有Compass，单纯用Lucene的环境里，一般做法是定期遍历数据库，编码将里面的内容转为索引。</para>
+            <para>而Compass通过与Hibernate和Spring的结合，简单的将Domain Object转换为Lucene引擎的映射，而且索引库能够随Domain Object同步更新(Data Mirror)。</para>
+            <para>使用compass快速建立全文搜索的流程如下： </para>
+            <orderedlist>
+                <listitem>
+                    <para>用简单的compass annotation把User对象映射到Lucene。</para>
+                </listitem>
+                <listitem>
+                    <para>提供Index service和Search service。</para>
+                </listitem>
+                <listitem>
+                    <para>编写查询结果的显示页面，将查询返回的变量显示出来。</para>
+                </listitem>
+            </orderedlist>
+        </sect2>
+        <sect2>
+            <title>Object/Search Engine Mapping的Annotations配置</title>
+            <para>使用JDK5的annotation 来进行OSEM(Object/Search Engine Mapping)比用xml文件按简单许多，下面就是简单的搜索类，可见@SearchableID, @SearchableProperty与@SearchableComponent 三个标记，分别代表主键、可搜索的属性与关联的，另一个可搜索的对象，另外Compass要求POJO要有默认构造函数，要实现equals()和hashcode(): </para>
+            <programlisting><![CDATA[
+@Entity
+@Searchable
+public class Child {
+    private Long id;
+    private String name;
+    private Parent parent;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @SearchableId
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    @Column
+    @SearchableProperty(name = "name")
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "PARENT_ID")
+    @SearchableComponent(refAlias = "parent")
+    public Parent getParent() {
+        return parent;
+    }
+
+    public void setParent(Parent parent) {
+        this.parent = parent;
+    }
+}]]>
+            </programlisting>
+            <para>注意可被搜索的对象必须遵守下面的规则</para>
+            <orderedlist>
+                <listitem>
+                    <para>所有的持久化类必须有默认构造函数(没参数的构造函数).</para>
+                </listitem>
+                <listitem>
+                    <para>OSEM要求映射类JavaBean必须有一个或更多的id主建. id属性可以是对象类型,例如java.lang.String or java.util.Date.</para>
+                    <para>并且类注解使用@SearchableClassConverter或者使用定义Converter(通常继承Compass AbstractBasicConverter).</para>
+                </listitem>
+                <listitem>
+                    <para>使用JavaBean规范, getter/setter. </para>
+                </listitem>
+            </orderedlist>
+        </sect2>
+        <sect2>
+            <title>Data Change Mirror功能</title>
+            <para>DataMirror会把数据库的增删改变化实时映射到索引文件中。</para>
+            <para>如果你采用Hibernate等ORM方案，Compass就会与Hibernate的event机制结合，或者使用AOP的方式，自动在数据库增删改时变更索引；如果你只是采用JDBC，也可以在XML文件配置Table Mapping或ResultSet Mapping，指定version列，Compasss定时对version列变化了的数据进行索引更新。</para>
+            <para>而且Compass还支持事务，在查询数据库遍历结果集的过程中如果出现异常，会在Index Segments文件一级进行事务控制。</para>
+            <para>如果没有Compass，我们一般会在每天深夜重建一次索引。相比Compass的做法，</para>
+            <itemizedlist>
+                <listitem>
+                    <para>一来反应迟缓，平均延时半天。</para>
+                </listitem>
+                <listitem>
+                    <para>二来效率没有Compass高。如果采用完全重建索引，效率就不用说了。如果进行增量索引，就要增加一个字段，在数据更新时进行特殊的处理，删除时也不能直接删除数据，要等lucene删完索引数据才能删除，这样Lucene对应用就非常不透明了。</para>
+                </listitem>
+                <listitem>
+                    <para>三来不支持事务，如果建立索引过程中出现异常，索引文件的状态是不可控的。</para>
+                </listitem>
+            </itemizedlist>
+        </sect2>
+        <sect2>
+            <title>与spring，hibernate集成配置</title>
+            <para>下面是compass在spring中的简明配置：</para>
+            <programlisting><![CDATA[
+<bean id="compass" class="org.compass.spring.LocalCompassBean">
+    <!-- anontaition式设置 -->
+    <property name="classMappings">
+        <list>
+            <value>com.family168.domain.Child</value>
+            <value>com.family168.domain.Parent</value>
+        </list>
+    </property>
+
+    <property name="compassConfiguration">
+        <bean class="org.compass.annotations.config.CompassAnnotationsConfiguration"/>
+    </property>
+
+    <property name="compassSettings">
+        <props>
+            <prop key="compass.engine.connection">
+                file://${user.home}/oa/compass
+            </prop>
+            <prop key="compass.transaction.factory">
+                org.compass.spring.transaction.SpringSyncTransactionFactory
+            </prop>
+        </props>
+    </property>
+
+    <property name="transactionManager" ref="transactionManager"/>
+</bean>
+
+<!-- Compass中建立索引与mirror database change的部件 -->
+<bean id="compassGps" class="org.compass.gps.impl.SingleCompassGps"
+          init-method="start" destroy-method="stop">
+    <property name="compass" ref="compass"/>
+    <property name="gpsDevices">
+        <list>
+            <bean class="org.compass.spring.device.hibernate.dep.SpringHibernate3GpsDevice">
+                <property name="name" value="hibernateDevice"/>
+                <property name="sessionFactory" ref="sessionFactory"/>
+            </bean>
+        </list>
+    </property>
+</bean>]]>
+            </programlisting>
+            <para>上面要留意的配置有：</para>
+            <para>annotationConfiguration：使用annotation配置，指定要转换的POJO如User。</para>
+            <para>compass.engine.connection：索引文件在服务器上的存储路径。</para>
+            <para>hibernateGpsDevice：与hibernate的绑定，用Hibernate 3事件系统，支持Real Time Data Mirroring .经Hiberante的数据改变会自动被反射到索引里面.</para>
+            <para>上面的Gps定义只是自启动Mirror Data Change，但索引初始建立就需要靠程序员自己写代码调用CompassGps.index()来完成。</para>
+            <para>理论上，因为可以Mirror Data Change，所以索引只需要建立一次即可。如果索引已存在，Compass会对它gracefule override，所谓graceful，就是Compass会现在临时目录存放新的索引，新索引建立完毕后，再一次过覆盖旧索引，重建索引的漫长过程中，旧索引可以正常工作。</para>
+            <para>为了方便演示，定义一个CompassIndexBuilder，实现了Spring的InitializingBean接口，自动在Spring启动时，启动一条线程进行索引重建。</para>
+        </sect2>
+        <sect2>
+            <title>封装搜索</title>
+            <para>自定义CompassSearchService和AdvancedSearchCommand，以此实现高级搜索。</para>
+            <programlisting><![CDATA[
+<bean id="compassSearchService" class="com.family168.CompassSearchService">
+    <property name="compass" ref="compass"/>
+    <property name="pageSize" value="15"/>
+</bean>]]>
+            </programlisting>
+        </sect2>
+        <sect2>
+            <title>View JSP</title>
+            <para>简单搜索页面：只需要一个queryString参数：</para>
+            <programlisting><![CDATA[
+<INPUT type="text" size="20" name="queryString">]]>
+            </programlisting>
+            <para>结果页面将返回几个变量，包括：</para>
+            <itemizedlist>
+                <listitem>
+                    <para>searchResults(搜索结果)包括hits(结果)和searchtime(耗时)</para>
+                </listitem>
+                <listitem>
+                    <para>pages(分页信息)包括page_from，page_to等</para>
+                </listitem>
+                <listitem>
+                    <para>command(原来的查询请求)</para>
+                </listitem>
+            </itemizedlist>
+            <para>参见下面简单的代码:</para>
+            <programlisting><![CDATA[
+<c:if test="${not empty searchResults}">
+    耗时： ${searchResults.searchTime}ms
+    <c:forEach var="hit" items="${searchResults.hits}">
+        <c:choose>
+            <c:when test="${hit.alias == 'child'}">
+                <div class="left_content">
+                    <p>
+                        <a href="#" class= "title">${hit.data.name}</a>
+                        <br/> parent：${hit.data.parent.name}
+                        <br/>
+                    </p>
+                </div>
+            </c:when>
+        </c:choose>
+    </c:forEach>
+</c:if>]]>
+            </programlisting>
+        </sect2>
+
+        <sect2>
+            <title>Compass Highlighter</title>
+            <para>定义Highlighter字段，只需要在AdvancedSearchCommand上将需要highlighting的Fields加入即可。</para>
+            <programlisting><![CDATA[
+searchCommand.setHighlightFields(new String[] {"name"});]]>
+            </programlisting>
+            <para>定义高亮的样式</para>
+            <para>另外，如果对高亮显示的效果不满意的话，可以在applicationContext-compass.xml 文件里配置：</para>
+            <programlisting>
+&lt;prop key="compass.engine.highlighter.default.formatter.simple.pre"&gt;
+    &lt;![CDATA[&lt;font color="red"&gt;&lt;b&gt;]]&gt;
+&lt;/prop&gt;
+&lt;prop key="compass.engine.highlighter.default.formatter.simple.post"&gt;
+    &lt;![CDATA[&lt;/b&gt;&lt;/font&gt;]]&gt;
+&lt;/prop&gt;
+            </programlisting>
+        </sect2>
+    </sect1>
+
+    <sect1>
+        <title>Hibernate Search</title>
+        <para>在applicationContext.xml中添加两个参数：</para>
+        <programlisting><![CDATA[
+<prop key="hibernate.search.default.directory_provider">org.hibernate.search.store.FSDirectoryProvider</prop>
+<prop key="hibernate.search.default.indexBase">d:/lucene/indexes</prop>]]>
+        </programlisting>
+        <para>想使用动态索引的话，还需要配置event listener：</para>
+        <programlisting><![CDATA[
+<property name="eventListeners">
+    <map>
+        <entry key="post-update">
+            <bean class="org.hibernate.search.event.FullTextIndexEventListener"/>
+        </entry>
+        <entry key="post-insert">
+            <bean class="org.hibernate.search.event.FullTextIndexEventListener"/>
+        </entry>
+        <entry key="post-delete">
+            <bean class="org.hibernate.search.event.FullTextIndexEventListener"/>
+        </entry>
+        <entry key="post-collection-recreate">
+            <bean class="org.hibernate.search.event.FullTextIndexEventListener"/>
+        </entry>
+        <entry key="post-collection-remove">
+            <bean class="org.hibernate.search.event.FullTextIndexEventListener"/>
+        </entry>
+        <entry key="post-collection-update">
+            <bean class="org.hibernate.search.event.FullTextIndexEventListener"/>
+        </entry>
+    </map>
+</property>]]>
+        </programlisting>
+        <para>因为使用的时日尚短，还不知道如何在系统启动的时候统一初始化索引，在hibernate search官方文档上找到的方法是先查询，后逐条索引的方式：</para>
+        <programlisting><![CDATA[
+public void index() {
+    FullTextSession fullTextSession = Search.getFullTextSession(getSession());
+
+    //Transaction tx = fullTextSession.beginTransaction();
+    List<User> users = getSession().createQuery("from User").list();
+
+    for (User user : users) {
+        fullTextSession.index(user);
+    }
+
+    //tx.commit();
+}]]>
+        </programlisting>
+        <para>建立索引之后，就可以进行查询：</para>
+        <programlisting><![CDATA[
+public void search() throws ParseException {
+    FullTextSession fullTextSession = Search
+        .getFullTextSession(getSession());
+    QueryParser parser = new QueryParser("user_name",
+            new StopAnalyzer());
+    parser.setPhraseSlop(0);
+
+    org.apache.lucene.search.Query luceneQuery = parser.parse(
+            "username");
+    org.hibernate.Query hibQuery = fullTextSession.createFullTextQuery(luceneQuery,
+            User.class);
+    List<User> list = hibQuery.list();
+    System.out.println(list.size());
+}]]>
+        </programlisting>
+    </sect1>
+
+
+</chapter>

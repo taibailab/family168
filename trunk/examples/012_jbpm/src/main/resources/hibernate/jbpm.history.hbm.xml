@@ -1,0 +1,75 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="org.jbpm.pvm.internal.history.model" default-access="field">
+
+  <!-- ### HISTORY PROCESS INSTANCE ####################################### -->
+  <class name="HistoryProcessInstanceImpl" table="JBPM_HIST_PROCINST">
+    <id name="processInstanceId" column="ID_">
+      <generator class="assigned" />
+    </id>
+    <version name="dbversion" column="DBVERSION_" />
+
+    <property name="processDefinitionId" column="PROCDEFID_" />
+    <property name="key" column="KEY_" />
+    <property name="startTime" column="START_" type="timestamp" />
+    <property name="endTime" column="END_" type="timestamp" />
+    <property name="duration" column="DURATION_" />
+    <property name="state" column="STATE_" />
+    <property name="endActivityName" column="ENDACTIVITY_" />
+
+    <!-- many-to-one name="processDefinition" 
+                 class="org.jbpm.pvm.internal.model.ProcessDefinitionImpl" 
+                 column="PROCDEF_"
+                 foreign-key="FK_HISTPI_PROCDEF"
+                 index="IDX_HISTPI_PROCDEF" / -->
+                 
+    <set name="historyActivityInstances"
+         cascade="all">
+      <key>
+         <column name="HPI_" />
+      </key>
+      <one-to-many class="HistoryActivityInstanceImpl" />
+    </set>
+                 
+  </class>
+
+  <!-- ### HISTORY PROCESS INSTANCE ####################################### -->
+  <class name="HistoryActivityInstanceImpl" table="JBPM_HIST_ACTINST" discriminator-value="ACT">
+    <id name="dbid" column="DBID_">
+      <generator class="native" />
+    </id>
+    <discriminator column="CLASS_" />
+    <version name="dbversion" column="DBVERSION_" />
+
+    <many-to-one name="historyProcessInstance" 
+                 class="HistoryProcessInstanceImpl" 
+                 column="HPI_"
+                 foreign-key="FK_HAI_HPI"
+                 index="IDX_HAI_HPI" />
+
+    <!-- many-to-one name="activity" 
+                 class="org.jbpm.pvm.internal.model.ActivityImpl" 
+                 column="ACTIVITY_"
+                 foreign-key="FK_HISTAI_ACT"
+                 index="IDX_HISTAI_ACT" / -->
+
+    <property name="type" column="TYPE_" />
+    <property name="executionId" column="EXECUTION_" />
+    <property name="activityName" column="ACTIVITY_NAME_" />
+    <property name="startTime" column="START_" type="timestamp" />
+    <property name="endTime" column="END_" type="timestamp" />
+    <property name="duration" column="DURATION_" />
+    <property name="transitionName" column="TRANSITION_" />
+
+    <subclass name="HistoryAutomaticInstanceImpl" discriminator-value="AUT">
+      <subclass name="HistoryExclusiveInstanceImpl" discriminator-value="EXCL" />
+    </subclass>
+    
+    <subclass name="HistoryTaskInstanceImpl" discriminator-value="TASK">
+      <property name="assignee" column="ASSIGNEE_" />
+      <property name="state" column="STATE_" />
+    </subclass>
+  </class>
+
+</hibernate-mapping>

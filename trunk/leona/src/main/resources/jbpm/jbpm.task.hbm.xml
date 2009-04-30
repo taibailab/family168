@@ -1,0 +1,197 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+      "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+          "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping auto-import="false" package="org.jbpm.pvm.internal.task" default-access="field">
+
+  <!-- ### ASSIGNABLE DEFINITIONS #########################################
+  <class name="AssignableDefinitionImpl" 
+         table="JBPM_ASSIGNDEF"
+         discriminator-value="A" >
+    <id name="dbid" column="DBID_">
+      <generator class="native" />
+    </id>
+    <discriminator><column name="CLASS_" /></discriminator>
+    <version name="dbversion" column="DBVERSION_" />
+
+    <property name="name" column="NAME_"/>
+    <property name="description" column="DESCR_"/>
+    <property name="assigneeExpression" column="ASS_EXPR_"/>
+    <property name="assigneeExpressionLanguage" column="ASS_EXPR_LANG_"/>
+    <property name="candidateUsersExpression" column="CNDUSR_EXPR_"/>
+    <property name="candidateUsersExpressionLanguage" column="CNDUSR_EXPRLANG_"/>
+    <property name="candidateGroupsExpression" column="CNDGRP_EXPR_"/>
+    <property name="candidateGroupsExpressionLanguage" column="CNDGRP_EXPRLANG_"/>
+
+    <many-to-one name="assignmentHandlerDescriptor"
+                 column="ASSHNDLR_DESCR_" 
+                 cascade="all"
+                 class="org.jbpm.pvm.internal.wire.descriptor.AbstractDescriptor"
+                 foreign-key="FK_ASSHNDLR_DESCR"
+                 index="IDX_ASSHNDLR_DESCR" />
+
+    <subclass name="SwimlaneDefinitionImpl" discriminator-value="S">
+    </subclass>
+     -->
+
+    <!-- ### TASK DEFINITION ################################################
+    <subclass name="TaskDefinitionImpl" discriminator-value="T">
+  
+      <property name="priority" column="PRIORITY_"/>
+      <property name="dueDateDuration" column="DUEDATE_"/>
+      
+      <many-to-one name="taskHandlerDescriptor"
+                   column="TSKHNDLRDESCR_" 
+                   cascade="all"
+                   class="org.jbpm.pvm.internal.wire.descriptor.AbstractDescriptor"
+                   foreign-key="FK_TSKHNDLR_DESCR"
+                   index="IDX_TSKHNDLR_DESCR" />
+
+      <many-to-one name="swimlaneDefinition"
+                   column="SWIMLDEF_" 
+                   cascade="all"
+                   class="SwimlaneDefinitionImpl"
+                   foreign-key="FK_TSK_SWIMLDEF"
+                   index="IDX_TSK_SWIMLDEF" />
+  
+      <list name="subTaskDefinitions" cascade="all-delete-orphan">
+        <key column="TASKDEF_" />
+        <list-index column="TASKDEF_IDX_" />
+        <one-to-many class="TaskDefinitionImpl" />
+      </list>
+    </subclass>
+  </class>
+   -->
+
+  <!-- ### TASK ########################################################### -->
+  <class name="TaskImpl" 
+         table="JBPM_TASK"
+         discriminator-value="T">
+    <id name="dbid" column="DBID_">
+      <generator class="native" />
+    </id>
+    <discriminator type="char" column="CLASS_"/>
+    <version name="dbversion" column="DBVERSION_" />
+
+    <property name="id" column="ID_" unique="true" />
+    <property name="name" column="NAME_"/>
+    <property name="description" column="DESCR_"/>
+    <property name="assignee" column="ASSIGNEE_"/>
+    
+    <set name="participations" cascade="all-delete-orphan">
+      <key column="TASK_" />
+      <one-to-many class="ParticipationImpl" />
+    </set>
+    
+    <property name="priority" column="PRIORITY_"/>
+    <property name="create" column="CREATE_"/>
+    <property name="dueDate" column="DUEDATE_"/>
+    <property name="progress" column="PROGRESS_"/>
+    <property name="isSignalling" column="SIGNALLING_"/>
+    
+    <!-- 
+    <many-to-one name="variableMap"
+                 class="org.jbpm.pvm.impl.VariableMap" 
+                 column="VARMAP_" 
+                 foreign-key="FK_TASK_VARMAP"
+                 cascade="all" />
+    -->
+
+    <many-to-one name="superTask"
+                 class="TaskImpl" 
+                 column="SUPERTASK_" 
+                 foreign-key="FK_TASK_SUPERTASK" 
+                 index="IDX_TASK_SUPERTASK" />
+
+    <many-to-one name="execution"
+                 class="org.jbpm.pvm.internal.model.ExecutionImpl" 
+                 column="EXECUTION_" 
+                 foreign-key="none" />
+
+    <many-to-one name="processInstance"
+                 class="org.jbpm.pvm.internal.model.ExecutionImpl" 
+                 column="PROCINST_" 
+                 foreign-key="none" />
+
+    <many-to-one name="swimlane"
+                 class="SwimlaneImpl" 
+                 column="SWIMLANE_" 
+                 foreign-key="FK_TASK_SWIML" />
+
+    <property name="taskDefinitionName" column="TASKDEFNAME_"/>
+
+		<list name="comments" cascade="all-delete-orphan">
+			<key column="TASK_" />
+			<list-index column="TASK_IDX_" />
+			<one-to-many class="org.jbpm.pvm.internal.model.CommentImpl" />
+		</list>
+
+    <set name="subTasks" cascade="all-delete-orphan">
+      <key column="SUPERTASK_" />
+      <one-to-many class="TaskImpl" />
+    </set>
+    
+  </class>
+  
+  <!-- ### PARTICIPANT #################################################### -->
+  <class name="ParticipationImpl" table="JBPM_PARTICIPATION">
+    <id name="dbid" column="DBID_">
+      <generator class="native" />
+    </id>
+    <version name="dbversion" column="DBVERSION_" />
+    
+    <property name="groupId" column="GROUPID_"/>
+    <property name="userId" column="USERID_"/>
+    <property name="type" column="TYPE_" />
+
+    <many-to-one name="task"
+                 class="TaskImpl" 
+                 column="TASK_" 
+                 index="IDX_PART_TASK"
+                 foreign-key="FK_PART_TASK" />
+
+    <many-to-one name="swimlane"
+                 class="SwimlaneImpl" 
+                 column="SWIMLANE_" 
+                 foreign-key="FK_PART_SWIMLANE" />
+
+  </class>
+  
+  <!-- ### SWIMLANE ####################################################### -->
+  <class name="SwimlaneImpl" table="JBPM_SWIMLANE">
+    <id name="dbid" column="DBID_">
+      <generator class="native" />
+    </id>
+    <version name="dbversion" column="DBVERSION_" />
+    
+    <property name="name" column="NAME_"/>
+    <property name="assignee" column="ASSIGNEE_"/>
+
+    <!-- many-to-one name="swimlaneDefinition"
+                 class="SwimlaneDefinitionImpl" 
+                 column="SWIMLANEDEF_" 
+                 foreign-key="FK_SWIMLANE_DEF" / -->
+
+    <many-to-one name="execution"
+                 class="org.jbpm.pvm.internal.model.ExecutionImpl" 
+                 column="EXECUTION_" 
+                 foreign-key="none" />
+
+    <set name="participations" cascade="all-delete-orphan">
+      <key column="SWIMLANE_" />
+      <one-to-many class="ParticipationImpl" />
+    </set>
+    
+  </class>
+
+  
+  <!-- ### QUERIES ######################################################## -->
+
+  <query name="findTasks">
+    <![CDATA[
+     select task
+     from org.jbpm.pvm.internal.task.TaskImpl as task
+    ]]>
+  </query>
+
+</hibernate-mapping>

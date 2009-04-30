@@ -1,0 +1,642 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter xml:id="selenium">
+    <title>selenium<emphasis>（待整理）</emphasis></title>
+
+    <sect1>
+        <title>selenium功能测试</title>
+        <sect2>
+            <title>概述</title>
+            <para>Selenium是非常非常有用的，对JavaScript支持良好的Web层功能测试，集成测试工具。 </para>
+            <para>Selenium分为Core与RC(Remote Controll)两个部分，其中Core是基础的，直接在HTML Table里编写测试代码的模块，而Remote Controll则支持用Java等语言编写测试用例，并自动调用FireFox1.5来运行。</para>
+            <para>具体的语法见http://www.openqa.org/selenium-core/usage.html</para>
+        </sect2>
+        <sect2>
+            <title>Better Practice</title>
+            <para>Never use Selenium FIT mode</para>
+            <para>Selenium分为两种运行模式，Driven Mode(现在叫Selenium Remote Control)和FIT Mode(现在叫Selenium Core)。</para>
+            <para>FIT Mode顾名思义，就是类似FIT Testing Framework那种使用方式，主要用于QA等非技术人员编写Web应用的功能测试。FIT Mode的Selenium测试使用HTML来组织测试用例。例如我要测试一个web应用的登陆功能。我可能写出这样的HTML 表格。</para>
+            <programlisting><![CDATA[
+ 1  < table >
+ 2  < tr >
+ 3    < td > open </ td >
+ 4           < td > http://localhost:8080/login </ td >
+ 5           < td ></ td >
+ 6  </ tr >
+ 7  < tr >
+ 8    < td > type </ td >
+ 9           < td > id=username </ td >
+10           < td > someuser </ td >
+11  </ tr >
+12  < tr >
+13    < td > type </ td >
+14           < td > id=password </ td >
+15           < td > password </ td >
+16  </ tr >
+17  < tr >
+18    < td > click </ td >
+19           < td > id=login_button </ td >
+20           < td ></ td >
+21  </ tr >
+22  < tr >
+23    < td > assertTextPresent </ td >
+24           < td > Welcome to xxxx </ td >
+25           < td ></ td >
+26  </ tr >
+27  </ table > ]]>
+            </programlisting>
+            <para>不同于FIT，Selenium内置了一系列的命令，如上例中的open, type, click以及assertTextPresent，因此QA可以完全抛开DEV独立地编写测试(FIT需要DEV提供Behavior Fixture)。因此FIT Mode是相当容易使用的，哪怕不会使用HTML的QA，也可以使用FrontPage画出三列表格，依次填入数据。</para>
+            <para>然而对于大多数team而言——尤其是敏捷team，FIT Mode平易的外表下是令人恐惧的泥沼。大多数团队往往选择使用Selenium作为功能测试和集成测试工具而不仅仅是QA测试工具，在不同的迭代间遇到功能流程或UI变化时，必须要重构Selenium测试，或者说，Functional Test Migration。令人遗憾的是，HTML based的Selenium FIT Testing的重构竟然令人难以置信的困难。我们可以使用include等Selenium FIT扩展，使得它可以重用详细的功能（Log in， Log out诸如此类）。即便如此，在一个真实的项目中，Selenium Test的数量往往在200-500之间(我目前所处的项目在改用Driven Mode前已达350+)，对于这么大基数的Selenium测试，手工重构几乎是不可想象的，而目前尚没有HTML代码重构工具。即便存在泛泛意义上的HTML重构工具，对于Selenium测试重构的有效性尚待商榷。而使用Driven Mode上述代码可以写为:</para>
+            <programlisting><![CDATA[
+1   public   void  testShouldShowAWeclomeMessageAfterUserLoggedIn()   {
+2      selenium.open( " http://localhost:8080/login " );
+3      selenium.type( " id=username " , " someuser " );
+4      selenium.type( " id=password " ,  " password " );
+5      selenium.click( " id=login_button " );
+6      assertTrue(selenium.isTextPresent( " Welcome to xxxx " ));
+7 } ]]>
+            </programlisting>
+            <para>很自然，一个训练有素的程序员会重构出如下代码:</para>
+            <programlisting><![CDATA[
+1   public   void  login(String username, String password)   {
+ 2      selenium.open( " http://localhost:8080/login " );
+ 3      selenium.type( " id=username " ,username);
+ 4      selenium.type( " id=password " , password);
+ 5      selenium.click( " id=login_button " );
+ 6 }
+ 7
+ 8    public   void  testShouldShowAWeclomeMessageAfterUserLoggedIn()   {
+ 9      login( " someuser " ,  " password " );
+10      assertTrue(selenium.isTextPresent( " Welcome to xxxx " ));
+11 } ]]>
+            </programlisting>
+            <para>之后无论是pull up到公共基类还是extact到Utils class都是很容易的事情。由于Java在代码重构上便利，Java Selenium Remote Control成为使用Selenium的最佳方式。在这一点上，纵使Ruby语法上比Java简单灵活得多，它仍不是编写Selenium测试的最佳载体(当然一个经过精心设计的ruby selenium dsl wrapper还是具有非凡的价值的，这个我们后面会涉及到)。</para>
+        </sect2>
+        <sect2>
+            <title>Using the name user, system, page instead of selenium</title>
+            <para>观察上面提到的代码，其中使用selenium来操纵web应用的行为，这在Remote Control里是常见的做法，但是仍然不够好，我们可以做一些小的变化以得到更好的测试:</para>
+            <programlisting><![CDATA[
+ 1   protected   void  setup()   {
+ 2      selenium  =     //  intialize selenium instance
+ 3        user  =  selenium;
+ 4      currentPage  =  selenium;
+ 5 }
+ 6
+ 7    public   void  login(String username, String password)   {
+ 8      user.open( " http://localhost:8080/login " );
+ 9      user.type( " id=username " ,username);
+10      user.type( " id=password " , password);
+11      user.click( " id=login_button " );
+12 }
+13
+14    public   void  testShouldShowAWeclomeMessageAfterUserLoggedIn()   {
+15      login( " some guy " ,  " password " );
+16      assertTrue(currentPage.isTextPresent( " Welcome to xxxx " ));
+17 } ]]>
+            </programlisting>
+            <para>基本上这只不过是"另一种写法"而已，但是它更好的表达了"用户的行为"，如login代码所示。以及"系统的正确相应"，即currentPage.isTextPresent()。这种是典型的对编译器无意义对人有意义的代码，也就是普遍意义上好的代码。</para>
+        </sect2>
+        <sect2>
+            <title>Creating a DSL base on your test codes</title>
+            <para>懂得HTML的QA可以在没有DEV的帮助下使用Selenium FIT mode，然而却不能在没有DEV的帮助下使用Driven Mode。于是最自然也是最fashion的做法，就是在已有的test codes之上提供Testing DSL或者Scripting Language，让FIT mode变得更加FIT。这方面内容是一个更大的主题，以后再详细展开吧。</para>
+        </sect2>
+        <sect2>
+            <title>Hacking Selenium Object to support FIT command</title>
+            <para>Selenium FIT mode和RC mode下的命令有些许差异，比如FIT中的assertTextPresent，在RC中变成了isTextPresent。同样还有FIT中最实用的命令clickAndWait，在RC中变成了click和waitForPageToLoad。在RC中使用FIT mode中的命令也非难事，找到com.thoughtworks.selenium.Selenium，添加方法:</para>
+            <programlisting><![CDATA[
+public   void  doCommand(String commmand, String parameters); ]]>
+            </programlisting>
+            <para>然后在com.thoughtworks.selenium.DefaultSelenium中添加实现:</para>
+            <programlisting><![CDATA[
+1   public   void  doCommand(String commmand, String parameters)   {
+2      String[] paras  =   new  String[]  { "" , "" , "" }
+3      for  ( int  i  =   0 ; i  <  parameters.length  &&  i  <   3 ; i ++ )
+4        paras[i]  =  parameters[i];
+5     commandProcessor.doCommand(command, paras);
+6 } ]]>
+            </programlisting>
+            <para>然后试验一下:</para>
+            <programlisting><![CDATA[
+selenium.doCommand( " clickAndWait " ); ]]>
+            </programlisting>
+            <para>在我们使用纯RC mode之前曾经用过一段中间方案，将rc code转化为fit code来跑(因为rc不支持https)，由于不是真正的rc mode，像isTextPresent之类的方法都没有办法使用，只能使用FIT mode command。因此如果因为一些特殊的原因(https, chrome起不来，hta bug多等等)，你没有办法使用RC mode，但是有希望得到RC可重构的好处，那么这个tricky的技巧倒是不错的选择。</para>
+        </sect2>
+        <sect2>
+            <title>Using chrome and IE hta lanucher to support https</title>
+        </sect2>
+        <sect2>
+            <title>Run test using different browser lanucher to test browser compatibility</title>
+            <para>这两个都是和browser lanucher相关的，Selenium和JWebUnit最大的不同在于它使用真实的浏览器来跑测试，从而可以更加真实地考察系统在不同浏览器中的表现。因此使用不同的浏览器lanucher来运行测试，可以更好测试应用的浏览器兼容性，这对于web 2.0应用而言是很有帮助的。此外，使用rc提供的试验性lanucher，chrome和hta可以解决跨domain测试和https的问题。不过目前hta还是有很多bug的，推荐使用chrome。当然，最希望的还是澳洲的同事可以早日在selenium里提供https支持。</para>
+        </sect2>
+    </sect1>
+
+    <sect1>
+        <title>Selenium指南</title>
+        <para>网站：http://www.openqa.org</para>
+        <para> 国内大部分公司还依靠QA组的MM看着测试用例Word文档来手工测试。如果钱人有限，又想改变现状，最实在的自动化测试建议是先编写直接访问数据库的商业层单元测试用例和 基于Selenium的集成测试用例。</para>
+        <para>在徐昊指导下，SpringSide2.0 已经全面应用Selenium。</para>
+        <para>Selenium能被选为最好集成测试、回归测试方案的原因是：</para>
+        <orderedlist>
+            <listitem>
+                <para>Selenium IDE ，一个FireFox plugin，能自动记录用户的操作，生成测试脚本。</para>
+            </listitem>
+            <listitem>
+                <para>生成的测试脚本可以用Selenium Core手工执行，也能基于Selenium RC放入Java，C#，Ruby的单元测试用例中自动运行。</para>
+            </listitem>
+            <listitem>
+                <para>测试用例调用实际的浏览器(如IE、FireFox)来执行测试。和有些开源方案自行实现Web解释引擎相比，实际的浏览器能模拟更多用户交互和JS语法，顺便还可以测试各浏览器兼容性。</para>
+            </listitem>
+            <listitem>
+                <para>测试脚本语法非常简单，见后。</para>
+            </listitem>
+        </orderedlist>
+        <sect2>
+            <title>使用Selenium IDE生成脚本</title>
+            <para>Selenium IDE是一个Firefox1.5插件，下载后用Firefox将其打开。</para>
+            <para>工具->Selenium IDE，点击红色的recorder按钮开始录制，在网站中乱点时可以即时看到每个动作的脚本。</para>
+            <para>切换Format：显示 HTML，Java，C#，Ruby 语法的脚本。 option里还可以设定Java里Selenium变量的名称，如设为user，使脚本显示为user.input("name","foo");user.type("addButton")，阅读比较自然。</para>
+        </sect2>
+        <sect2>
+            <title>测试用例与测试脚本</title>
+            <programlisting><![CDATA[
+public   class  UserManagerTest  extends  TestCase
+{
+     private  Selenium user;     public   void  setUp()  throws  Exception {
+       user =   new  DefaultSelenium( " localhost " , SeleniumServer.DEFAULT_PORT,  " *iexplore " ,  " http://localhost:8080 " );
+       user.start();
+     }     protected   void  tearDown()  throws  Exception {
+        user.stop();
+     }
+
+    public   void  testUserEdit() {
+      user.open( " /helloworld " );
+      user.click( " //a[contains(@href, 'user.do?id=0')] " );
+      user.waitForPageToLoad( " 3000 " );
+      user.type( " user.name " ,  " calvin " );
+      user.click( " save " );
+      user.waitForPageToLoad( " 3000 " );
+      assertTrue(user.isTextPresent( " calvin " ));
+   }]]>
+            </programlisting>
+            <para>留意setUp中的"*iexplore"参数，设定使用IE作为测试浏览器；如果设为"*firefox"，就会在PATH中查找*firefox.exe。</para>
+            <para>注意，Selenium使用IE时的Proxy机制比较特殊，如果你同时在本机ADSL modem拨号上网，要先断网。</para>
+            <para>脚本中按徐昊的指导，使用user 作为Selenium的变量名，使用例更加易读。</para>
+            <para>Selenium RC里并没有为Java单列一个函数参考手册，需要阅读公共的Selenium Refrences，再使用同名对应的java函数。</para>
+            <para>所有函数都有一个locator参数，将操作付诸某个页面上的对象。支持ID，DOM语法，XPath语法，CSS selector语法等，详见参考手册。</para>
+            <para><![CDATA[如果不会写，最好的老师就是Selenium IDE。比如那句点击<a href="user.do?id=0" />修改</a>，就是用IDE得到user.click("//a[contains(@href, 'user.do?id=0')]")的XPath语句。]]></para>
+        </sect2>
+        <sect2>
+            <title>Ant的运行脚本</title>
+            <para><![CDATA[我写的Ant测试脚本一个重要特征是使用<parallel> 并行容器节点，一边同时打开tomcat 和selenium server，一边等待两者打开后执行JUnit测试。]]></para>
+            <para>如果不使用并行节点，而是用spawn=yes属性后台启动tomcat，则屏幕里看不到tomcat信息，如果测试意外终止的话，也不能关闭tomcat。</para>
+            <programlisting><![CDATA[
+< parallel >
+     < antcall  target ="tomcat.start" />
+     < antcall  target ="selenium.server.start" />
+     < sequential >
+         < waitfor  maxwait ="10"  maxwaitunit ="minute"  checkevery ="1"  checkeveryunit ="second" >
+             < http  url =http://localhost:8080/>
+         </waitfor >
+         < waitfor  maxwait ="10"  maxwaitunit ="minute"  checkevery ="1"  checkeveryunit ="second" >
+             < socket  server ="localhost"  port ="4444" />
+        </ waitfor >
+        < junit .. />
+        < antcall  target ="tomcat.stop" />
+     </ sequential >
+</ parallel >]]>
+            </programlisting>
+        </sect2>
+        <sect2>
+            <title>SpringSide 中的FunctionalTestCase基类</title>
+            <para>SpringSide中抽象了一个FunctionalTestCase基类，抽取了setUp() ，tearDown()函数中selenium server 开闭操作。</para>
+            <para>其中浏览器类型默认为"*iexplore", 基本url默认为http://localhost:8080</para>
+            <para>用户可以在Classpath 根目录中放置selenium.properties 文件，重新设定selenium.explorer 和selenium.baseurl 变量。</para>
+        </sect2>
+    </sect1>
+
+    <sect1>
+        <title>Selenium测试Ajax项目</title>
+        <sect2>
+            <title>匆匆一瞥 Selenium</title>
+            <para>在典型的在线商店中，需要用户输入或选择众多步骤后才可以完成整个购物流程。作为web应用的开发者，你如何保证你程序的质量和正确性呢？如果能有办法测试你功能的正确性，那问题就迎刃而解了，但如何做到呢?</para>
+            <para>Selenium 是一个由ThoughtWorks做的专门为web应用所做的非常有效的功能测试工具。Selenium 的 tests 直接在浏览器里跑，就像用户真的在操作一样。Selenium 可运行 Windows, Linux, 和 Macintosh 的各种浏览器， 如 Internet Explorer, Mozilla 和 Firefox。</para>
+            <para>看看Selenium 的  online demo 。点击右上角的"All"按钮来启动运行test cases， 如无意其外，你将看到所有都是绿行。注意action的绿色是会比assertions浅的，这是因为他们测试的所有东西都只是verify或assert 命令。如果有一个assertion 失败了，则那行命令会变为红色，并且Selenium 会停止运行。如果verify 命令失败了，那行命令也会变为红色，但是不会让测试停下来。</para>
+            <para><![CDATA[在 Selenium 中的Test suites 和 cases 实际上是由 HTML 写成的， 它们只是很简单的 HTML <table>s。 test suite 中没行都只是关联了一个test case, 例如：]]></para>
+            <programlisting><![CDATA[
+<tr><td><a href="MyTest.html" >MyTest</a></td></tr>]]>
+            </programlisting>
+            <para>test-case实际上是由 "Selenese" 写成的 HTML 文档，里面包有一个table，3个列，所有的命令最多只有两个参数，所以足够位置摆放。一个典型的test case像这样：</para>
+            <para>当你开始运行测试 (例如 按 "All"按钮), Selenium 的 TestRunner 会自动解释 HTML 格式的 test-case， 并运行你的web应用，并在页面下方的框架中显示运行的情形。</para>
+            <para>Selenium 允许你通过在浏览器里模拟用户的行为来进行测试。这当然不代表它可以代替unit-testing，只是我们通常会用它来进行web应用的功能测试。它也可以被加入持续继承测试(continuous-integration)中，作为常规的自动回归测试(regression testing)。如果想更深入了解Selenium, 请参看在线文档 "Selenium: Usage".</para>
+        </sect2>
+        <sect2>
+            <title>开始测试 Ajax</title>
+            <para>在你的web应用功能是用JavaScript实现时，Selenium 就显得极为有用了。</para>
+            <para>Ajax, 是Asynchronous JavaScript and XML 的简称，是web应用中的一种web 交互技术。它可以实现在页面不需要刷新的情况下，在后台与服务器交互少量数据，并即时改变页面内容。这意味着网页看起来更实时，更有动态和更实用。</para>
+        </sect2>
+        <sect2>
+            <title>Ajax 中指示正在"读取数据"的标签</title>
+            <para>刚才那句话是对Ajax的技术定义，对于我们大多数人来说，Ajax意味着页面向GMail 或 Flickr 那样。当你点一个连接时，它不会产生页面刷新，而是页面会和服务器交互后返回来再更改一部分页面。在点击连接和看到结果之间延迟的这段时间，让测试看起来那么的棘手。</para>
+            <para>让我们来假设我们的页面包含了一个text field 和一个 button。text field 的初始值是oldValue。 如果你点击button， Ajax就会启动，并把text field的值改为 "newValue", 而没有刷新任何页面。那我们怎么去测试它呢？ 你会很自然的去打开页面， 点击button, 然后检查text field。但是你在Selenium中的这个test case失败了！</para>
+            <para>测试失败的原因也许并不明显。这个意外的发生是因为Ajax的异步性，它并不会马上从服务器上得到结果。所以当你按下button时，Selenium 就开始马上检查是否有改变值。Selenium 并不知道需要去等待结果。那我们如何去让这个测试在Ajax下生效呢？</para>
+            <para>我们如何去让Selenium 等待返回的结果呢？ 有些人认为解决这个问题的办法是用 clickAndWait 命令来代替 click 命令；但是在使用以 "AndWait" 为后序的命令时，Selenium 会等待页面刷新。但是明显的，页面不会刷新，这样就使得Selenium 永远在等待了。明显这个方法行不通。</para>
+            <para>另外一个方法是在 click 和 assertValue 之间加入暂停时间。让它暂停5秒，让服务器有足够的时间返回相应。这种方法在大多数时候是可行的，但是如果服务器相应时间大于5秒，如网速很慢，测试机重启等的时候，就会失败了。你或许会加大等待时间来保证更正确，但是这样明显会使得你的测试越来越慢。所以明显的这个办法并没有按需而慢下拉，所以这也不是最佳的解决办法。</para>
+            <para>幸运的是，Selenium 现在已经提供了这种我们非常需要的技术支持。当field 的值在单前页面改变时，你能用 waitForValue 命令去让 Selenium 等待到这个期望值出现为止。</para>
+            <para>所以为了让刚才的失败的测试通过，你需要把它其中的assertValue 命令改变如下：</para>
+            <para>当执行这个命令的时候, Selenium 会暂停执行当前的test case 和等待所期待的值。当新的值 "newValue" 出现在 text field 时， 测试再次开始。但你需要注意的是，如果你写错期望值了， 那 Selenium 将会等待这个值30分钟。</para>
+            <para>就如你想到的那样，Selenium 已经提供了很多测试Ajax 效果的命令。例如，如果你想等待某些文本会在页面上出现，那你可用waitForText 命令;如果你想检查当前页面的Title是否有改变，则用waitForTitle;  如果你想检查某个 HTML 元素是否有在页面中被移除，应用 waitForElementNotPresent 命令。 实际上，对于每个Selenium Accessor, 都会有相应的 waitForXxxx 和 waitForNotXxxx 命令。当你用 verifyXxxx or assertXxxx 去检查某些东西时，总可以有 waitForXxxx 去测试异步效果。</para>
+            <para>如果预先确定了 waitForXxxx 和 waitForNotXxxx 命令但又达不到预期，那会怎样呢？ 对于这种情况，我们有waitForCondition 命令去指定一个Javascript 的真假表达式(Boolean expression)， 然 Selenium 去等待表达式的值为true为止。waitForCondition 命令的格式是</para>
+            <para>waitForCondition  script  timeout (in ms) </para>
+            <para>这样在测试复杂的 Ajax 效果时就更为便捷了。</para>
+            <para>实际上如果你深入研究 Selenium 的 source code 的话， 你会发现所有前序为 waitForXxxx 和 waitForNotXxxx 的命令都是继承了waitForCondition 的。 Grig Gheorghiu 写了一篇关于这方面的blog: Ajax testing with Selenium using waitForCondition. 当他写这篇文章时，waitForCondition 仅仅是用户自己扩展Selenium， 现在已经成为Selenium 核心代码的一部分了。</para>
+        </sect2>
+        <sect2>
+            <title>总结</title>
+            <para>在这篇简短的文章中， 我们介绍了Selenium，一个web应用测试工具。同样地，我们也讨论了如何去用waitForXxxx 命令来测试 Ajax 应用，也演示了如何用 Selenium 去测试一些Ajax 异步效果。</para>
+            <para>如果你想知道更多有关于 waitForXxxx 命令， Selenium 的开发者提供了一些简单的测试例子 演示了如何测试 Ajax， 如编辑替换，自动填充和拖拉效果等。这些例子是基于script.aculo.us, 来做的， 它是大家都非常熟悉的 Ajax library- prototype.js的子项目。</para>
+            <para>(自 http://www.infoq.com/articles/testing-ajax-selenium , cac译。注：之前也翻译了一篇很详细的 Selenium文档， 见Selenium中文手册: http://wiki.springside.org.cn/display/springside/SeleniumReference )</para>
+        </sect2>
+    </sect1>
+
+    <sect1>
+        <title>selenium中文手册</title>
+        <sect2>
+            <title>Commands (命令)</title>
+            <itemizedlist>
+                <listitem>
+                    <para>Action</para>
+                    <para>对当前状态进行操作</para>
+                    <para>失败时，停止测试</para>
+                </listitem>
+                <listitem>
+                    <para>Assertion</para>
+                    <para>校验是否有产生正确的值</para>
+                </listitem>
+                <listitem>
+                    <para>Element Locators</para>
+                    <para>指定HTML中的某元素</para>
+                </listitem>
+                <listitem>
+                    <para>Patterns</para>
+                    <para>用于模式匹配</para>
+                </listitem>
+            </itemizedlist>
+            <sect3>
+                <title>Element Locators (元素定位器)</title>
+                <itemizedlist>
+                    <listitem>
+                        <para>id=id</para>
+                        <para>id locator 指定HTML中的唯一id的元素</para>
+                    </listitem>
+                    <listitem>
+                        <para>name=name</para>
+                        <para>name locator指定 HTML中相同name的元素中的第一个元素</para>
+                    </listitem>
+                    <listitem>
+                        <para>identifier=id</para>
+                        <para>identifier locator 首先查找HTML是否存在该id的元素, 若不存在，查找第一个该name的元素</para>
+                    </listitem>
+                    <listitem>
+                        <para>dom=javascriptExpression</para>
+                        <para>dom locator用JavaScript表达式来定位HTML中的元素,注意必须要以"document"开头</para>
+                        <para>例如:</para>
+                        <para>dom=document.forms['myForm'].myDropdown</para>
+                        <para>dom=document.images[56]</para>
+                    </listitem>
+                    <listitem>
+                        <para>xpath=xpathExpression</para>
+                        <para>xpath locator用 XPath 表达式来定位HTML中的元素,必须注意要以"//"开头</para>
+                        <para>例如：</para>
+                        <para>xpath=//img[@alt='The image alt text']</para>
+                        <para>xpath=//table[@id='table1']//tr[4]/td[2]</para>
+                    </listitem>
+                    <listitem>
+                        <para>link=textPattern</para>
+                        <para>link locator 用link来选择HTML中的连接或锚元素</para>
+                        <para>例如:</para>
+                        <para>在没有locator前序的情况下 Without a locator prefix, Selenium uses:</para>
+                        <para>如果以"document."开头，则默认是使用 dom locator，如果是以"//"开头，则默认使用xpath locator,其余情况均认作identifier locator</para>
+                    </listitem>
+                </itemizedlist>
+            </sect3>
+            <sect3>
+                <title>String Matching Patterns (字符串匹配模式)</title>
+                <itemizedlist>
+                    <listitem>
+                        <para>glob:patthern</para>
+                        <para>glob模式，用通配符"*"代表任意长度字符，"?"代表一个字符 </para>
+                    </listitem>
+                    <listitem>
+                        <para>regexp:regexp</para>
+                        <para>正则表达式模式，用JavaScript正则表达式的形式匹配字符串</para>
+                    </listitem>
+                    <listitem>
+                        <para>exact:string</para>
+                        <para>精确匹配模式，精确匹配整个字符串，不能用通配符</para>
+                    </listitem>
+                    <listitem>
+                        <para>在没有指定字符串匹配前序的时候，selenium 默认使用golb 匹配模式</para>
+                    </listitem>
+                </itemizedlist>
+            </sect3>
+            <sect3>
+                <title>Select Option Specifiers (Select选项指定器)</title>
+                <itemizedlist>
+                    <listitem>
+                        <para>label=labelPattern</para>
+                        <para>通过匹配选项中的文本指定选项</para>
+                        <para>例如：label=regexp:^[Oo]ther </para>
+                    </listitem>
+                    <listitem>
+                        <para>value=valuePattern</para>
+                        <para>通过匹配选项中的值指定选项</para>
+                        <para>例如：value=other </para>
+                    </listitem>
+                    <listitem>
+                        <para>通过匹配选项的id指定选项</para>
+                        <para>例如: id=option1 </para>
+                    </listitem>
+                    <listitem>
+                        <para>index=index</para>
+                        <para>通过匹配选项的序号指定选项，序号从0开始</para>
+                        <para>例如：index=2</para>
+                    </listitem>
+                    <listitem>
+                        <para>在没有选项选择前序的情况下，默认是匹配选项的文本</para>
+                    </listitem>
+                </itemizedlist>
+            </sect3>
+        </sect2>
+        <sect2>
+            <title>Actions</title>
+            <para>描述了用户所会作出的操作。</para>
+            <para>Action 有两种形式: action和actionAndWait, action会立即执行，而actionAndWait会假设需要较长时间才能得到该action的相响，而作出等待，open则是会自动处理等待时间。</para>
+            <sect3>
+                <title>click</title>
+                <para>click(elementLocator)</para>
+                <para>点击连接,按钮，复选和单选框</para>
+                <para>如果点击后需要等待响应，则用"clickAndWait"</para>
+                <para>如果是需要经过JavaScript的alert或confirm对话框后才能继续操作，则需要调用verify或assert来告诉Selenium你期望对对话框进行什么操作。</para>
+                <para>click - aCheckbox </para>
+                <para>clickAndWait  - submitButton  </para>
+                <para>clickAndWait  - anyLink  </para>
+            </sect3>
+            <sect3>
+                <title>open</title>
+                <para>open(url)</para>
+                <para> 在浏览器中打开URL,可以接受相对和绝对路径两种形式</para>
+                <para>注意：该URL必须在与浏览器相同的安全限定范围之内 </para>
+                <para>open - /mypage </para>
+                <para>open - http://localhost/</para>
+            </sect3>
+            <sect3>
+                <title>type</title>
+                <para>type(inputLocator, value)</para>
+                <para>模拟人手的输入过程，往指定的input中输入值</para>
+                <para>也适合给复选和单选框赋值</para>
+                <para>在这个例子中，则只是给钩选了的复选框赋值，注意，而不是改写其文本 </para>
+                <para>type - nameField - John Smith</para>
+                <para>typeAndWait - textBoxThatSubmitsOnChange - newValue</para>
+            </sect3>
+            <sect3>
+                <title>select</title>
+                <para>select(dropDownLocator, optionSpecifier)</para>
+                <para>根据optionSpecifier选项选择器来选择一个下拉菜单选项</para>
+                <para> 如果有多于一个选择器的时候，如在用通配符模式，如"f*b*",或者超过一个选项有相同的文本或值，则会选择第一个匹配到的值 </para>
+                <para>select - dropDown - Australian Dollars  </para>
+                <para>select - dropDown - index=0  </para>
+                <para>selectAndWait - currencySelector - value=AUD  </para>
+                <para>selectAndWait - currencySelector - label=Auslian D*rs  </para>
+            </sect3>
+            <sect3>
+                <title>goBack,close</title>
+                <para>goBack()</para>
+                <para>模拟点击浏览器的后退按钮</para>
+                <para>close()</para>
+                <para>模拟点击浏览器关闭按钮</para>
+            </sect3>
+            <sect3>
+                <title>selectWindow</title>
+                <para>select(windowId)</para>
+                <para>选择一个弹出窗口</para>
+                <para>当选中那个窗口的时候，所有的命令将会转移到那窗口中执行 </para>
+                <para>selectWindow - myPopupWindow  </para>
+                <para>selectWindow - null  </para>
+            </sect3>
+            <sect3>
+                <title>pause</title>
+                <para>pause(millisenconds)</para>
+                <para>根据指定时间暂停Selenium脚本执行</para>
+                <para>常用在调试脚本或等待服务器段响应时 </para>
+                <para>pause - 5000  </para>
+                <para>pause - 2000  </para>
+            </sect3>
+            <sect3>
+                <title>fireEvent</title>
+                <para>fireEvent(elementLocatore,evenName)</para>
+                <para>模拟页面元素事件被激活的处理动作</para>
+                <para>fireEvent - textField - focus  </para>
+                <para>fireEvent - dropDown - blur  </para>
+            </sect3>
+            <sect3>
+                <title>waitForCondition</title>
+                <para>waitForCondition(JavaScriptSnippet,time)</para>
+                <para>在限定时间内，等待一段JavaScript代码返回true值，超时则停止等待 </para>
+                <para>waitForCondition - var value=selenium.getText("foo"); value.match(/bar/); - 3000  </para>
+            </sect3>
+            <sect3>
+                <title>waitForValue</title>
+                <para>waitForValue(inputLocator, value)</para>
+                <para>等待某input(如hidden input)被赋予某值，</para>
+                <para>会轮流检测该值，所以要注意如果该值长时间一直不赋予该input该值的话，可能会导致阻塞 </para>
+                <para>waitForValue - finishIndication - isfinished  </para>
+            </sect3>
+            <sect3>
+                <title>store,stroreValue</title>
+                <para>store(valueToStore, variablename)</para>
+                <para>保存一个值到变量里。</para>
+                <para>该值可以由自其他变量组合而成或通过JavaScript表达式赋值给变量 </para>
+                <para>store - Mr John Smith - fullname  </para>
+                <para>store - $.｛title｝ $.｛firstname｝ $.｛suname｝ - fullname  </para>
+                <para>store - javascript.｛Math.round(Math.PI*100)/100｝-  PI  </para>
+                <para>storeValue - inputLocator - variableName  </para>
+                <para>把指定的input中的值保存到变量中</para>
+                <para>storeValue - userName - userID  </para>
+                <para>type - userName - $.｛userID｝ </para>
+            </sect3>
+            <sect3>
+                <title>storeText, storeAttribute</title>
+                <para>storeText(elementLocator, variablename)</para>
+                <para>把指定元素的文本值赋予给变量 </para>
+                <para>storeText - currentDate - expectedStartDate  </para>
+                <para>verifyValue - startDate - $.｛expectedStartDate｝ </para>
+            </sect3>
+            <sect3>
+                <title>storeAttribute(.｛｝elementLocator@attributeName,variableName.｛｝)</title>
+                <para>把指定元素的属性的值赋予给变量</para>
+                <para>storeAttribute  input1@class   classOfInput1  </para>
+                <para>verifyAttribute  input2@class  $.｛classOfInput1｝ </para>
+            </sect3>
+            <sect3>
+                <title>chooseCancel.., answer..</title>
+                <para>chooseCancelOnNextConfirmation()</para>
+                <para>当下次JavaScript弹出confirm对话框的时候,让selenium选择Cancel</para>
+                <para>如果没有该命令时，遇到confirm对话框Selenium默认返回true，如手动选择OK按钮一样 </para>
+                <para>chooseCancelOnNextConfirmation </para>
+                <para>如果已经运行过该命令，当下一次又有confirm对话框出现时，也会同样地再次选择Cancel</para>
+                <para>answerOnNextPrompt(answerString)</para>
+                <para>在下次JavaScript弹出prompt提示框时，赋予其anweerString的值，并选择确定</para>
+                <para>answerOnNextPrompt  Kangaroo  </para>
+            </sect3>
+        </sect2>
+        <sect2>
+            <title>Assertions</title>
+            <para>允许用户去检查当前状态。两种模式: Assert 和 Verify， 当Assert失败，则退出测试；当Verify失败，测试会继续运行。</para>
+            <sect3>
+                <title>assertLocation, assertTitle</title>
+                <para>assertLocation(relativeLocation)</para>
+                <para>判断当前是在正确的页面 verifyLocation  /mypage  </para>
+                <para>assertLocation  /mypage  </para>
+            </sect3>
+            <sect3>
+                <title>assertTitle(titlePattern)</title>
+                <para>检查当前页面的title是否正确 verifyTitle  My Page </para>
+                <para>assertTitle  My Page  </para>
+            </sect3>
+            <sect3>
+                <title>assertValue</title>
+                <para>assertValue(inputLocator, valuePattern)</para>
+                <para>检查input的值</para>
+                <para>对于 checkbox或radio，如果已选择，则值为"on",反之为"off"</para>
+                <para>verifyValue  nameField  John Smith  </para>
+                <para>assertValue  document.forms[2].nameField  John Smith  </para>
+            </sect3>
+            <sect3>
+                <title>assertSelected, assertSelectedOptions</title>
+                <para>assertSelected(selectLocator, optionSpecifier)</para>
+                <para>检查select的下拉菜单中选中的选型是否和optionSpecifer(Select选择选项器)的选项相同</para>
+                <para>verifySelected  dropdown2  John Smith  </para>
+                <para>verifySelected  dorpdown2  value=js*123</para>
+                <para>assertSelected  document.forms[2].dropDown  label=J*Smith</para>
+                <para>assertSelected  document.forms[2].dropDown  index=0</para>
+            </sect3>
+            <sect3>
+                <title>assertSelectOptions(selectLocator, optionLabelList)</title>
+                <para>检查下拉菜单中的选项的文本是否和optionLabelList相同</para>
+                <para>optionLabelList是以逗号分割的一个字符串</para>
+                <para>verifySelectOptions  dropdown2  John Smith,Dave Bird  </para>
+                <para>assertSelectOptions  document.forms[2].dropdown  Smith,J,Bird,D</para>
+            </sect3>
+            <sect3>
+                <title>assertText</title>
+                <para>assertText(elementLocator,textPattern)</para>
+                <para>检查指定元素的文本</para>
+                <para>只对有包含文本的元素生效</para>
+                <para>对于Mozilla类型的浏览器，用textContent取元素的文本，对于IE类型的浏览器，用innerText取元素文本</para>
+                <para>verifyText  statusMessage  Successful  </para>
+                <para>assertText  //div[@id='foo']//h1  Successful  </para>
+            </sect3>
+            <sect3>
+                <title>assertAttribute(.｛｝elementLocator@attributeName.｛｝, ValuePattern)</title>
+                <para>检查当前指定元素的属性的值</para>
+                <para>verifyAttribute  txt1@class  bigAndBlod </para>
+                <para>assertAttribute  document.images[0]@alt  alt-text  </para>
+                <para>verifyAttribute  //img[@id='foo']/alt  alt-text  </para>
+            </sect3>
+            <sect3>
+                <title>assertTextPresent, etc.</title>
+                <para>assertTextPresent(text)</para>
+                <para>assertTextNotPresent(text)</para>
+                <para>assertElementPresent(elementLocator)</para>
+                <para>  verifyElementPresent    submitButton  </para>
+                <para> assertElementPresent    //img[@alt='foo']</para>
+                <para>assertElementNotPresent(elementLocator)  </para>
+            </sect3>
+            <sect3>
+                <title>assertTable</title>
+                <para>assertTable(cellAddress, valuePattern)</para>
+                <para>检查table里的某个cell中的值</para>
+                <para>cellAddress的语法是tableName.row.column, 注意行列序号都是从0开始</para>
+                <para>verifyTable  myTable.1.6  Submitted  </para>
+                <para>assertTable  results0.2  13  </para>
+            </sect3>
+            <sect3>
+                <title>assertVisible, nonVisible</title>
+                <para>assertVisible(elementLocator)</para>
+                <para>检查指定的元素是否可视的</para>
+                <para>隐藏一个元素可以用设置css的'visibility'属性为'hidden'，也可以设置'display'属性为'none'</para>
+                <para>verfyVisible  postcode  </para>
+                <para>assertVisible  postcode</para>
+            </sect3>
+            <sect3>
+                <title>assertNotVisible(elementLocator)</title>
+                <para>verfyNotVisible    postcode      </para>
+                <para> assertNotVisible    postcode   </para>
+            </sect3>
+            <sect3>
+                <title>Editable, non-editable</title>
+                <para>assertEditable(inputLocator)</para>
+                <para>检查指定的input是否可以编辑</para>
+                <para>verifyEditable  shape </para>
+                <para>assertEditable  colour</para>
+            </sect3>
+            <sect3>
+                <title>assertNotEditable(inputLocator)</title>
+                <para>检查指定的input是否不可以编辑 </para>
+            </sect3>
+            <sect3>
+                <title>assertAlert</title>
+                <para>assertAlert(messagePattern)</para>
+                <para>检查JavaScript是否有产生带指定message的alert对话框</para>
+                <para>alert产生的顺序必须与检查的顺序一致</para>
+                <para>检查alert时会产生与手动点击'OK'按钮一样的效果。如果一个alert产生了，而你却没有去检查它，selenium会在下个action中报错。</para>
+                <para>注意：Selenium 不支持 JavaScript 在onload()事件时 调用alert();在这种情况下，Selenium需要你自己手动来点击OK.</para>
+            </sect3>
+            <sect3>
+                <title>assertConfirmation</title>
+                <para>assertConfirmation(messagePattern)</para>
+                <para>检查JavaScript是否有产生带指定message的confirmation对话框和alert情况一样，confirmation对话框也必须在它们产生的时候进行检查</para>
+                <para>默认情况下，Selenium会让confirm() 返回true, 相当于手动点击Ok按钮的效果。你能够通过chooseCancelOnNextConfirmation命令让confirm()返回false.同样地，如果一个cofirmation对话框出现了，但你却没有检查的话，Selenium将会在下个action中报错</para>
+                <para>注意：在Selenium的环境下，confirmation对话框框将不会再出现弹出显式对话框</para>
+                <para>注意：Selenium不支持在onload()事件时调用confirmation对话框，在这种情况下，会出现显示confirmatioin对话框，并需要你自己手动点击。</para>
+            </sect3>
+            <sect3>
+                <title>assertPrompt</title>
+                <para>assertPrompt(messagePattern)</para>
+                <para>检查JavaScript是否有产生带指定message的Prompt对话框</para>
+                <para>你检查的prompt的顺序Prompt对话框产生的顺序必须相同</para>
+                <para>必须在verifyPrompt之前调用answerOnNextPrompt命令</para>
+                <para>如果prompt对话框出现了但你却没有检查，则Selenium会在下个action中报错</para>
+                <para> answerOnNextPrompt  Joe</para>
+                <para>click  id=delegate</para>
+                <para>verifyPrompt  Delegate to who?</para>
+            </sect3>
+        </sect2>
+        <sect2>
+            <title>Parameters and Variables</title>
+            <para>参数和变量的声明范围由简单的赋值到JavaScript表达式赋值。</para>
+            <para>Store，storeValue 和storeText 为下次访问保存值。</para>
+            <para>在Selenium内部是用一个叫storeVars的map来保存变量名。</para>
+            <sect3>
+                <title>Variable Substitution 变量替换</title>
+                <para>提供了一个简单的方法去访问变量,语法</para>
+                <para> $.｛xxx｝ store  Mr  title</para>
+                <para>storeValue  nameField  surname</para>
+                <para>store  $.｛title｝ $.｛suname｝  fullname</para>
+                <para>type  textElement  Full name is: $.｛fullname｝</para>
+            </sect3>
+            <sect3>
+                <title>JavaScript Evaluation JavaScript赋值</title>
+                <para>你能用JavaScript来构建任何你所需要的值。</para>
+                <para>这个参数是以javascript开头，语法是 javascript.｛'with a trailing'｝。</para>
+                <para>可以通过JavaScript表达式给某元素赋值。</para>
+                <para> store  javascript.｛'merchant'+(new Date()).getTime()｝  merchantId</para>
+                <para>type  textElement  javascript.｛storedVars['merchantId'].toUpperCase()｝</para>
+            </sect3>
+            <sect3>
+                <title>Generating Unique values 产生唯一值. </title>
+                <para>问题：你需要唯一的用户名</para>
+                <para>解决办法: 基于时间来产生用户名，如'fred'+(new Date().getTime()) </para>
+            </sect3>
+        </sect2>
+    </sect1>
+</chapter>

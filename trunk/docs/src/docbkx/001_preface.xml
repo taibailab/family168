@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<preface xml:id="preface">
+    <title>序言</title>
+    <subtitle>写在所有之前</subtitle>
+
+    <sect1>
+        <title>Leona是什么？</title>
+        <para>先摘一段网上看到的评价</para>
+        <blockquote>
+            <para>Java最不好的地方就是：它其实没有一个Web框架，只有零敲碎打的一堆东西。</para>
+            <para>Hibernate伟大吗？伟大。</para>
+            <para>Spring伟大吗？伟大。</para>
+            <para>Struts？Freemarker？Acegi？都很伟大。</para>
+            <para>但一堆伟大的框架凑合在一起，就谈不上伟大，而是痛苦。把这些东西凑在一起，就是配置的地狱~~</para>
+            <para>这就为什么ROR，或者.NET，或者别的什么开发效率更好的原因之一吧。</para>
+        </blockquote>
+        <para>所以说做java的公司不容易啊，自己要把那么一堆“零敲碎打”的框架组合在一起，还要考虑依赖包之间会不会冲突，怎么样才能简化配置。终于配好了，这套架构实际中好不好用还两说。</para>
+        <para>希望Leona成为：成功整合流行工具，并且很好用的架构范例。</para>
+        <para>一个小程序当然不可能涵盖所有的行业，Leona目前的目标是实现一个OA办公自动化系统，我们希望在这个平台上将市面上经常可以看到的，经常可以听到的流行框架组合在一起，这里不只包括技术上的功能组件，还涵盖项目管理流程部分的选型和应用。</para>
+        <para>我们现在应该关心的是： <link linkend="technique">选择哪些工具包</link>， <link linkend="solve_case">关注哪些实际业务</link>。</para>
+    </sect1>
+
+</preface>

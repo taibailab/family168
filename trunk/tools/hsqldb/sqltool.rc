@@ -1,0 +1,7 @@
+urlid test
+url jdbc:hsqldb:hsql://localhost:9000/test
+username sa
+driver org.hsqldb.jdbcDriver
+charset utf-8
+truststore true
+password

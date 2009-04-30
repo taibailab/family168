@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter xml:id="webservice">
+    <title>web service</title>
+
+    <sect1>
+        <title>概述</title>
+        <para>Web Service层已经几乎进化到开始跟CRUD代码一样普遍。Web Service 层的概念很多，主要关注点包括：</para>
+        <orderedlist>
+            <listitem>
+                <para>从Java业务类开始，发布Web服务。 </para>
+            </listitem>
+            <listitem>
+                <para>根据已有的WSDL，生成Web服务代码框架。 </para>
+            </listitem>
+            <listitem>
+                <para>Java对象与XML的绑定。</para>
+            </listitem>
+            <listitem>
+                <para>Client的编写。</para>
+            </listitem>
+            <listitem>
+                <para>安全。</para>
+            </listitem>
+            <listitem>
+                <para>性能。</para>
+            </listitem>
+        </orderedlist>
+    </sect1>
+
+    <sect1>
+        <title>重要规则</title>
+        <para>使用Java first的开发模式，通过JSR181 annotation标注Web Service接口，用JAXB-2.0 annotation标注Java-XML Mapping。</para>
+        <para>Apache CXF资料中对以下的规则做了介绍：</para>
+        <itemizedlist>
+            <listitem>
+                <para>在CXF下那些必须显式定义，不能采取默认值的的Annotation。</para>
+            </listitem>
+            <listitem>
+                <para><![CDATA[List<T>类型的处理。]]></para>
+            </listitem>
+            <listitem>
+                <para>为了实现任意客户端都能使用的服务，尽量只使用其WS规范中最原始通用的部分，Soap Header/Fault节点都不要使用，高阶的WS-*就更要慎用。</para>
+            </listitem>
+            <listitem>
+                <para>虽然JavaFirst的开发方式，WSDL由CXF动态自动生成，但一定要进行保存下来并加入版本管理系统。</para>
+            </listitem>
+            <listitem>
+                <para>多机负载均衡或者有内外网IP之别时，publishedEndpointUrl属性指定WSDL中的URL。</para>
+            </listitem>
+        </itemizedlist>
+    </sect1>
+
+    <sect1>
+        <title>错误返回机制</title>
+        <para>服务端的错误可以使用WebService的异常机制(SOAPFault节点)，也可以返回结果代码的方式返回。因为WebService的最大价值是简单通用，面对众多语言的客户端对Soap-Fault处理的不确定性，因此建议除了两个子系统间内部交互的情况，对外的接口都使用结果返回代码的形式。</para>
+        <para><![CDATA[因为CXF在返回结果定义时还不支持除Collection<T>外的范型，也就是无法支持WebServiceResult<UserDTO> getUser(int id)这样的定义，因此需要定义多个Result类型。]]></para>
+        <para>注意代码中截获了Exception转换为WebServiceResult后，必须对异常写日志，因为CXF不会再帮你拦截异常，记录日志了。</para>
+    </sect1>
+
+    <sect1>
+        <title>内部子系统间</title>
+        <para>如果是内部两个子系统间采用web service作为远程访问手段时，则可以直接标注Service层和Entity类，并且直接用SoapFault作为异常机制，无需接口类、DTO和WebServiceResult类。</para>
+    </sect1>
+
+    <sect1>
+        <title>DTO</title>
+        <para>对外系统的Web Service接口，必须增加接口类及DTO以解耦。</para>
+        <para>为了应付DTO中的子对象也需要是DTO(如UserDTO的子对象是RoleDTO，User的子对象是Role)，或者entity与DTO的属性名不同等情况，复制DTO与entity时采用dozer做mapper，而不能使用BeanUtils。</para>
+    </sect1>
+
+    <sect1>
+        <title>客户端代码生成</title>
+        <para>调用cxf的wsdl2java.bat生成客户端代码，还需要将WSDL中的Date类型转为Java常用的Date类型。</para>
+    </sect1>
+
+    <sect1>
+        <title>简单示例</title>
+        <para>依赖</para>
+        <programlisting><![CDATA[
+<dependency>
+  <groupId>org.apache.cxf</groupId>
+  <artifactId>cxf-rt-core</artifactId>
+</dependency>
+<dependency>
+  <groupId>org.apache.cxf</groupId>
+  <artifactId>cxf-rt-frontend-jaxws</artifactId>
+</dependency>
+<dependency>
+  <groupId>org.apache.cxf</groupId>
+  <artifactId>cxf-rt-transports-http</artifactId>
+</dependency>
+
+<dependency>
+  <groupId>com.sun.xml.bind</groupId>
+  <artifactId>jaxb-impl</artifactId>
+</dependency>
+<dependency>
+  <groupId>com.sun.xml.bind</groupId>
+  <artifactId>jaxb-xjc</artifactId>
+</dependency>]]>
+        </programlisting>
+        <para>服务端</para>
+        <programlisting><![CDATA[
+@WebService(name = "HelloWorld", targetNamespace = "http://localhost:8080/cxf/services")
+public interface HelloWorld {
+    String sayHi(@WebParam(name = "text")
+    String text);
+}]]>
+        </programlisting>
+        <programlisting><![CDATA[
+@WebService(endpointInterface = "com.family168.HelloWorld", targetNamespace = "http://localhost:8080/cxf/services", portName = "HelloWorldPort", serviceName = "HelloWorld")
+public class HelloWorldImpl implements HelloWorld {
+    public String sayHi(String text) {
+        System.out.println(text);
+
+        return "Hello " + text;
+    }
+}]]>
+        </programlisting>
+        <para>spring配置</para>
+        <programlisting><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:jaxws="http://cxf.apache.org/jaxws"
+    xmlns:cxf="http://cxf.apache.org/core"
+    xsi:schemaLocation="http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd
+        http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd"
+    default-autowire="byType" default-lazy-init="true">
+
+    <import resource="classpath:META-INF/cxf/cxf.xml" />
+    <import resource="classpath:META-INF/cxf/cxf-servlet.xml" />
+    <import resource="classpath:META-INF/cxf/cxf-extension-soap.xml" />
+
+    <!-- jax-ws endpoint定义  -->
+    <jaxws:endpoint id="helloWorldEP" address="/HelloWorld">
+        <jaxws:implementor ref="helloWorld" />
+    </jaxws:endpoint>
+
+    <!-- WebService的实现Bean定义 -->
+    <bean id="helloWorld" class="com.family168.HelloWorldImpl" />
+
+</beans>]]>
+        </programlisting>
+        <para>客户端</para>
+        <programlisting><![CDATA[
+<%@page import="com.family168.HelloWorld"%>
+<%@page import="org.apache.cxf.jaxws.JaxWsProxyFactoryBean"%>
+<%
+    JaxWsProxyFactoryBean factory = new JaxWsProxyFactoryBean();
+    factory.setServiceClass(HelloWorld.class);
+    factory.setAddress("http://localhost:8080/cxf/services/HelloWorld");
+    HelloWorld client = (HelloWorld) factory.create();
+    String result = client.sayHi("Hello");
+    out.println(result);
+%>]]>
+        </programlisting>
+        <para>本来cxf还支持更简单的simple方式，但是在jetty下一直出问题，所以只好使用jaxws的方式，需要注意的是jaxws发布的服务端只能使用jaxws的客户端访问，使用simple方式的客户端虽然不会出错，但是也无法调用服务端。</para>
+    </sect1>
+
+</chapter>
+
+
+

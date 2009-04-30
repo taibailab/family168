@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter xml:id="groovy">
+    <title>Groovy</title>
+
+    <sect1>
+        <title>与Spring集成</title>
+        <para>Spring 2.0的Script Language集成，是让动态语言编写的类，可以良好的融入java/spring的大框架内，成为application context中的普通一员，拥有与其他pojo良好的交互与注入能力。</para>
+        <para>需要引入schema。</para>
+        <programlisting><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<beans
+  xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:lang="http://www.springframework.org/schema/lang"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans
+  http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+  http://www.springframework.org/schema/lang
+  http://www.springframework.org/schema/lang/spring-lang-2.5.xsd">
+    <!--Groovy版本的Web Service Client-->
+    <lang:groovy id="userManager" refresh-check-delay="60000" script-source="classpath:com/family168/UserManagerImpl.groovy">
+        <lang:property name="name" value="username"/>
+    </lang:groovy>
+</beans>]]>
+        </programlisting>
+        <para><![CDATA[注意spring 2.0为语言集成提供了<lang:language>的简写法，详细见Spring的参考文档第24章]]></para>
+        <para>第一个属性 refresh-check-delay，每隔一段时间扫描一次脚本的变化，reload it。</para>
+        <para><![CDATA[第二个属性script-source指向script source, <lang:property>演绎了Spring最喜爱的IOC，将serviceUr变量注入。]]></para>
+        <para>当然，世上没有奇迹，Spring与Groovy、JRuby是靠一个Interface来定义连接点的。Spring使用UserManager时，实际使用的是UserManager接口。 Groovy因为是Java近亲，所以可以在类里面直接implements UserManager接口，而JRuby则必须把interface作为构造参数传给RubyScriptFactory。这样有个不爽的地方，在Groovy里必须显式定义接口的所有函数和参数、返回值的类型。Ruby的Miss Method与Groovy的MOP反射顿时没了用武之地。</para>
+    </sect1>
+
+</chapter>

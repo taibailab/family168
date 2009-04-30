@@ -1,0 +1,23 @@
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <script type="text/javascript" src="dwr/interface/UserService.js"></script>
+    <script type="text/javascript" src="dwr/engine.js"></script>
+    <script type="text/javascript" src="dwr/util.js"></script>
+    <script type="text/javascript" src="components/jstemplate/trimpath-template-1.0.38.js"></script>
+  </head>
+  <body>
+    <textarea id="jst">
+{for u in data}
+    <p>${u.name}</p>
+{/for}
+    </textarea>
+    <div id="result"></div>
+    <script type="text/javascript">
+UserService.getAll(function(data) {
+    document.getElementById("result").innerHTML = TrimPath.processDOMTemplate('jst', {data:data});
+});
+    </script>
+  </body>
+</html>
+
