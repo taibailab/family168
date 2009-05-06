@@ -1026,7 +1026,6 @@
           </execution>
         </executions>
       </plugin>
--->
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>dashboard-maven-plugin</artifactId>
@@ -1046,6 +1045,7 @@
           <password></password>
         </configuration>
       </plugin>
+-->
     </plugins>
   </build>
 
@@ -1179,11 +1179,13 @@
         <artifactId>maven-surefire-report-plugin</artifactId>
         <version>${maven-surefire-report-plugin.version}</version>
       </plugin>
+<!--
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>dashboard-maven-plugin</artifactId>
         <version>${dashboard-maven-plugin.version}</version>
       </plugin>
+-->
       <plugin>
         <groupId>com.googlecode.maven-overview-plugin</groupId>
         <artifactId>maven-overview-plugin</artifactId>
