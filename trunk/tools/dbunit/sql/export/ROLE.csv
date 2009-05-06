@@ -1,6 +1,0 @@
-ID, NAME, DESCN
-"4","ROLE_USER","user"
-"5","ROLE_ADMIN","admin"
-"6","no","no"
-"7","ACL_USER_CREATE","acl user create"
-"8","ACL_USER_ADMIN","acl user admin"

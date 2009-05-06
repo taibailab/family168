@@ -1,4 +1,0 @@
-ID, NAME, MOTHER_ID
-1,father,null
-2,father_2,1
-3,father_3,2
