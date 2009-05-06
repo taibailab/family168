@@ -1006,6 +1006,7 @@
           <warSourceDirectory>${basedir}/webapp/</warSourceDirectory>
         </configuration>
       </plugin>
+<!--
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>jalopy-maven-plugin</artifactId>
@@ -1025,6 +1026,7 @@
           </execution>
         </executions>
       </plugin>
+-->
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>dashboard-maven-plugin</artifactId>
@@ -1140,11 +1142,13 @@
           </tags>
         </configuration>
       </plugin>
+<!--
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>javancss-maven-plugin</artifactId>
         <version>${javancss-maven-plugin.version}</version>
       </plugin>
+-->
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>jdepend-maven-plugin</artifactId>
@@ -1160,6 +1164,7 @@
           <charset>${project.reporting.outputEncoding}</charset>
         </configuration>
       </plugin>
+<!--
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-changelog-plugin</artifactId>
@@ -1168,6 +1173,7 @@
           <outputEncoding>${project.reporting.outputEncoding}</outputEncoding>
         </configuration>
       </plugin>
+-->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-report-plugin</artifactId>
@@ -1300,8 +1306,10 @@
     <maven-war-plugin.version>2.1-alpha-2</maven-war-plugin.version>
     <maven-jetty-plugin.version>6.1.16</maven-jetty-plugin.version>
     <tomcat-maven-plugin.version>1.0-beta-1</tomcat-maven-plugin.version>
+<!--
     <jalopy-maven-plugin.version>20081026</jalopy-maven-plugin.version>
     <dashboard-maven-plugin.version>20081126</dashboard-maven-plugin.version>
+-->
     <maven-site-plugin.version>2.0-beta-7</maven-site-plugin.version>
     <maven-project-info-reports-plugin.version>2.1</maven-project-info-reports-plugin.version>
     <maven-jxr-plugin.version>2.1</maven-jxr-plugin.version>
@@ -1310,10 +1318,14 @@
     <findbugs-maven-plugin.version>2.0.1</findbugs-maven-plugin.version>
     <cobertura-maven-plugin.version>2.2</cobertura-maven-plugin.version>
     <taglist-maven-plugin.version>2.3</taglist-maven-plugin.version>
+<!--
     <javancss-maven-plugin.version>20081124</javancss-maven-plugin.version>
+-->
     <jdepend-maven-plugin.version>2.0-beta-2</jdepend-maven-plugin.version>
     <maven-javadoc-plugin.version>2.5</maven-javadoc-plugin.version>
+<!--
     <maven-changelog-plugin.version>20080922</maven-changelog-plugin.version>
+-->
     <maven-surefire-report-plugin.version>2.4.3</maven-surefire-report-plugin.version>
     <maven-overview-plugin.version>1.3</maven-overview-plugin.version>
     <stat-scm.version>1.2.0</stat-scm.version>
