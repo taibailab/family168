@@ -1,17 +1,18 @@
 <%@page contentType="text/html;charset=UTF-8"%>
+<%pageContext.setAttribute("ext", "scripts/ext-2.0.2");%>
 <html>
   <head>
     <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/>
     <meta http-equiv="Cache-Control" content="no-store"/>
     <meta http-equiv="Pragma" content="no-cache"/>
     <meta http-equiv="Expires" content="0"/>
-    <link rel="stylesheet" type="text/css" href="ext-2.2.1/resources/css/ext-all.css" />
+    <link rel="stylesheet" type="text/css" href="${ext}/resources/css/ext-all.css" />
     <link rel="stylesheet" type="text/css" href="styles/ext-patch.css" />
-    <link rel="stylesheet" type="text/css" href="ext-2.2.1/icons/ext-customer.css" />
+    <link rel="stylesheet" type="text/css" href="styles/ext-customer.css" />
     <link rel="stylesheet" type="text/css" href="styles/menu.css" />
-    <script type="text/javascript" src="ext-2.2.1/ext-base.js"></script>
-    <script type="text/javascript" src="ext-2.2.1/ext-all.js"></script>
-    <script type="text/javascript" src="ext-2.2.1/ext-lang-zh_CN.js"></script>
+    <script type="text/javascript" src="${ext}/ext-base.js"></script>
+    <script type="text/javascript" src="${ext}/ext-all.js"></script>
+    <script type="text/javascript" src="${ext}/ext-lang-zh_CN.js"></script>
 
     <script type="text/javascript" src="./scripts/ux/Autogrid.js"></script>
     <script type="text/javascript" src="./scripts/ux/cvi_glossy_lib.js"></script>
@@ -27,14 +28,14 @@
     <script type="text/javascript" src="./scripts/ux/Ext.ux.ClearableCombo.js"></script>
     <script type="text/javascript" src="./scripts/ux/Ext.ux.SpringSecurityLoginWindow.js"></script>
     <script type="text/javascript">
-Ext.BLANK_IMAGE_URL = 'ext-2.2.1/resources/images/default/s.gif';
+Ext.BLANK_IMAGE_URL = '${ext}/resources/images/default/s.gif';
     </script>
     <title>OA</title>
   </head>
   <body>
     <div id="loading-mask" style=""></div>
     <div id="loading">
-        <div class="loading-indicator"><img src="ext-2.2.1/icons/extanim32.gif" width="32" height="32" style="margin-right:8px;" align="absmiddle"/>正在加载数据...</div>
+        <div class="loading-indicator"><img src="styles/login/extanim32.gif" width="32" height="32" style="margin-right:8px;" align="absmiddle"/>正在加载数据...</div>
     </div>
     <div id="nav_area" class="x-date-bottom">
         <table cellspacing="0" border="0" cellpadding="0" width="100%">
@@ -67,5 +68,7 @@ Ext.BLANK_IMAGE_URL = 'ext-2.2.1/resources/images/default/s.gif';
 
     <script type="text/javascript" src="./scripts/App.security.js"></script>
     <script type="text/javascript" src="./scripts/App.view.js"></script>
+<%--
+--%>
   </body>
 </html>
