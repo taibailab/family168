@@ -48,7 +48,8 @@ public class SecurityAction {
     public void isLogin() throws Exception {
         Object securityContext = ActionContext.getContext().getSession()
                                               .get("SPRING_SECURITY_CONTEXT");
-
+        getResponse()
+            .setHeader("Cache-Control", "no-cache, must-revalidate");
         getResponse().setCharacterEncoding("UTF-8");
 
         if (securityContext != null) {

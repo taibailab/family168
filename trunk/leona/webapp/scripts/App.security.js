@@ -35,7 +35,11 @@ App.security = {
 
     rebuildMenu: function(info) {
         var mainAccordion = Ext.getCmp('mainAccordion');
-        mainAccordion.removeAll();
+        var item = null;
+        while ((item = mainAccordion.items.last())) {
+            mainAccordion.remove(item, true);
+        }
+
         for (var i = 0; i < info.length; i++) {
             var p = new Ext.tree.TreePanel({
                 title: info[i].text,

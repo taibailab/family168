@@ -5,20 +5,20 @@ App.SexCombo = Ext.extend(Ext.form.ComboBox, {
     name: 'sex.name',
     hiddenName: 'sex',
     readOnly: true,
-    fieldLabel: '�Ա�',
+    fieldLabel: '性别',
     valueField: 'id',
     displayField: 'name',
     typeAhead: true,
     mode: 'remote',
     triggerAction: 'all',
-    emptyText: '��ѡ��',
+    emptyText: '请选择',
     selectOnFocus: true,
     allowBlank: false,
     store: new Ext.data.Store({
         proxy: new Ext.data.MemoryProxy([
-            [0,'δ֪'],
-            [1,'��'],
-            [2,'Ů']
+            [0,'未知'],
+            [1,'男'],
+            [2,'女']
         ]),
         reader: new Ext.data.ArrayReader({
         },['id','name'])
@@ -27,7 +27,7 @@ App.SexCombo = Ext.extend(Ext.form.ComboBox, {
 Ext.reg('sexcombo', App.SexCombo);
 
 App.sexMap = [
-    'δ֪', '��', 'Ů'
+    '未知', '男', '女'
 ];
 
 App.SexRenderer = function(value) {
@@ -36,7 +36,7 @@ App.SexRenderer = function(value) {
 
 App.SexColumn = {
     name: 'sex',
-    fieldLabel: '�Ա�',
+    fieldLabel: '性别',
     allowBlank: false,
     xtype: 'sexcombo',
     renderer: App.SexRenderer,
