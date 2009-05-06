@@ -21,10 +21,7 @@
   <modules>
     <module>core</module>
     <module>security</module>
-<!--
-    <module>test</module>
-    <module>leona</module>
--->
+    <module>components</module>
   </modules>
 
 </project>

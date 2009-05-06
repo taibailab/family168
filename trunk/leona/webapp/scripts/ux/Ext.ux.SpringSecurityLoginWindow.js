@@ -12,6 +12,11 @@ SpringSecurityLoginWindow = Ext.extend(Ext.Window, {
         border: false
     },
     buttonAlign: 'center',
+    listeners: {
+        show: function() {
+            Ext.getDom('captcha').src = 'captcha.jpg?' + new Date().getTime();;
+        }
+    },
     createFormPanel: function() {
         return new Ext.form.FormPanel({
             bodyStyle: 'padding-top:6px',
