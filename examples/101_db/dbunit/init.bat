@@ -1,1 +1,0 @@
-call mvn -Pcreate-database

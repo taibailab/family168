@@ -21,8 +21,8 @@
   <modules>
     <module>core</module>
     <module>security</module>
-    <module>test</module>
 <!--
+    <module>test</module>
     <module>leona</module>
 -->
   </modules>
