@@ -490,6 +490,11 @@
         <artifactId>hsqldb</artifactId>
         <version>${hsqldb.version}</version>
       </dependency>
+      <dependency>
+        <groupId>mysql</groupId>
+        <artifactId>mysql-connector-java</artifactId>
+        <version>${mysql.version}</version>
+      </dependency>
 
       <!-- 数据库连接池 -->
       <dependency>
@@ -1262,6 +1267,7 @@
     <commons-fileupload.version>1.2.1</commons-fileupload.version>
     <commons-io.version>1.4</commons-io.version>
     <hsqldb.version>1.8.0.7</hsqldb.version>
+    <mysql.version>5.1.6</mysql.version>
     <c3p0.version>0.9.1.2</c3p0.version>
     <p6spy.version>1.3</p6spy.version>
 
