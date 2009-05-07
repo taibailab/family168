@@ -20,11 +20,12 @@
     <root level="info">
         <appender-ref ref="STDOUT" />
     </root>
-
+<!--
     <logger name="net.sf.ehcache" level="debug">
         <appender-ref ref="FILE"/>
     </logger>
     <logger name="org.hibernate.cache" level="debug">
         <appender-ref ref="FILE"/>
     </logger>
+-->
 </configuration>
