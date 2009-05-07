@@ -1,0 +1,24 @@
+ID, NAME, ICON_CLS, URL, THE_SORT, DESCN, PARENT_ID, QTIP
+"1","部门管理","config",null,"14","index",null,null
+"2","员工管理","config",null,"12","user",null,null
+"3","公文管理","config",null,"10","role",null,null
+"4","公告管理","config",null,"8","resc",null,null
+"5","组织机构","config",null,"5","menu",null,null
+"6","权限管理","add","security","0","",null,""
+"7","收发信息","config",null,"18",null,null,null
+"8","优秀员工管理","config",null,"20",null,null,null
+"9","资源","wrench","resc","1","","6",""
+"10","角色","user_delete","role","2","","6",""
+"11","用户","config","user","3","","6",""
+"12","菜单","config","menu","4","","6",""
+"13","组织机构部门","config","dept","6","","5",""
+"14","组织机构","config","org","7","","5",""
+"16","查看公告","config","view-affice","9","","4",""
+"17","查看公文","config","send-bumf","11","","3",""
+"19","查看员工","config","view-emp","13","","2",""
+"22","查看部门","config","view-dept","15","","1",""
+"23","查看职位","config","view-job","16","","1",""
+"24","查看状态","config","view-state","17","","1",""
+"25","查看信息","config","view-msg","19","","7",""
+"27","上下班时间管理","config","add-best","21","","8",""
+"28","考勤记录","config","view-best","22","","8",""
