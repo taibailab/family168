@@ -43,7 +43,7 @@ public class Sign implements java.io.Serializable {
     private Integer quit;
 
     /** null. */
-    private Integer leave;
+    private Integer leaveStatus;
 
     /** null. */
     private Integer work;
@@ -52,13 +52,13 @@ public class Sign implements java.io.Serializable {
     }
 
     public Sign(Employee employee, SignState signState, Date time,
-        Integer late, Integer quit, Integer leave, Integer work) {
+        Integer late, Integer quit, Integer leaveStatus, Integer work) {
         this.employee = employee;
         this.signState = signState;
         this.time = time;
         this.late = late;
         this.quit = quit;
-        this.leave = leave;
+        this.leaveStatus = leaveStatus;
         this.work = work;
     }
 
@@ -134,14 +134,14 @@ public class Sign implements java.io.Serializable {
     }
 
     /** @return null. */
-    @Column(name = "LEAVE")
-    public Integer getLeave() {
-        return this.leave;
+    @Column(name = "LEAVE_STATUS")
+    public Integer getLeaveStatus() {
+        return this.leaveStatus;
     }
 
-    /** @param leave null. */
-    public void setLeave(Integer leave) {
-        this.leave = leave;
+    /** @param leaveStatus null. */
+    public void setLeaveStatus(Integer leaveStatus) {
+        this.leaveStatus = leaveStatus;
     }
 
     /** @return null. */

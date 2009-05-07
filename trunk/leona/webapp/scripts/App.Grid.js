@@ -294,7 +294,7 @@ App.formConfig = {
             {name: 'employeeId',fieldLabel: '员工编号',allowBlank: false,xtype:'employeecombo',hideGrid:true,mapping:'employee.id'},
             {name: 'late',fieldLabel: '是否迟到',allowBlank: false},
             {name: 'quit',fieldLabel: '是否下班',allowBlank: false},
-            {name: 'leave',fieldLabel: '是否早退',allowBlank: false},
+            {name: 'leaveStatus',fieldLabel: '是否早退',allowBlank: false},
             {name: 'work',fieldLabel: '工作状态',allowBlank: false},
             {name: 'signStateName',fieldLabel: '上下班描述',mapping:'signState.name',xtype:'hidden'},
             {name: 'signStateId',fieldLabel: '上下班描述',allowBlank: false,xtype:'signstatecombo',hideGrid:true,mapping:'signState.id',raw:'signState.name'}
