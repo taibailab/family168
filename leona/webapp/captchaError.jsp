@@ -1,1 +1,1 @@
-<%@ page contentType="text/html;charset=UTF-8"%>{success:false,errors:{msg:'验证码错误'}}
+<%@ page contentType="text/html;charset=UTF-8"%><%response.setHeader("Cache-Control", "no-cache, must-revalidate");%>{success:false,errors:{msg:'验证码错误'}}

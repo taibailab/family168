@@ -69,17 +69,14 @@ SpringSecurityLoginWindow = Ext.extend(Ext.Window, {
                     }
                 },
                 failure: function(form, action) {
-                    for (var i in action.result)
-                    {
-                        alert(i + "," + action.result[i]);
-                    }
                     if (action.failureType == Ext.form.Action.SERVER_INVALID) {
                         Ext.MessageBox.alert('错误', action.result.errors.msg);
                     }
+                    Ext.getDom('captcha').src = 'captcha.jpg?' + new Date().getTime();
                     form.findField("j_password").setRawValue("");
                     form.findField("j_username").focus(true);
                 },
-                scope:this
+                scope: this
             });
         }
     },

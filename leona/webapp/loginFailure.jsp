@@ -1,1 +1,1 @@
-<%@ page contentType="text/html;charset=UTF-8"%>{success:false,errors:{msg:'登陆失败'}}
+<%@ page contentType="text/html;charset=UTF-8"%><%response.setHeader("Cache-Control", "no-cache, must-revalidate");%>{success:false,errors:{msg:'登陆失败'}}
