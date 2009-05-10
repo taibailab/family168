@@ -259,6 +259,13 @@ public class DeptAction extends BaseAction<Dept> {
         ServletActionContext.getResponse().getWriter()
                             .print("{success:true,info:\"success\"}");
     }
+    /**
+     * 组织结构.
+     */
+    public String orgMap() throws Exception {
+        this.list=deptManager.loadTops();
+        return "orgMap";
+    }
 
     /**
      * 迭代取得所有节点时候，使用的exclude设置.
@@ -267,7 +274,7 @@ public class DeptAction extends BaseAction<Dept> {
      */
     public String[] getExcludesForAll() {
         return new String[] {
-            "hibernateLazyInitializer", "class", "root", "parent"
+            "hibernateLazyInitializer", "class", "root", "parent","users"
         };
     }
 
@@ -279,7 +286,7 @@ public class DeptAction extends BaseAction<Dept> {
     public String[] getExcludesForChildren() {
         return new String[] {
             "hibernateLazyInitializer", "class", "root", "parent",
-            "children"
+            "children","users"
         };
     }
 

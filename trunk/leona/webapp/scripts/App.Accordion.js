@@ -20,25 +20,32 @@ createAccordion = function() {
 };
 
 
-App.addContent = function(name, title, url) {
+App.addContent = function(name, title, iconCls) {
     var tabs = App.centerTabPanel;
     var tabItem = tabs.getItem(name);
     if (tabItem == null) {
+        var p = null;
         if (name == 'dept') {
-            tabItem = tabs.add(new App.DeptTree());
+            p = new App.DeptTree();
         } else if (name == 'menu') {
-            tabItem = tabs.add(new App.MenuTree());
+            p = new App.MenuTree();
         } else if (name == 'resc') {
-            tabItem = tabs.add(new App.RescGrid());
+            p = new App.RescGrid();
         } else if (name == 'role') {
-            tabItem = tabs.add(new App.RoleGrid());
+            p = new App.RoleGrid();
         } else if (name == 'user') {
-            tabItem = tabs.add(new App.UserGrid());
+            p = new App.UserGrid();
+        } else if (name == 'org') {
+            p = new Ext.ux.ManagedIframePanel({
+                id: 'org',
+                defaultSrc: 'security/dept!orgMap.do'
+            });
         } else {
-            tabItem = tabs.add(new Ext.lingo.JsonGrid(this.formConfig[name]));
+            p = new Ext.lingo.JsonGrid(this.formConfig[name]);
         }
+        p.setTitle(title, iconCls);
+        tabItem = tabs.add(p);
     }
-    tabItem.setTitle(title);
     tabs.activate(tabItem);
 };
 
