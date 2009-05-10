@@ -34,6 +34,7 @@
                 <param name="actionName">dept</param>
                 <param name="method">list</param>
             </result>
+            <result name="orgMap">/orgMap.jsp</result>
         </action>
         <action name="menu" class="com.family168.security.web.MenuAction">
             <result>/security/menu.jsp</result>

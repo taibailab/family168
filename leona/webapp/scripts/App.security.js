@@ -48,7 +48,7 @@ App.security = {
             });
             p.on('click', function(node) {
                 if (node.attributes.url != '') {
-                    App.addContent(node.attributes.url, node.attributes.text);
+                    App.addContent(node.attributes.url, node.attributes.text, node.attributes.iconCls);
                 }
             });
             mainAccordion.add(p);

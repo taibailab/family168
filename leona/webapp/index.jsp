@@ -54,6 +54,7 @@ Ext.BLANK_IMAGE_URL = '${ext}/resources/images/default/s.gif';
     <script type="text/javascript" src="./scripts/checkboxtree/Ext.lingo.JsonCheckBoxTree.js"></script>
     <script type="text/javascript" src="./scripts/treefield/Ext.lingo.TreeField.js"></script>
     <script type="text/javascript" src="./scripts/webim/webim.js"></script>
+    <script type="text/javascript" src="./scripts/miframe/miframe-min.js"></script>
     <script type="text/javascript" src="./scripts/App.js"></script>
     <script type="text/javascript" src="./scripts/App.Sex.js"></script>
     <script type="text/javascript" src="./scripts/App.Combo.js"></script>
