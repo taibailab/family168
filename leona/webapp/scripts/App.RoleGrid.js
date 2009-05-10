@@ -8,7 +8,7 @@ App.RoleGrid = Ext.extend(Ext.lingo.JsonGrid, {
     dlgWidth: 300,
     dlgHeight: 240,
     formConfig: [
-        {fieldLabel: '编号',     name: 'id'},
+        {fieldLabel: '编号',     name: 'id', readOnly: true},
         {fieldLabel: '角色名称', name: 'name'},
         {fieldLabel: '角色备注', name: 'descn'}
     ],

@@ -2,7 +2,7 @@
 --
 -- Host: localhost    Database: leona
 -- ------------------------------------------------------
--- Server version	5.0.41-community-nt
+-- Server version   5.0.41-community-nt
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -21,7 +21,7 @@
 
 DROP TABLE IF EXISTS `acl_class`;
 CREATE TABLE `acl_class` (
-  `ID` bigint(20) NOT NULL,
+  `ID` bigint(20) NOT NULL auto_increment,
   `SID` varchar(100) default NULL,
   PRIMARY KEY  (`ID`),
   UNIQUE KEY `ID` (`ID`)
@@ -42,7 +42,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `acl_entry`;
 CREATE TABLE `acl_entry` (
-  `ID` bigint(20) NOT NULL,
+  `ID` bigint(20) NOT NULL auto_increment,
   `ACE_ORDER` int(11) default NULL,
   `AUDIT_FAILURE` int(11) default NULL,
   `AUDIT_SUCCESS` int(11) default NULL,
@@ -73,7 +73,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `acl_object_identity`;
 CREATE TABLE `acl_object_identity` (
-  `ID` bigint(20) NOT NULL,
+  `ID` bigint(20) NOT NULL auto_increment,
   `entries_inheriting` int(11) default NULL,
   `OBJECT_ID_IDENTITY` bigint(20) default NULL,
   `OBJECT_ID_CLASS` bigint(20) default NULL,
@@ -106,7 +106,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `acl_sid`;
 CREATE TABLE `acl_sid` (
-  `ID` bigint(20) NOT NULL,
+  `ID` bigint(20) NOT NULL auto_increment,
   `PRINCIPAL` int(11) default NULL,
   `SID` varchar(100) default NULL,
   PRIMARY KEY  (`ID`),
@@ -211,7 +211,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `dept`;
 CREATE TABLE `dept` (
-  `ID` bigint(20) NOT NULL,
+  `ID` bigint(20) NOT NULL auto_increment,
   `DESCN` varchar(200) default NULL,
   `NAME` varchar(50) default NULL,
   `THE_SORT` int(11) default NULL,
@@ -298,7 +298,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `menu`;
 CREATE TABLE `menu` (
-  `ID` bigint(20) NOT NULL,
+  `ID` bigint(20) NOT NULL auto_increment,
   `DESCN` varchar(200) default NULL,
   `ICON_CLS` varchar(50) default NULL,
   `NAME` varchar(50) default NULL,
@@ -384,7 +384,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `resc`;
 CREATE TABLE `resc` (
-  `ID` bigint(20) NOT NULL,
+  `ID` bigint(20) NOT NULL auto_increment,
   `DESCN` varchar(200) default NULL,
   `NAME` varchar(50) default NULL,
   `RES_STRING` varchar(200) default NULL,
@@ -434,7 +434,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `role`;
 CREATE TABLE `role` (
-  `ID` bigint(20) NOT NULL,
+  `ID` bigint(20) NOT NULL auto_increment,
   `DESCN` varchar(200) default NULL,
   `NAME` varchar(50) NOT NULL,
   PRIMARY KEY  (`ID`),
@@ -536,7 +536,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `user`;
 CREATE TABLE `user` (
-  `ID` bigint(20) NOT NULL,
+  `ID` bigint(20) NOT NULL auto_increment,
   `DESCN` varchar(200) default NULL,
   `PASSWORD` varchar(50) default NULL,
   `STATUS` int(11) default NULL,

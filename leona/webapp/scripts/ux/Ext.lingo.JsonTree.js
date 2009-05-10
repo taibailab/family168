@@ -269,7 +269,7 @@ Ext.lingo.JsonTree = Ext.extend(Ext.tree.TreePanel, {
 
     createNode : function(n) {
         var node = n.appendChild(new Ext.tree.TreeNode({
-            id            : -1,
+            id            : Ext.id(),
             text          : '请输入分类名',
             cls           : 'album-node',
             allowDrag     : true,
@@ -464,5 +464,17 @@ Ext.lingo.JsonTree = Ext.extend(Ext.tree.TreePanel, {
     // 返回当前选中的节点，可能为null
     getSelectedNode: function() {
         return this.getSelectionModel().getSelectedNode();
-    }
+    },
+
+    onDestroy : function(){
+        if(this.rendered){
+            if (this.contextMenu) {
+                this.contextMenu.destroy();
+            }
+            if (this.dialog) {
+                this.dialog.destroy();
+            }
+        }
+        Ext.lingo.JsonTree.superclass.onDestroy.call(this);
+    },
 });

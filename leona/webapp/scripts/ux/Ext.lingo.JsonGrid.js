@@ -374,19 +374,31 @@ Ext.lingo.JsonGrid = Ext.extend(Ext.grid.GridPanel, {
 
         var menuList = [updateMenu, removeMenu];
 
-        grid_menu = new Ext.menu.Menu({
+        this.grid_menu = new Ext.menu.Menu({
             id    : 'mainMenu',
             items : menuList
         });
 
         var coords = e.getXY();
         grid.getSelectionModel().selectRow(rowIndex);
-        grid_menu.showAt([coords[0], coords[1]]);
+        this.grid_menu.showAt([coords[0], coords[1]]);
     },
 
     // 刷新表格数据
     refresh : function() {
         this.store.reload();
-    }
+    },
+
+    onDestroy : function(){
+        if(this.rendered){
+            if (this.grid_menu) {
+                this.grid_menu.destory();
+            }
+            if (this.dialog) {
+                this.dialog.destroy();
+            }
+        }
+        Ext.lingo.JsonGrid.superclass.onDestroy.call(this);
+    },
 });
 

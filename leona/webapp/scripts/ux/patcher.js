@@ -1,3 +1,8 @@
+
+///////////////////////////////////////////////////////////
+// 1.Ext.data.JsonReader
+///////////////////////////////////////////////////////////
+
 Ext.override(Ext.data.JsonReader, {
     getJsonAccessor: function(){
         var re = /[\[\.]/;
@@ -116,3 +121,26 @@ Ext.override(Ext.data.JsonReader, {
     }
 });
 
+///////////////////////////////////////////////////////////
+// 2.Ext.menu.Adapter Ext.Toolbar.MenuButton
+///////////////////////////////////////////////////////////
+
+if (Ext.version == '3.0') {
+    Ext.menu.Adapter = Ext.menu.Menu;
+    Ext.Toolbar.MenuButton = Ext.SplitButton;
+}
+
+///////////////////////////////////////////////////////////
+// 3.Ext.Container
+///////////////////////////////////////////////////////////
+
+if (typeof Ext.Container.prototype.removeAll == 'undefined') {
+    Ext.override(Ext.Container, {
+        removeAll: function() {
+            var item = null;
+            while ((item = this.items.last())) {
+                this.remove(item, true);
+            }
+        }
+    });
+}
