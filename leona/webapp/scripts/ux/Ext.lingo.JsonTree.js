@@ -476,5 +476,5 @@ Ext.lingo.JsonTree = Ext.extend(Ext.tree.TreePanel, {
             }
         }
         Ext.lingo.JsonTree.superclass.onDestroy.call(this);
-    },
+    }
 });

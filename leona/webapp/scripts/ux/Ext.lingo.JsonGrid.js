@@ -399,6 +399,6 @@ Ext.lingo.JsonGrid = Ext.extend(Ext.grid.GridPanel, {
             }
         }
         Ext.lingo.JsonGrid.superclass.onDestroy.call(this);
-    },
+    }
 });
 
