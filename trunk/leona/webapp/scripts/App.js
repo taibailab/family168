@@ -37,7 +37,7 @@ App.init = function() {
                 text: 'Logout',
                 iconCls: 'user_delete',
                 handler: function() {
-                    App.logout();
+                    App.security.logout();
                 }
             }])
         },{

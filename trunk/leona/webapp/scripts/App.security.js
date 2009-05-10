@@ -35,11 +35,6 @@ App.security = {
 
     rebuildMenu: function(info) {
         var mainAccordion = Ext.getCmp('mainAccordion');
-        var item = null;
-        while ((item = mainAccordion.items.last())) {
-            mainAccordion.remove(item, true);
-        }
-
         for (var i = 0; i < info.length; i++) {
             var p = new Ext.tree.TreePanel({
                 title: info[i].text,
@@ -59,6 +54,26 @@ App.security = {
             mainAccordion.add(p);
         }
         mainAccordion.doLayout();
+    },
+
+    logout: function() {
+        Ext.Ajax.request({
+            url: './j_spring_security_logout',
+            success: function(response) {
+                var tabs = App.centerTabPanel;
+                for (var i = tabs.items.length; i > 0; i--) {
+                    var tab = tabs.getComponent(i);
+                    tabs.remove(tab, true);
+                }
+                var mainAccordion = Ext.getCmp('mainAccordion');
+                mainAccordion.removeAll();
+                App.loginWindow.formPanel.getForm().reset();
+                App.loginWindow.show();
+            },
+            failure: function(response) {
+                Ext.Msg.alert('错误', '无法访问服务器。');
+            }
+        });
     }
 };
 

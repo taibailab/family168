@@ -16,7 +16,6 @@
 
     <script type="text/javascript" src="./scripts/ux/Autogrid.js"></script>
     <script type="text/javascript" src="./scripts/ux/cvi_glossy_lib.js"></script>
-    <script type="text/javascript" src="./scripts/ux/JsonReader.patcher.js"></script>
     <script type="text/javascript" src="./scripts/ux/Ext.lingo.JsonGrid.js"></script>
     <script type="text/javascript" src="./scripts/ux/Ext.lingo.PlainGrid.js"></script>
     <script type="text/javascript" src="./scripts/ux/Ext.lingo.EditGrid.js"></script>
@@ -27,6 +26,7 @@
     <script type="text/javascript" src="./scripts/ux/Ext.ux.PageSizePlugin.js"></script>
     <script type="text/javascript" src="./scripts/ux/Ext.ux.ClearableCombo.js"></script>
     <script type="text/javascript" src="./scripts/ux/Ext.ux.SpringSecurityLoginWindow.js"></script>
+    <script type="text/javascript" src="./scripts/ux/patcher.js"></script>
     <script type="text/javascript">
 Ext.BLANK_IMAGE_URL = '${ext}/resources/images/default/s.gif';
     </script>

@@ -8,7 +8,7 @@ App.UserGrid = Ext.extend(Ext.lingo.JsonGrid, {
     dlgWidth: 300,
     dlgHeight: 300,
     formConfig: [
-        {fieldLabel: '编号', name: 'id'},
+        {fieldLabel: '编号', name: 'id', readOnly: true},
         {fieldLabel: '用户名', name: 'username'},
         {fieldLabel: '密码', name: 'password', inputType: 'password'},
         {fieldLabel: '部门', name: 'deptName', mapping: 'dept.name', xtype: 'deptfield'},
