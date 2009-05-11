@@ -146,6 +146,10 @@ App.UserGrid = Ext.extend(Ext.lingo.JsonGrid, {
             Ext.MessageBox.alert('提示', '请选择需要授权的用户！');
             return;
         }
+        if (this.getSelections().length > 1){
+            Ext.MessageBox.alert('提示', '不能选择多行！');
+            return;
+        }
 
         if (!this.selectRoleWin) {
             // 建一个角色数据映射数组

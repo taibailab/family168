@@ -104,6 +104,10 @@ App.RoleGrid = Ext.extend(Ext.lingo.JsonGrid, {
             Ext.MessageBox.alert('提示', '请选择需要配置的角色！');
             return;
         }
+        if (this.getSelections().length > 1){
+            Ext.MessageBox.alert('提示', '不能选择多行！');
+            return;
+        }
 
         if (!this.selectRescWin) {
             var r = Ext.data.Record.create([
@@ -268,6 +272,11 @@ App.RoleGrid = Ext.extend(Ext.lingo.JsonGrid, {
             Ext.MessageBox.alert('提示', '请选择需要配置的角色！');
             return;
         }
+        if (this.getSelections().length > 1){
+            Ext.MessageBox.alert('提示', '不能选择多行！');
+            return;
+        }
+
         var roleId = this.getSelections()[0].get("id");
         if (!this.selectMenuWin) {
             var menuTree = new Ext.tree.TreePanel({
