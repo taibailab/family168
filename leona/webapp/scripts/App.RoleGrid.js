@@ -300,15 +300,18 @@ App.RoleGrid = Ext.extend(Ext.lingo.JsonGrid, {
                     }
                 }])
             });
+            menuTree.getLoader().on('load', function(o, node) {
+                if (node.isRoot) {
+                    menuTree.expandAll();
+                }
+            });
             // 设置根节点
             var root = new Ext.tree.AsyncTreeNode({
                 text       : 'root',
-                draggable  : false,
-                id         : '0'/*,
+                draggable  : false/*,
                 uiProvider : Ext.tree.CheckboxNodeUI*/
             });
             menuTree.setRootNode(root);
-            menuTree.expandAll();
 
             this.menuTree = menuTree;
             this.selectMenuWin = new Ext.Window({
