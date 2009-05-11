@@ -308,6 +308,7 @@ App.RoleGrid = Ext.extend(Ext.lingo.JsonGrid, {
                 uiProvider : Ext.tree.CheckboxNodeUI*/
             });
             menuTree.setRootNode(root);
+            menuTree.expandAll();
 
             this.menuTree = menuTree;
             this.selectMenuWin = new Ext.Window({
