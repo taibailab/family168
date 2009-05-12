@@ -15,11 +15,14 @@
 
     void renderDept(StringBuffer buff, Dept dept, boolean isFirst, boolean isLast) {
         buff.append("<li>");
-        String cls = null;
+        String cls = "";
         if (isFirst) {
             cls = "first";
-        } else if (isLast) {
+        }else if (isLast) {
             cls = "last";
+        }
+        if (isFirst && isLast) {
+            cls = "solo";
         }
         if (!dept.isLeaf()) {
             cls += " section";
@@ -30,9 +33,13 @@
             .append(dept.getName())
             .append("</a></div>");
         if (!dept.isLeaf()) {
-            buff.append("<ul>");
             int index = 0;
             int len = dept.getChildren().size();
+            if (len == 1) {
+                buff.append("<ul class=\"solo\">");
+            } else {
+                buff.append("<ul>");
+            }
             for (Dept child : dept.getChildren()) {
                 renderDept(buff, child, index == 0, index == len - 1);
                 index++;
@@ -50,39 +57,15 @@
     <link rel="stylesheet" type="text/css" href="${ctx}/styles/orgmap/orgmap.css" />
   </head>
   <body>
-    <h1>组织结构图</h1>
-    <hr/>
     <div id="contain">
       <ul id="map" class="solo">
         <li>
           <div class="root section"><a href="#">组织结构</a></div>
           <ul>
             <%=renderDeptList((List<Dept>)request.getAttribute("list"))%>
+          </ul>
+        </li>
       </ul>
     </div>
-<%--
-<#macro renderDept dept isFirst isLast>
-  <li>
-    <div class="<#if isFirst>first<#elseif isLast>last</#if><#if dept.leaf!=true> section</#if>"><a href="#">${dept.name!}</a></div>
-  <#if dept.leaf!=true>
-    <ul>
-    <#list dept.children! as child>
-      <@renderDept child child_index==0 child_has_next!=true/>
-    </#list>
-    </ul>
-  </#if>
-  </li>
-</#macro>
-    <div id="contain">
-      <ul id="map" class="solo">
-        <li>
-          <div class="root section"><a href="#">组织结构</a></div>
-          <ul>
-<#list deptList! as dept>
-  <@renderDept dept dept_index==0 dept_has_next!=true/>
-</#list>
-      </ul>
-    </div>
---%>
   </body>
 </html>
