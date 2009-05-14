@@ -37,8 +37,9 @@
 
     <!-- 以AspectJ方式 定义 AOP -->
     <aop:config proxy-target-class="true">
-        <aop:advisor pointcut="execution(* com.family168.security.manager..*Manager.*(..))" advice-ref="txAdvice"/>
         <aop:advisor pointcut="execution(* com.family168.core.hibernate.*Dao.*(..))" advice-ref="txAdvice"/>
+        <aop:advisor pointcut="execution(* com.family168.security.manager.*Manager.*(..))" advice-ref="txAdvice"/>
+        <aop:advisor pointcut="execution(* com.family168.leona.manager.*Manager.*(..))" advice-ref="txAdvice"/>
     </aop:config>
 
     <!--

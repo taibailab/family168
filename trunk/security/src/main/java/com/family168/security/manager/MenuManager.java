@@ -81,4 +81,32 @@ public class MenuManager extends HibernateEntityDao<Menu> {
 
         return find(hql, userId);
     }
+
+    /**
+     * 保存.
+     *
+     * @param o Object
+     */
+    public void save(Object o) {
+        super.save(o);
+
+        if (o instanceof Menu) {
+            getSessionFactory()
+                .evictCollection("com.family168.security.domain.Menu.children");
+        }
+    }
+
+    /**
+     * 删除.
+     *
+     * @param o Object
+     */
+    public void remove(Object o) {
+        if (o instanceof Menu) {
+            getSessionFactory()
+                .evictCollection("com.family168.security.domain.Menu.children");
+        }
+
+        super.remove(o);
+    }
 }
