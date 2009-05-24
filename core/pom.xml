@@ -61,6 +61,12 @@
       <version>0.1-SNAPSHOT</version>
     </dependency>
 
+    <dependency>
+      <groupId>com.family168.leona</groupId>
+      <artifactId>component-logger</artifactId>
+      <version>0.1-SNAPSHOT</version>
+    </dependency>
+
     <!--servlet-2.4和jsp-2.0规范 start-->
     <dependency>
       <groupId>javax.servlet</groupId>
