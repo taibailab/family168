@@ -135,4 +135,11 @@ public class PageTest extends TestCase {
         assertTrue(page.isPageCountEnabled());
         assertEquals(7, page.getPageCount());
     }
+
+    public void testPageCountDisabled() {
+        page.setTotalCount(-1);
+        page.setPageSize(15);
+        assertFalse(page.isPageCountEnabled());
+        assertEquals(-1, page.getPageCount());
+    }
 }
