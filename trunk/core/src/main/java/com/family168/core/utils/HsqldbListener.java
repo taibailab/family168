@@ -1,6 +1,7 @@
 package com.family168.core.utils;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -58,8 +59,15 @@ public class HsqldbListener implements ServletContextListener {
     public void contextInitialized(ServletContextEvent sce) {
         try {
             Properties prop = new Properties();
-            prop.load(HsqldbListener.class.getResourceAsStream(
-                    "/conf/hsql.properties"));
+            InputStream inputStream = HsqldbListener.class
+                .getResourceAsStream("/conf/hsql.properties");
+
+            try {
+                prop.load(inputStream);
+            } finally {
+                inputStream.close();
+            }
+
             username = prop.getProperty("hsql.username");
             password = prop.getProperty("hsql.password");
 

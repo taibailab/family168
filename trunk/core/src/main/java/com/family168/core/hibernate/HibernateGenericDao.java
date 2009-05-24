@@ -364,7 +364,11 @@ public class HibernateGenericDao extends HibernateDaoSupport {
             if (id != null) {
                 criteria.add(Restrictions.not(Restrictions.eq(idName, id)));
             }
-        } catch (Exception e) {
+        } catch (IllegalAccessException e) {
+            ReflectionUtils.handleReflectionException(e);
+        } catch (NoSuchMethodException e) {
+            ReflectionUtils.handleReflectionException(e);
+        } catch (InvocationTargetException e) {
             ReflectionUtils.handleReflectionException(e);
         }
 
@@ -499,7 +503,13 @@ public class HibernateGenericDao extends HibernateDaoSupport {
         Assert.notNull(criteria);
         Assert.isTrue(pageNo >= 1, "pageNo should be eg 1");
 
-        CriteriaImpl impl = CriteriaImpl.class.cast(criteria);
+        CriteriaImpl impl = null;
+
+        if (criteria instanceof CriteriaImpl) {
+            impl = CriteriaImpl.class.cast(criteria);
+        } else {
+            Assert.isTrue(criteria instanceof CriteriaImpl);
+        }
 
         // 先把Projection和OrderBy条件取出来,清空两者来执行Count操作
         Projection projection = impl.getProjection();
