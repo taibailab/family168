@@ -18,6 +18,7 @@ App.centerTabPanel = new Ext.TabPanel({
         title: '欢迎您',
         closable: false,
         autoScroll: true,
+        iconCls: 'welcome',
         html: '<table width="100%" height="100%"><tr><td align="center"><a href="http://www.china-pub.com/195152" target="_blank"><img src="images/extjs/cover.jpg" width="300" height="380" border="0" /></a></td></tr></table>'
     }]
 });
