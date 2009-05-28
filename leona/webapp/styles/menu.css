@@ -91,3 +91,7 @@ x-accordion-hd img.user_delete,
     background: url('../images/icons/user_delete.png') no-repeat;
 }
 
+.welcome {
+    background: url('./login/home16.png') no-repeat;
+}
+

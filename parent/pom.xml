@@ -64,14 +64,14 @@
   </ciManagement>
   <distributionManagement>
     <repository>
-      <id>family168-milestone</id>
-      <name>Family168 Milestone Repository</name>
-      <url>s3://maven2.family168.com/milestone</url>
+      <id>family168-release</id>
+      <name>Family168 Release Repository</name>
+      <url>${siteDirectory}</url>
     </repository>
     <snapshotRepository>
       <id>family168-snapshot</id>
       <name>Spring Snapshot Repository</name>
-      <url>s3://maven.family168.org/snapshot</url>
+      <url>${siteDirectory}</url>
     </snapshotRepository>
     <site>
       <id>local</id>
@@ -83,15 +83,33 @@
     <repository>
       <id>openqa selenium repository</id>
       <url>http://nexus.openqa.org/content/repositories/releases/</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
     </repository>
     <repository>
       <id>jboss repository</id>
       <url>http://repository.jboss.com/maven2/</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
     </repository>
     <repository>
       <id>compass-project.org</id>
       <name>Compass</name>
       <url>http://repo.compass-project.org</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
     </repository>
   </repositories>
   <pluginRepositories>
@@ -108,6 +126,12 @@
     <pluginRepository>
       <id>mojo repository</id>
       <url>http://repository.codehaus.org/</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
     </pluginRepository>
   </pluginRepositories>
 
@@ -121,16 +145,6 @@
       <dependency>
         <groupId>com.family168.leona</groupId>
         <artifactId>leona-security</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.family168.leona</groupId>
-        <artifactId>leona-jbpm</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.family168.leona</groupId>
-        <artifactId>leona-taglib</artifactId>
         <version>${project.version}</version>
       </dependency>
 
@@ -512,103 +526,6 @@
 
       <!-- jbpm start -->
       <dependency>
-        <groupId>org.jbpm</groupId>
-        <artifactId>jbpm-jpdl</artifactId>
-        <version>${jbpm.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.jbpm</groupId>
-        <artifactId>jbpm-identity</artifactId>
-        <version>${jbpm.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>jaxen</groupId>
-        <artifactId>jaxen</artifactId>
-        <version>${jaxen.version}</version>
-        <exclusions>
-          <exclusion>
-            <groupId>jdom</groupId>
-            <artifactId>jdom</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>xom</groupId>
-            <artifactId>xom</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>xml-apis</groupId>
-            <artifactId>xml-apis</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>xerces</groupId>
-            <artifactId>xercesImpl</artifactId>
-          </exclusion>
-        </exclusions>
-      </dependency>
-      <dependency>
-        <groupId>javax.jcr</groupId>
-        <artifactId>jcr</artifactId>
-        <version>${jcr.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.springmodules</groupId>
-        <artifactId>spring-modules-jbpm31</artifactId>
-        <version>${spring-modules-jbpm31.version}</version>
-        <exclusions>
-          <exclusion>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-beans</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-core</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-dao</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-support</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-hibernate3</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-jdbc</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-aop</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>jboss</groupId>
-            <artifactId>jbpm</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>bsh</groupId>
-            <artifactId>bsh</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>ehcache</groupId>
-            <artifactId>ehcache</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>geronimo-spec</groupId>
-            <artifactId>geronimo-spec-jta</artifactId>
-          </exclusion>
-        </exclusions>
-      </dependency>
-      <dependency>
         <groupId>org.jbpm.jbpm4</groupId>
         <artifactId>jbpm-jpdl</artifactId>
         <version>${jbpm4.version}</version>
@@ -636,6 +553,14 @@
           <exclusion>
             <groupId>juel</groupId>
             <artifactId>juel</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-jdk14</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-entitymanager</artifactId>
           </exclusion>
         </exclusions>
       </dependency>
@@ -1001,7 +926,6 @@
           <warSourceDirectory>${basedir}/webapp/</warSourceDirectory>
         </configuration>
       </plugin>
-<!--
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>jalopy-maven-plugin</artifactId>
@@ -1040,7 +964,6 @@
           <password></password>
         </configuration>
       </plugin>
--->
     </plugins>
   </build>
 
@@ -1137,13 +1060,11 @@
           </tags>
         </configuration>
       </plugin>
-<!--
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>javancss-maven-plugin</artifactId>
         <version>${javancss-maven-plugin.version}</version>
       </plugin>
--->
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>jdepend-maven-plugin</artifactId>
@@ -1159,7 +1080,6 @@
           <charset>${project.reporting.outputEncoding}</charset>
         </configuration>
       </plugin>
-<!--
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-changelog-plugin</artifactId>
@@ -1168,7 +1088,6 @@
           <outputEncoding>${project.reporting.outputEncoding}</outputEncoding>
         </configuration>
       </plugin>
--->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-report-plugin</artifactId>
@@ -1271,8 +1190,7 @@
     <c3p0.version>0.9.1.2</c3p0.version>
     <p6spy.version>1.3</p6spy.version>
 
-    <jbpm.version>3.2.3</jbpm.version>
-    <jbpm4.version>4.0.0.Beta1</jbpm4.version>
+    <jbpm4.version>4.0.0.Beta2</jbpm4.version>
     <jaxen.version>1.1.1</jaxen.version>
     <jcr.version>1.0</jcr.version>
     <spring-modules-jbpm31.version>0.8a</spring-modules-jbpm31.version>
@@ -1284,45 +1202,39 @@
     <oscache.version>2.4</oscache.version>
     <cxf.version>2.2.1</cxf.version>
     <jaxb.version>2.1.8</jaxb.version>
-    <drools.version>4.0.7</drools.version>
+    <drools.version>5.0.1</drools.version>
     <activemq.version>5.2.0</activemq.version>
     <xbean.version>3.5</xbean.version>
     <jencks.version>2.1</jencks.version>
     <lingo.version>1.3</lingo.version>
     <quartz.version>1.6.5</quartz.version>
-    <groovy.version>1.6.2</groovy.version>
+    <groovy.version>1.6.3</groovy.version>
     <lucene.version>2.4.1</lucene.version>
     <compass.version>2.1.2</compass.version>
-    <felix.version>1.6.1</felix.version>
+    <felix.version>1.8.0</felix.version>
 
     <maven-clean-plugin.version>2.3</maven-clean-plugin.version>
     <maven-compiler-plugin.version>2.0.2</maven-compiler-plugin.version>
-    <maven-install-plugin.version>2.2</maven-install-plugin.version>
+    <maven-install-plugin.version>2.3</maven-install-plugin.version>
     <!-- http://jira.codehaus.org/browse/MSOURCES-44因为这个问题不敢升级到2.1 -->
     <maven-source-plugin.version>2.0.4</maven-source-plugin.version>
-    <maven-war-plugin.version>2.1-alpha-2</maven-war-plugin.version>
+    <maven-war-plugin.version>2.1-beta-1</maven-war-plugin.version>
     <maven-jetty-plugin.version>6.1.16</maven-jetty-plugin.version>
     <tomcat-maven-plugin.version>1.0-beta-1</tomcat-maven-plugin.version>
-<!--
     <jalopy-maven-plugin.version>20081026</jalopy-maven-plugin.version>
     <dashboard-maven-plugin.version>20081126</dashboard-maven-plugin.version>
--->
-    <maven-site-plugin.version>2.0-beta-7</maven-site-plugin.version>
-    <maven-project-info-reports-plugin.version>2.1</maven-project-info-reports-plugin.version>
+    <maven-site-plugin.version>2.0</maven-site-plugin.version>
+    <maven-project-info-reports-plugin.version>2.1.1</maven-project-info-reports-plugin.version>
     <maven-jxr-plugin.version>2.1</maven-jxr-plugin.version>
     <maven-checkstyle-plugin.version>2.2</maven-checkstyle-plugin.version>
     <maven-pmd-plugin.version>2.4</maven-pmd-plugin.version>
     <findbugs-maven-plugin.version>2.0.1</findbugs-maven-plugin.version>
     <cobertura-maven-plugin.version>2.2</cobertura-maven-plugin.version>
     <taglist-maven-plugin.version>2.3</taglist-maven-plugin.version>
-<!--
     <javancss-maven-plugin.version>20081124</javancss-maven-plugin.version>
--->
     <jdepend-maven-plugin.version>2.0-beta-2</jdepend-maven-plugin.version>
     <maven-javadoc-plugin.version>2.5</maven-javadoc-plugin.version>
-<!--
     <maven-changelog-plugin.version>20080922</maven-changelog-plugin.version>
--->
     <maven-surefire-report-plugin.version>2.4.3</maven-surefire-report-plugin.version>
     <maven-overview-plugin.version>1.4</maven-overview-plugin.version>
     <stat-scm.version>1.2.0</stat-scm.version>
