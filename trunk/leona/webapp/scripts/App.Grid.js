@@ -5,10 +5,11 @@ App.centerTabPanel = new Ext.TabPanel({
     deferredRender: false,
     enableTabScroll: true,
     monitorResize: true,
-    border: true,
     activeTab: 0,
+    border: false,
     defaults: {
         closable: true,
+        border: true,
         viewConfig: {
             forceFit: true
         }
@@ -30,6 +31,7 @@ App.centerTabPanel.on('remove', function(){
 }, App);
 
 App.centerPanel = new Ext.Panel({
+    border: false,
     region: 'center',
     layout: 'fit',
     items: App.centerTabPanel
