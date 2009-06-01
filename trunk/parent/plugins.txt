@@ -1,57 +1,57 @@
 
 2008-11-26
-²å¼şËµÃ÷
+æ’ä»¶è¯´æ˜
 
 
-build²å¼ş
+buildæ’ä»¶
 
-* org.apache.maven.plugins.maven-clean-pluginÉ¾³ı
-  ³ıÁËÉ¾³ıtargetºÍoutputÒÔÍâ£¬»¹É¾³ıEditPlusÉú³É.bakÎÄ¼ş£¬windows¶ÔÍ¼Æ¬µÄThumbs.db»º´æ£¬ÒÔ¼°log4jÉú³ÉµÄ*.log.*ÈÕÖ¾
-  µ«ÊÇ²»É¾³ıbuild.log£¬ÒòÎªÕâ¸öÎÄ¼şÊÇshitty²å¼şÓÃÀ´Êä³öÈÕÖ¾µÄÎÄ¼ş£¬°ÑÕâ¸öÉ¾³ıµÄ»°£¬shittyµÄ¼¯³É²âÊÔÒ»¶¨»áÊ§°Ü
-  ÔÚprocess-sources½×¶Î£¬Ö»É¾³ı.bakÎÄ¼ş
+* org.apache.maven.plugins.maven-clean-pluginåˆ é™¤
+  é™¤äº†åˆ é™¤targetå’Œoutputä»¥å¤–ï¼Œè¿˜åˆ é™¤EditPlusç”Ÿæˆ.bakæ–‡ä»¶ï¼Œwindowså¯¹å›¾ç‰‡çš„Thumbs.dbç¼“å­˜ï¼Œä»¥åŠlog4jç”Ÿæˆçš„*.log.*æ—¥å¿—
+  ä½†æ˜¯ä¸åˆ é™¤build.logï¼Œå› ä¸ºè¿™ä¸ªæ–‡ä»¶æ˜¯shittyæ’ä»¶ç”¨æ¥è¾“å‡ºæ—¥å¿—çš„æ–‡ä»¶ï¼ŒæŠŠè¿™ä¸ªåˆ é™¤çš„è¯ï¼Œshittyçš„é›†æˆæµ‹è¯•ä¸€å®šä¼šå¤±è´¥
+  åœ¨process-sourcesé˜¶æ®µï¼Œåªåˆ é™¤.bakæ–‡ä»¶
 
-* org.apache.maven.plugins.maven-compiler-plugin±àÒë
-  Ô´´úÂëÊ¹ÓÃUTF-8±àÂë£¬JDK°æ±¾Îª1.5
+* org.apache.maven.plugins.maven-compiler-pluginç¼–è¯‘
+  æºä»£ç ä½¿ç”¨UTF-8ç¼–ç ï¼ŒJDKç‰ˆæœ¬ä¸º1.5
 
-* org.apache.maven.plugins.maven-install-plugin²¿Êğ
-  createCheckSum£¬ÔÚinstallµ½±¾µØrepoµÄÊ±ºò£¬Éú³Ésha1ºÍmd5ÍêÕûĞÔÕªÒª
+* org.apache.maven.plugins.maven-install-pluginéƒ¨ç½²
+  createCheckSumï¼Œåœ¨installåˆ°æœ¬åœ°repoçš„æ—¶å€™ï¼Œç”Ÿæˆsha1å’Œmd5å®Œæ•´æ€§æ‘˜è¦
 
-* org.apache.maven.plugins.maven-source-pluginÔ´´úÂë¹ÜÀí²å¼ş
-  installµÄÊ±ºò£¬½«Ô´´úÂë´ò°ü³ÉjarÎÄ¼ş£¬·¢²¼µ½repoÖĞ
+* org.apache.maven.plugins.maven-source-pluginæºä»£ç ç®¡ç†æ’ä»¶
+  installçš„æ—¶å€™ï¼Œå°†æºä»£ç æ‰“åŒ…æˆjaræ–‡ä»¶ï¼Œå‘å¸ƒåˆ°repoä¸­
 
-* org.apache.maven.plugins.maven-war-plugin´ò°üwar
-  warSourceDirectoryÄ¬ÈÏÎªsrc/main/webapp£¬ĞŞ¸ÄÎªwebapp
+* org.apache.maven.plugins.maven-war-pluginæ‰“åŒ…war
+  warSourceDirectoryé»˜è®¤ä¸ºsrc/main/webappï¼Œä¿®æ”¹ä¸ºwebapp
 
-* org.mortbay.jetty.maven-jetty-plugin·şÎñÆ÷jetty
-  scanIntervalSecondsÈÈ²¿ÊğÊ±¼ä¼ä¸ô10s
-  webDefaultXmlÊ¹ÓÃ×Ô¶¨ÒåµÄwebdefault.xml£¬½â¾ö¾²Ì¬×ÊÔ´±»Ëø¶¨µÄÎÊÌâ
-  webAppSourceDirectoryÄ¬ÈÏÎªsrc/main/webapp£¬ĞŞ¸ÄÎªwebapp
+* org.mortbay.jetty.maven-jetty-pluginæœåŠ¡å™¨jetty
+  scanIntervalSecondsçƒ­éƒ¨ç½²æ—¶é—´é—´éš”10s
+  webDefaultXmlä½¿ç”¨è‡ªå®šä¹‰çš„webdefault.xmlï¼Œè§£å†³é™æ€èµ„æºè¢«é”å®šçš„é—®é¢˜
+  webAppSourceDirectoryé»˜è®¤ä¸ºsrc/main/webappï¼Œä¿®æ”¹ä¸ºwebapp
 
-* org.codehaus.mojo.tomcat-maven-plugin·şÎñÆ÷tomcat
-  warSourceDirectoryÄ¬ÈÏÎªsrc/main/webapp£¬ĞŞ¸ÄÎªwebapp
+* org.codehaus.mojo.tomcat-maven-pluginæœåŠ¡å™¨tomcat
+  warSourceDirectoryé»˜è®¤ä¸ºsrc/main/webappï¼Œä¿®æ”¹ä¸ºwebapp
 
-* org.codehaus.mojo.jalopy-maven-pluginÃÀ»¯Ô´´úÂë
-  convention¸ñÊ½»¯ÅäÖÃÎÄ¼ş
-  encodingÔ´´úÂëÊ¹ÓÃUTF-8±àÂë
-  historyÊ¹ÓÃfile¼ÇÂ¼ÀúÊ·ĞÅÏ¢
-  ÔÚprocess-sources½×¶ÎÖ´ĞĞformat¹¦ÄÜ
+* org.codehaus.mojo.jalopy-maven-pluginç¾åŒ–æºä»£ç 
+  conventionæ ¼å¼åŒ–é…ç½®æ–‡ä»¶
+  encodingæºä»£ç ä½¿ç”¨UTF-8ç¼–ç 
+  historyä½¿ç”¨fileè®°å½•å†å²ä¿¡æ¯
+  åœ¨process-sourcesé˜¶æ®µæ‰§è¡ŒformatåŠŸèƒ½
 
-* org.codehaus.mojo.dashboard-maven-plugin±¨±í°×°å
-  Ê¹ÓÃhsqldbÊı¾İ¿â±£´æÀúÊ·±¨±í¼ÇÂ¼
+* org.codehaus.mojo.dashboard-maven-pluginæŠ¥è¡¨ç™½æ¿
+  ä½¿ç”¨hsqldbæ•°æ®åº“ä¿å­˜å†å²æŠ¥è¡¨è®°å½•
 
 
-reporting±¨±í²å¼ş
+reportingæŠ¥è¡¨æ’ä»¶
 
-* org.apache.maven.plugins.maven-site-pluginÉú³Ésite±¨±í
-  inputEncodingÊäÈëĞÅÏ¢µÄ±àÂë
-  outputEncodingÊä³öhtmlµÄ±àÂë
+* org.apache.maven.plugins.maven-site-pluginç”ŸæˆsiteæŠ¥è¡¨
+  inputEncodingè¾“å…¥ä¿¡æ¯çš„ç¼–ç 
+  outputEncodingè¾“å‡ºhtmlçš„ç¼–ç 
 
-* org.apache.maven.plugins.maven-project-info-reports-pluginÏîÄ¿ĞÅÏ¢±£´æ
-  inputEncodingÊäÈëĞÅÏ¢µÄ±àÂë
-  outputEncodingÊä³öhtmlµÄ±àÂë
-  dependencyLocationsEnabled²»¼ì²âÒÀÀµµÄÎ»ÖÃ£¬¿ÉÒÔ±ÜÃâ³öÏÖÄÚ´æÒç³öµÄÎÊÌâ£¬ÒòÎª¼ì²âÒÀÀµĞÔµÄ±¨±íÌ«Õ¼ÄÚ´æÁË
-  Ä¬ÈÏÌáÊ¾ÈçÏÂµÄ±¨±í£¬¿ÉÒÔ×ÔĞĞÅäÖÃÏÔÊ¾ÄÄĞ©±¨±íÏîÄ¿
-  ×î·ÑÊ±µÄ¾ÍÊÇdependenciesÏà¹ØµÄÈı¸ö±¨±í£¬Æ½³£¿ª·¢¿ÉÒÔ¿¼ÂÇÈ¥µô
+* org.apache.maven.plugins.maven-project-info-reports-pluginé¡¹ç›®ä¿¡æ¯ä¿å­˜
+  inputEncodingè¾“å…¥ä¿¡æ¯çš„ç¼–ç 
+  outputEncodingè¾“å‡ºhtmlçš„ç¼–ç 
+  dependencyLocationsEnabledä¸æ£€æµ‹ä¾èµ–çš„ä½ç½®ï¼Œå¯ä»¥é¿å…å‡ºç°å†…å­˜æº¢å‡ºçš„é—®é¢˜ï¼Œå› ä¸ºæ£€æµ‹ä¾èµ–æ€§çš„æŠ¥è¡¨å¤ªå å†…å­˜äº†
+  é»˜è®¤æç¤ºå¦‚ä¸‹çš„æŠ¥è¡¨ï¼Œå¯ä»¥è‡ªè¡Œé…ç½®æ˜¾ç¤ºå“ªäº›æŠ¥è¡¨é¡¹ç›®
+  æœ€è´¹æ—¶çš„å°±æ˜¯dependenciesç›¸å…³çš„ä¸‰ä¸ªæŠ¥è¡¨ï¼Œå¹³å¸¸å¼€å‘å¯ä»¥è€ƒè™‘å»æ‰
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-project-info-reports-plugin</artifactId>
@@ -81,47 +81,47 @@ reporting±¨±í²å¼ş
         </reportSets>
       </plugin>
 
-* org.apache.maven.plugins.maven-jxr-pluginÔ´´úÂëÎ»ÖÃÒıÓÃ
-  ×¢Òâ°ÑÕâ¸ö²å¼ş·ÅÔÚtaglistµÄÇ°Ãæ£¬·ñÔò¿ÉÄÜ³öÏÖ³¬Á´½Ó´íÎóµÄÎÊÌâ
-  inputEncodingÔ´´úÂë±àÂë
-  outputEncodingÊä³öhtml±àÂë
+* org.apache.maven.plugins.maven-jxr-pluginæºä»£ç ä½ç½®å¼•ç”¨
+  æ³¨æ„æŠŠè¿™ä¸ªæ’ä»¶æ”¾åœ¨taglistçš„å‰é¢ï¼Œå¦åˆ™å¯èƒ½å‡ºç°è¶…é“¾æ¥é”™è¯¯çš„é—®é¢˜
+  inputEncodingæºä»£ç ç¼–ç 
+  outputEncodingè¾“å‡ºhtmlç¼–ç 
 
-* org.apache.maven.plugins.maven-checkstyle-plugin¼ì²â±àÂë¹æ·¶
-  configLocation±àÂë¹æ·¶ÅäÖÃÎÄ¼şcheckstyle.xml
-  encodingÔ´´úÂëµÄ±àÂë
-  excludes²»¼ì²âÄÄĞ©´úÂë£¬¿ÉÒÔÊ¹ÓÃ*Í¨Åä·û£¬¶à¸öÌõ¼şÖ®¼äÊ¹ÓÃ,·Ö¸ô
+* org.apache.maven.plugins.maven-checkstyle-pluginæ£€æµ‹ç¼–ç è§„èŒƒ
+  configLocationç¼–ç è§„èŒƒé…ç½®æ–‡ä»¶checkstyle.xml
+  encodingæºä»£ç çš„ç¼–ç 
+  excludesä¸æ£€æµ‹å“ªäº›ä»£ç ï¼Œå¯ä»¥ä½¿ç”¨*é€šé…ç¬¦ï¼Œå¤šä¸ªæ¡ä»¶ä¹‹é—´ä½¿ç”¨,åˆ†éš”
 
-* org.apache.maven.plugins.maven-pmd-plugin´úÂë¼ì²â
-  sourceEncodingÔ´´úÂë±àÂë
-  targetJdkÊ¹ÓÃjdk-1.5°æ±¾
-  excludes¶ÔÓÚgenerated°üÏÂµÄ´úÂë²»ĞèÒª¼ì²â
+* org.apache.maven.plugins.maven-pmd-pluginä»£ç æ£€æµ‹
+  sourceEncodingæºä»£ç ç¼–ç 
+  targetJdkä½¿ç”¨jdk-1.5ç‰ˆæœ¬
+  excludeså¯¹äºgeneratedåŒ…ä¸‹çš„ä»£ç ä¸éœ€è¦æ£€æµ‹
 
-* org.codehaus.mojo.findbugs-maven-plugin¶¯Ì¬´úÂë¼ì²â
-  targetJdkÊ¹ÓÃjdk-1.5
-  xmlOutputÊä³öxml
-  excludeFilterFileÖÆ¶¨ÄÄĞ©´úÂë»òÕßÄÄĞ©bug²»ÒªÌáÊ¾³öÀ´
+* org.codehaus.mojo.findbugs-maven-pluginåŠ¨æ€ä»£ç æ£€æµ‹
+  targetJdkä½¿ç”¨jdk-1.5
+  xmlOutputè¾“å‡ºxml
+  excludeFilterFileåˆ¶å®šå“ªäº›ä»£ç æˆ–è€…å“ªäº›bugä¸è¦æç¤ºå‡ºæ¥
 
-* org.codehaus.mojo.cobertura-maven-plugin²âÊÔ¸²¸ÇÂÊ
-  ignores»òÕßexcludes¿ÉÒÔ°ÑÄ³Ğ©ÀàµÄ²âÊÔ¸²¸ÇÂÊ£¬ÅÅ³ıµ½×ÜÊıÁ¿Ö®Íâ
+* org.codehaus.mojo.cobertura-maven-pluginæµ‹è¯•è¦†ç›–ç‡
+  ignoresæˆ–è€…excludeså¯ä»¥æŠŠæŸäº›ç±»çš„æµ‹è¯•è¦†ç›–ç‡ï¼Œæ’é™¤åˆ°æ€»æ•°é‡ä¹‹å¤–
 
-* org.codehaus.mojo.taglist-maven-plugin±êÇ©ÁĞ±í
-  encodingÔ´´úÂë±àÂë
-  tags¼ì²âTODO, FIXME, todoÈı¸ö±êÇ©
+* org.codehaus.mojo.taglist-maven-pluginæ ‡ç­¾åˆ—è¡¨
+  encodingæºä»£ç ç¼–ç 
+  tagsæ£€æµ‹TODO, FIXME, todoä¸‰ä¸ªæ ‡ç­¾
 
-* org.codehaus.mojo.javancss-maven-pluginÍ³¼Æ´úÂëĞĞÊı
+* org.codehaus.mojo.javancss-maven-pluginç»Ÿè®¡ä»£ç è¡Œæ•°
 
-* org.codehaus.mojo.jdepend-maven-plugin¼ÆËã°üºÍÀàµÄÒÀÀµĞÔÎÈ¶¨ĞÔ
+* org.codehaus.mojo.jdepend-maven-pluginè®¡ç®—åŒ…å’Œç±»çš„ä¾èµ–æ€§ç¨³å®šæ€§
 
-* org.apache.maven.plugins.maven-javadoc-pluginÉú³Éjavadoc
+* org.apache.maven.plugins.maven-javadoc-pluginç”Ÿæˆjavadoc
 
-* org.apache.maven.plugins.maven-changelog-pluginĞŞ¸ÄÈÕÖ¾
-  ÅäÖÃscm·ÃÎÊsvn£¬Êä³öÒ»¸öÔÂÄÚµÄ¸üĞÂÈÕÖ¾£¬Í³¼ÆÎÄ¼ş¸üĞÂÆµÂÊºÍ¿ª·¢Õß»î¶¯ÆµÂÊ
+* org.apache.maven.plugins.maven-changelog-pluginä¿®æ”¹æ—¥å¿—
+  é…ç½®scmè®¿é—®svnï¼Œè¾“å‡ºä¸€ä¸ªæœˆå†…çš„æ›´æ–°æ—¥å¿—ï¼Œç»Ÿè®¡æ–‡ä»¶æ›´æ–°é¢‘ç‡å’Œå¼€å‘è€…æ´»åŠ¨é¢‘ç‡
 
-* org.apache.maven.plugins.maven-surefire-report-pluginµ¥Ôª²âÊÔ±¨±í
+* org.apache.maven.plugins.maven-surefire-report-pluginå•å…ƒæµ‹è¯•æŠ¥è¡¨
 
-* org.codehaus.mojo.dashboard-maven-plugin±¨±í°×°å
+* org.codehaus.mojo.dashboard-maven-pluginæŠ¥è¡¨ç™½æ¿
 
-* com.googlecode.maven-overview-plugin.maven-overview-pluginÉú³ÉÏîÄ¿µÄÒÀÀµÍ¼
+* com.googlecode.maven-overview-plugin.maven-overview-pluginç”Ÿæˆé¡¹ç›®çš„ä¾èµ–å›¾
 
-* net.sf.stat-scm»ùÓÚscm(cvs,svn)Éú³ÉµÄ±¨±í
+* net.sf.stat-scmåŸºäºscm(cvs,svn)ç”Ÿæˆçš„æŠ¥è¡¨
 

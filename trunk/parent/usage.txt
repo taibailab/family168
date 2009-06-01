@@ -1,23 +1,23 @@
 
-* Éú³Émaven2¹¤³Ì
+* ç”Ÿæˆmaven2å·¥ç¨‹
   mvn archetype:create -DgroupId=com.mycompany.app -DartifactId=my-webapp -DarchetypeArtifactId=maven-archetype-webapp
 
-* Éú³Éeclipse¹¤³Ì£¬²¢ÏÂÔØ¶ÔÓ¦µÄÔ´´úÂë
+* ç”Ÿæˆeclipseå·¥ç¨‹ï¼Œå¹¶ä¸‹è½½å¯¹åº”çš„æºä»£ç 
   mvn eclipse:eclipse -DdownloadSources=true
 
-* ÎªÁËeclipse¿ÉÒÔÊ¹ÓÃmaven2µÄrepo£¬ÎªeclipseÌí¼ÓM2_REPO±äÁ¿
+* ä¸ºäº†eclipseå¯ä»¥ä½¿ç”¨maven2çš„repoï¼Œä¸ºeclipseæ·»åŠ M2_REPOå˜é‡
   mvn -Declipse.workspace=<path-to-eclipse-workspace> eclipse:add-maven-repo
 
-* ½«jarÎÄ¼şÌí¼Óµ½repoÖĞ
+* å°†jaræ–‡ä»¶æ·»åŠ åˆ°repoä¸­
   mvn install:install-file -Dfile=X:/path/mail-1.3.jar -DartifactId=javamail -Dversion=1.3.1 -Dpackaging=jar -DgroupId=javamail
 
-* ½¨Á¢ÄÚ²¿²Ö¿â
+* å»ºç«‹å†…éƒ¨ä»“åº“
   <repository>
     <id>companyName</id>
     <url>http:// ${ip}/maven</url>
   </repository>
 
-* ²¿Êğ
+* éƒ¨ç½²
   <project>
     [...]
     <distributionManagement>
@@ -30,7 +30,7 @@
     [...]
   </project>
 
-* SSH2·½Ê½²¿Êğ
+* SSH2æ–¹å¼éƒ¨ç½²
   <project>
     [...]
     <distributionManagement>
@@ -42,7 +42,7 @@
     </distributionManagement>
   </project>
 
-* FTP·½Ê½²¿Êğ
+* FTPæ–¹å¼éƒ¨ç½²
   <project>
     [...]
     <distributionManagement>
@@ -54,7 +54,7 @@
     </distributionManagement>
   </project>
 
-* SSH·½Ê½²¿Êğ
+* SSHæ–¹å¼éƒ¨ç½²
   <project>
     [...]
     <distributionManagement>
@@ -75,7 +75,7 @@
    </build>
   </project>
 
-* FTP·½Ê½²¿Êğ
+* FTPæ–¹å¼éƒ¨ç½²
   <project>
     [...]
     <distributionManagement>
