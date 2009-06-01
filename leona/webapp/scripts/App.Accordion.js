@@ -10,7 +10,7 @@ createAccordion = function() {
         maxSize: 200,
         split: true,
         collapsible: true,
-        border: true,
+        border: false,
         defaults: {
             lines: false,
             autoScroll: true,
