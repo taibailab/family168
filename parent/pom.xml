@@ -926,6 +926,7 @@
           <warSourceDirectory>${basedir}/webapp/</warSourceDirectory>
         </configuration>
       </plugin>
+<!--
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>jalopy-maven-plugin</artifactId>
@@ -945,6 +946,7 @@
           </execution>
         </executions>
       </plugin>
+-->
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>dashboard-maven-plugin</artifactId>
