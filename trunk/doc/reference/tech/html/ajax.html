@@ -1,0 +1,144 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>&#31532;&nbsp;8&nbsp;&#31456;&nbsp;ajax</title><link rel="stylesheet" href="css/html.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.73.2"><style type="text/css">
+body { background-image: url('images/draft.png');
+       background-repeat: no-repeat;
+       background-position: top left;
+       /* The following properties make the watermark "fixed" on the page. */
+       /* I think that's just a bit too distracting for the reader... */
+       /* background-attachment: fixed; */
+       /* background-position: center center; */
+     }</style><link rel="start" href="index.html" title="Leona"><link rel="up" href="index.html" title="Leona"><link rel="prev" href="view.html" title="&#31532;&nbsp;7&nbsp;&#31456;&nbsp;view"><link rel="next" href="webservice.html" title="&#31532;&nbsp;9&nbsp;&#31456;&nbsp;web service"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div xmlns="http://www.w3.org/TR/xhtml1/transitional" xmlns:fo="http://www.w3.org/1999/XSL/Format" style="background-color:white;border:none;height:73px;border:1px solid black;"><a style="border:none;" href="http://www.family168.com/" title="Family168"><img src="images/family168.png" border="0"></img></a></div><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">&#31532;&nbsp;8&nbsp;&#31456;&nbsp;ajax</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="view.html">&#19978;&#19968;&#39029;</a>&nbsp;</td><th width="60%" align="center">&nbsp;</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="webservice.html">&#19979;&#19968;&#39029;</a></td></tr></table><hr></div><div class="chapter" lang="zh-cn"><div class="titlepage"><div><div><h2 class="title"><a name="ajax"></a>&#31532;&nbsp;8&nbsp;&#31456;&nbsp;ajax</h2></div></div></div><div class="sect1" lang="zh-cn"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="d4e1211"></a>8.1.&nbsp;JSCalendar&#26085;&#21382;&#25511;&#20214;</h2></div></div></div><p>&#26085;&#21382;&#25511;&#20214;&#25105;&#20204;&#20351;&#29992;dynarch&#30340;JSCalendar: http://www.dynarch.com/projects/calendar/&#19979;&#36733;&#21253;&#20013;&#26377;&#23436;&#25972;&#30340;sample &#21644; &#25991;&#26723;&#12290;</p><p>&#21487;&#20197;&#30452;&#25509;&#21253;&#21547;components/calendar/calendar.jsp&#33719;&#24471;&#25152;&#38656;&#30340;js&#21644;css&#25991;&#20214;&#12290;</p><pre class="programlisting">
+&lt;link href="${ctx}/components/calendar/skins/theme.css" type="text/css" rel="stylesheet"/&gt;
+&lt;script type="text/javascript" src="${ctx}/components/calendar/calendar.js"&gt;&lt;/script&gt;
+&lt;script type="text/javascript" src="${ctx}/components/calendar/calendar-setup.js"&gt;&lt;/script&gt;
+&lt;script type="text/javascript" src="${ctx}/components/calendar/lang/calendar-en.js"&gt;&lt;/script&gt;
+        </pre><p>&#21478;&#22806;&#65292;&#20004;&#20010;&#21407;&#29256;&#30340;&#20013;&#25991;&#35821;&#35328;&#25991;&#20214;calendar-zh.js&#26377;&#35823;&#65292;springside&#20316;&#20102;&#20462;&#27491;&#65292;&#34917;&#22238;&#20102;&#32570;&#22833;&#30340; Calendar._FD = 0; &#35821;&#21477;&#12290;</p><p>&#22522;&#26412;&#20351;&#29992;&#20195;&#30721;&#22914;&#19979;&#65306;</p><pre class="programlisting">
+&lt;%@ include file="/components/calendar/calendar.jsp" %&gt;
+&lt;input type="text" name="publisherDate" id="publisherDate"&gt;
+&lt;button id="publisherDateBt" type="button" class="button"&gt; ...&lt;/button&gt;
+&lt;script type="text/javascript"&gt;
+Calendar.setup({
+    inputField : "publisherDate",
+    ifFormat   : "%Y-%m-%d",
+    button     : "publisherDateBt"
+});
+&lt;/script&gt;
+        </pre><p>&#27880;&#24847;&#65292;&#26085;&#21382;&#25511;&#20214;&#36824;&#21487;&#20197;&#26174;&#31034;&#23567;&#26102;&#21644;&#20998;&#38047;&#65292;&#21482;&#35201;&#35774;&#32622;Calendar.setup&#20013;&#30340;&#21442;&#25968;&#21363;&#21487;&#65292;&#35814;&#32454;&#30475;JSCalendar&#33258;&#24102;&#30340;&#25991;&#26723;&#12290;</p></div><div class="sect1" lang="zh-cn"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="d4e1220"></a>8.2.&nbsp;JQuery </h2></div></div></div><p>Prototype.js&#65292;JQuery&#36825;&#31867;Javascript&#24211;&#65292;&#26377;&#21161;&#20110;&#36328;&#27983;&#35272;&#22120;&#30340;Javascript&#65292;&#24182;&#31616;&#21270;&#23545;&#35937;&#36873;&#25321;&#12289;DOM&#25805;&#20316;&#12289;Ajax&#25805;&#20316;&#12290;</p><div class="sect2" lang="zh-cn"><div class="titlepage"><div><div><h3 class="title"><a name="d4e1223"></a>8.2.1.&nbsp;&#22522;&#26412;&#21151;&#33021;</h3></div></div></div><p>JQuery&#30340;&#22522;&#26412;&#21151;&#33021;&#21253;&#25324;DOM&#23545;&#35937;&#36873;&#25321;&#35774;&#32622;&#65292;&#22914;&#65306;</p><pre class="programlisting">
+$("#loginName").val("calvin");
+            </pre><p>&#20854;&#20013;#loginName&#26159;CSS&#35821;&#27861;&#65292;&#33719;&#24471;&#39029;&#38754;id&#20026;loginName&#30340;&#20803;&#32032;&#12290;&#19968;&#33324;&#25353;ID&#33719;&#21462;&#23545;&#35937;&#24050;&#36275;&#22815;&#65292;&#24819;&#20351;&#29992;&#26356;&#39640;&#32423;&#30340;CSS+XPath&#30340;&#33719;&#21462;&#26041;&#27861;&#65292;&#21442;&#32771;JQuery&#30340;Selector&#25991;&#26723;&#12290;</p><p>&#27880;&#24847;JQuery1.3&#21518;&#65292;&#25353;&#23646;&#24615;&#26597;&#35810;&#23545;&#35937;&#30340;&#35821;&#27861;&#24050;&#21462;&#28040;@&#65292;&#19979;&#38754;&#35821;&#21477;&#20026;name&#20026;"gender"&#30340;radio&#65292;checked&#20540;&#20026;"male"&#30340;box&#12290;</p><pre class="programlisting">
+$('input:radio[name=gender]').val(['male']);
+            </pre></div><div class="sect2" lang="zh-cn"><div class="titlepage"><div><div><h3 class="title"><a name="d4e1230"></a>8.2.2.&nbsp;Ajax</h3></div></div></div><p>ajax&#30340;&#20960;&#31181;&#24120;&#29992;&#27861;&#65292;&#21253;&#25324;&#65306;</p><div class="itemizedlist"><ul type="disc"><li><p>&#23558;Form&#20013;&#30340;&#20869;&#23481;&#24207;&#21015;&#21270;&#25104;&#23383;&#31526;&#20018;&#21160;&#24577;&#25552;&#20132;&#12290;</p></li><li><p>&#21160;&#24577;&#33719;&#21462;&#25991;&#26412;&#20869;&#23481;&#65292;&#26356;&#26032;&#26412;&#39029;&#20869;&#23481;&#12290;</p></li><li><p>&#21160;&#24577;&#33719;&#21462;JSON&#20869;&#23481;&#65292;&#26356;&#26032;&#26412;&#39029;&#20869;&#23481;&#12290;</p></li><li><p>&#22522;&#20110;JSONP&#65292;&#36328;&#22495;&#33719;&#21462;html&#20869;&#23481;&#65292;&#26356;&#26032;&#26412;&#39029;&#20869;&#23481;&#12290;</p></li><li><p>&#27880;&#24847;&#35201;&#36991;&#20813;&#32531;&#23384;&#65292;&#35201;&#19981;&#26381;&#21153;&#31471;&#36820;&#22238;&#26102;&#36755;&#20986;no-cache&#21442;&#25968;&#65292;&#35201;&#19981;&#20351;&#29992;JQuery&#20013;&#26368;&#40635;&#28902;&#30340;&#29992;&#27861;$.ajax()&#26041;&#27861;&#26469;&#35774;&#23450;&#38750;&#32531;&#23384;&#21442;&#25968;&#65292;&#35814;&#35265;JQuery&#23448;&#26041;&#25991;&#26723;&#12290;</p></li></ul></div></div><div class="sect2" lang="zh-cn"><div class="titlepage"><div><div><h3 class="title"><a name="d4e1244"></a>8.2.3.&nbsp;Valiation plugin</h3></div></div></div><p>Validation&#26159;&#33879;&#21517;&#30340;&#23458;&#25143;&#31471;&#36755;&#20837;&#26657;&#39564;plugin&#65292;&#21487;&#36827;&#34892;&#38750;&#31354;&#12289;&#25968;&#23383;&#31561;&#24120;&#35268;&#26657;&#39564;&#65292;&#20063;&#21487;&#20197;&#36828;&#31243;ajax&#21028;&#26029;&#29992;&#25143;&#21517;&#26159;&#21542;&#21807;&#19968;&#65292;&#35814;&#35265;JQuery Plugin&#36164;&#26009;&#12290;</p></div></div><div class="sect1" lang="zh-cn"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="d4e1247"></a>8.3.&nbsp;DWR</h2></div></div></div><p>DWR&#26159;&#19968;&#31181;&#26032;&#30340;Ajax&#26041;&#24335;&#65292;&#26377;&#21035;&#20110;&#35775;&#38382;URL&#30340;&#20256;&#32479;&#27169;&#24335;&#65292;DWR&#33258;&#24049;&#22312;&#26381;&#21153;&#31471;&#20316;&#20102;&#19968;&#20010;&#36890;&#29992;&#30340;Service&#23618;Gateway(Proxy)&#65292;&#20351;&#24471;&#23458;&#25143;&#31471;&#30340;Javascript&#21487;&#20197;&#30452;&#25509;&#25805;&#20316;&#36828;&#31243;&#30340;&#26381;&#21153;&#22120;&#31471;&#30340;Service&#23618;&#65292;&#20877;&#37197;&#21512;TrimPath JSTemplate&#20197;Template&#32780;&#19981;&#26159;Dom Builder&#30340;&#26041;&#24335;&#23558;Service&#23618;&#36820;&#22238;&#30340;POJO&#28210;&#26579;&#25104;&#22797;&#26434;&#30340;&#39029;&#38754;&#65292;&#21019;&#36896;&#19968;&#31181;&#26032;&#30340;&#32431;Ajax&#32534;&#31243;&#27169;&#24335;&#12290;</p><p>DWR&#30340;&#23448;&#26041;&#32593;&#31449;&#65306;http://directwebremoting.org/dwr/</p><p>TrimPath JSTemplate&#30340;&#23448;&#26041;&#32593;&#31449;&#65306;http://code.google.com/p/trimpath/&#12290;</p><p>TrimPath JSTemplate&#20197;&#31867;&#20284;Freemarker&#30340;&#35821;&#27861;&#29992;Javascript&#22312;IE&#23458;&#25143;&#31471;&#28210;&#26579;&#39029;&#38754;&#65292;&#38750;&#24120;&#22909;&#29992;&#65306;</p><pre class="programlisting">
+{for u in data}
+    &lt;p&gt;${u.name}&lt;/p&gt;
+{/for}
+        </pre><p>&#26381;&#21153;&#31471;&#37197;&#32622;&#25991;&#20214;</p><p>&#22312;web.xml&#20013;&#28155;&#21152;dwr-invoker servlet&#65292;&#26032;&#24314;&#19968;&#20010;dwr.xml&#65292;&#37197;&#32622;&#23548;&#20986;&#30340;service&#26381;&#21153;&#20197;&#21450;&#35201;&#36716;&#25442;&#21040;&#23458;&#25143;&#31471;javascript&#30340;bean&#12290;&#22914;&#26524;&#23433;&#20840;&#35201;&#27714;&#19981;&#20005;&#26684;&#65292;&#21487;&#20197;&#24456;&#31616;&#21333;&#23601;&#37197;&#23436;&#65292;&#22914;&#26524;&#20005;&#26684;&#23601;&#40635;&#28902;&#19968;&#28857;&#65292;&#35265;dwr&#30340;&#27880;&#37322;&#12290;</p><p>&#23458;&#25143;&#31471;&#39029;&#38754;</p><p>&#22686;&#21152;DWR&#19968;&#20010;&#21160;&#24577;&#29983;&#25104;&#30340;JavaScript&#21450;&#20004;&#20010;&#26631;&#20934;&#30340;&#24037;&#20855;js&#65306;</p><pre class="programlisting">
+&lt;script type="text/javascript" src="dwr/interface/UserService.js"&gt;&lt;/script&gt;
+&lt;script type="text/javascript" src="dwr/engine.js"&gt;&lt;/script&gt;
+&lt;script type="text/javascript" src="dwr/util.js"&gt;&lt;/script&gt;
+        </pre><p>&#20351;&#29992;UserService&#23545;&#35937;&#65306;</p><p>UserService.js&#30340;&#21517;&#23383;&#22312;&#26381;&#21153;&#31471;dwr.xml&#37324;&#24050;&#23450;&#20041;&#65292;&#22312;&#20854;&#21518;&#30340;Javascript&#37324;&#65292;&#23601;&#21487;&#20197;&#20687;&#22312;Java&#37324;&#38754;&#19968;&#26679;&#20351;&#29992;UserService&#23545;&#35937;&#21644;&#23427;&#30340;&#26041;&#27861;&#65292;&#22914;</p><pre class="programlisting">
+UserService.getAll(function(data) {
+    document.getElementById("result").innerHTML = TrimPath.processDOMTemplate('jst', {data:data});
+});
+        </pre><p>&#21442;&#25968;&#26159;&#22312;&#21709;&#24212;&#36820;&#22238;&#26102;&#36827;&#34892;&#22788;&#29702;&#30340;&#22238;&#35843;&#20989;&#25968;&#12290;</p><p>&#20351;&#29992;TrimPath JSTemplate&#28210;&#26579;&#36820;&#22238;&#30340;POJO&#65306;</p><p>&#19979;&#36733;&#24182;&#25335;&#36125;trimpath-template-1.0.38.js&#21040;&#20219;&#24847;&#30446;&#24405;&#65292;&#28982;&#21518;&#22312;&#39029;&#38754;&#21152;&#20837;</p><pre class="programlisting">
+&lt;script type="text/javascript" src="components/jstemplate/trimpath-template-1.0.38.js"&gt;&lt;/script&gt;
+        </pre><p>&#28982;&#21518;&#25353;&#29031;Trimpath&#30340;&#31616;&#21333;&#35821;&#27861;&#22312;&lt;textarea&gt;&#37324;&#32534;&#20889;&#27169;&#29256;&#24182;&#25226;POJO&#25918;&#21040;&#27169;&#29256;&#37324;&#28210;&#26579;</p><p>&#20855;&#20307;&#20351;&#29992;&#35265;dwr.html&#20013;&#30340;&lt;textarea id="jst" &gt;&#33410;&#28857;&#21644;dwr&#20013;&#30340;&#22238;&#35843;&#20989;&#25968;&#12290;</p></div><div class="sect1" lang="zh-cn"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="d4e1268"></a>8.4.&nbsp;DWR&#25512;&#25216;&#26415;</h2></div></div></div><p>DWR2.0.x&#30340;&#25512;&#25216;&#26415;&#20197;&#25512;&#21457;&#36865;&#28040;&#24687;&#65292;&#36866;&#29992;&#20110;ChatRoom&#65292;&#32929;&#31080;&#20449;&#24687;&#26174;&#31034;&#31561;&#22330;&#26223;&#65292;&#20248;&#20110;&#29616;&#22312;JS&#23450;&#26102;&#36718;&#35810;&#26381;&#21153;&#31471;&#30340;&#31574;&#30053;&#65292;&#22823;&#22823;&#33410;&#30465;&#26381;&#21153;&#31471;&#30340;&#36164;&#28304;&#65288;&#25968;&#25454;&#26080;&#21464;&#21270;&#26102;&#19981;&#38656;&#35201;&#24212;&#31572;&#23458;&#25143;&#31471;&#30340;&#23450;&#26102;&#26597;&#35810;&#65289;&#12290;</p><p>&#25512;&#25216;&#26415;&#30340;&#32463;&#20856;&#33539;&#20363;&#26159;DWR Examples&#37324;&#30340;ChatRoom&#12290;</p><p>&#25512;&#28040;&#24687;&#30340;&#25509;&#25910;&#39029;</p><div class="itemizedlist"><ul type="disc"><li><p>&#31532;&#19968;&#65292;&#24341;&#20837;dwr&#21450;&#37027;&#20010;&#36127;&#36131;&#25191;&#34892;&#25512;&#25805;&#20316;&#30340;Java&#31867;(NoticeService)&#30340;js</p><pre class="programlisting">
+&lt;script type="text/javascript" src="dwr/interface/NoticeService.js"&gt;&lt;/script&gt;
+&lt;script type="text/javascript" src="dwr/engine.js"&gt;&lt;/script&gt;
+&lt;script type="text/javascript" src="dwr/util.js"&gt;&lt;/script&gt;
+                </pre></li><li><p>&#31532;&#20108;&#65292;&#35774;&#23450;&#20219;&#24847;&#30340;&#25509;&#25910;&#25512;&#20449;&#24687;&#30340;js&#20989;&#25968;</p><pre class="programlisting">
+function receiveMessages(message) {
+    $('result').innerHTML += "&lt;p&gt;&#25910;&#21040;&#28040;&#24687;&#65306;" + message + "&lt;/p&gt;";
+}
+                </pre></li><li><p>&#31532;&#19977;&#65292;&#22312;body&#30340;onload&#37324;&#35774;&#23450;ReverseAjax=true&#12290;</p><pre class="programlisting">
+&lt;body onload="DWREngine.setActiveReverseAjax(true);"&gt;
+                </pre></li></ul></div><p>&#36127;&#36131;&#25512;&#36865;&#28040;&#24687;&#30340;Java&#31867;</p><pre class="programlisting">
+public class NoticeService {
+    public void send(String message) {
+        WebContext wctx = WebContextFactory.get();
+        ScriptBuffer script = new ScriptBuffer();
+        script.appendScript("receiveMessages('").appendData(message)
+              .appendScript("');");
+
+        ServerContext sctx = ServerContextFactory.get(wctx
+                .getServletContext());
+        Collection&lt;ScriptSession&gt; pages = sctx.getScriptSessionsByPage(
+                "/ajax/dwr-push.html");
+
+        for (ScriptSession session : pages) {
+            session.addScript(script);
+        }
+    }
+}
+        </pre><p>&#21487;&#35265;&#65292;&#29992;ScriptBuffer&#26500;&#36896;&#19968;&#27573;&#22312;&#23458;&#25143;&#31471;&#25191;&#34892;&#30340;JavaScript&#65292;&#28982;&#21518;&#20351;&#29992;WebContext&#65292;ServerContext&#23450;&#20301;&#38656;&#35201;&#21457;&#36865;&#30340;session&#36827;&#34892;&#21457;&#36865;&#12290;&#27880;&#24847;&#36825;&#37324;HardCode&#20102;URL&#36335;&#24452;&#26469;&#30830;&#23450;Subscriber&#65292;&#20063;&#21487;&#20197;&#20687;ChatRoom&#37324;&#38754;&#37027;&#26679;&#65292;&#29992;currenpage&#21457;&#32473;&#19982;NoticeService&#30340;&#35843;&#29992;&#32773;&#21457;&#36215;&#32773;&#22312;&#21516;&#19968;&#39029;&#30340;session&#12290;</p></div><div class="sect1" lang="zh-cn"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="d4e1286"></a>8.5.&nbsp;Ajax Upload&#65292;&#25991;&#20214;&#19978;&#20256;&#36827;&#24230;&#26465;</h2></div></div></div><p>Ajax Upload &#23454;&#29616;&#20102;&#25991;&#20214;&#19978;&#20256;&#36827;&#24230;&#26465;&#30340;&#21151;&#33021;&#12290;</p><p>&#39318;&#20808;&#31616;&#35201;&#35828;&#26126;&#19968;&#19979;AjaxUpload&#30340;&#21407;&#29702;&#65306;&#25105;&#20204;&#30693;&#36947;&#19978;&#20256;&#25991;&#20214;&#30340;&#26102;&#20505;&#23454;&#38469;&#19978;&#26159;&#23458;&#25143;&#31471;&#21644;&#26381;&#21153;&#22120;&#31471;&#21019;&#24314;&#20102;&#19968;&#20010;&#25991;&#20214;&#27969;&#65292;&#25105;&#20204;&#30340;&#30446;&#26631;&#23601;&#26159;&#23454;&#26102;&#24471;&#21040;&#36825;&#20010;&#25991;&#20214;&#21040;&#24213;&#19978;&#20256;&#20102;&#22810;&#23569;&#12290;&#25105;&#20204;&#21482;&#35201;&#22312;&#26381;&#21153;&#22120;&#31471;&#21019;&#24314;&#19968;&#20010;&#30417;&#21548;&#22120;&#30417;&#21548;&#36825;&#20010;&#25991;&#20214;&#27969;&#65292;&#24456;&#23481;&#26131;&#23601;&#33021;&#24471;&#21040;&#19978;&#20256;&#30340;&#22823;&#23567;&#65292;&#20851;&#38190;&#38382;&#39064;&#26159;&#24590;&#20040;&#25226;&#24403;&#21069;&#19968;&#19978;&#20256;&#30340;&#22823;&#23567;&#36820;&#22238;&#32473;&#23458;&#25143;&#31471;&#26174;&#31034;&#20986;&#26469;&#12290;&#26377;&#20102;AJAX&#65292;&#36825;&#20010;&#36824;&#26159;&#38382;&#39064;&#20040;&#65311;&#29992;DWR&#36828;&#31243;&#35843;&#29992;&#26381;&#21153;&#31471;&#30340;FileUploadMontor&#21462;&#19968;&#19979;&#23601;OK&#20102;&#12290;</p><p>&#25152;&#38656;&#25991;&#20214;</p><div class="itemizedlist"><ul type="disc"><li><p>com.family168.ajaxupload&#21253;&#19979;&#30340;&#25991;&#20214;&#65292;&#26469;&#33258;springside</p></li><li><p>webapp/components/ajaxupload&#30446;&#24405;&#30340;js&#19982;css&#25991;&#20214;</p></li><li><p>DWR&#37197;&#32622;&#25991;&#20214;&#65292;&#36127;&#36131;&#19982;&#19978;&#20256;&#29366;&#24577;&#31867;&#30340;&#36890;&#20449;&#12290;</p></li></ul></div><p>DWR&#30340;&#37197;&#32622;&#65292;&#20027;&#35201;&#37197;&#32622;DWR&#36755;&#20986;UploadMonitor&#30340;&#20869;&#23481;&#12290;</p><p>&#39029;&#38754;&#38656;&#35201;&#21152;&#19978;css&#21644;ajaxupload.js&#33050;&#26412;, dwr&#30340;js&#33050;&#26412;&#65292;&#36824;&#26377;&#29305;&#23450;&#30340;div&#26469;&#26174;&#31034;&#36827;&#24230;&#26465;&#30340;&#25928;&#26524;&#12290;</p><p>&#22914;&#26524;&#30452;&#25509;&#20351;&#29992;&#25105;&#20204;&#30340;&#23553;&#35013;&#30340;css&#21644;js&#65292;&#35831;&#22312;jsp&#39029;&#38754;&#30452;&#25509;&#24341;&#29992;</p><pre class="programlisting">
+&lt;%@ include file="/components/ajaxupload/ajaxupload.jsp" %&gt;
+        </pre><div class="itemizedlist"><ul type="disc"><li><p>&#20854;&#20013;css&#25991;&#20214;&#25351;&#23450;&#20102;&#36827;&#24230;&#26465;&#30340;&#22823;&#23567;&#21644;&#39068;&#33394;&#65306;</p><pre class="programlisting">
+#progressBar {
+    padding-top: 5px;
+}
+#progressBarBox {
+    width: 350px;
+    height: 20px;
+    border: 1px inset;
+    background: #eee;
+}
+#progressBarBoxContent {
+    width: 0;
+    height: 20px;
+    border-right: 1px solid #444;
+    background: #9ACB34;
+    text-align: right;
+}
+                </pre></li><li><p>js&#25991;&#20214;&#30340;&#20869;&#23481;&#65306;</p><pre class="programlisting">
+var fileInput;
+var submitButton;
+var progressBarBoxContent;
+var progressBar;
+
+function refreshProgress() {
+  UploadMonitor.getUploadInfo(updateProgress);
+}
+function updateProgress(uploadInfo) {
+  if (uploadInfo.inProgress) {
+    progressBar.style.display = 'block';
+    fileInput.style.display = 'none';
+    fileInput.disabled = true;
+    submitButton.disabled = true;
+
+    var fileIndex = uploadInfo.fileIndex;
+    var progressPercent = Math.ceil((uploadInfo.bytesRead / uploadInfo.totalSize) * 100);
+
+    progressBarBoxContent.innerHTML = progressPercent + '%';
+    progressBarBoxContent.style.width = parseInt(progressPercent * 3.5) + 'px';
+
+    window.setTimeout('refreshProgress()', 100);
+  } else {
+    submitButton.disabled = false;
+    fileInput.disabled = false;
+    progressBar.style.display = 'none';
+  }
+  return true;
+}
+
+function startProgress(fileInputName, submitButtonName) {
+  fileInput = document.getElementById(fileInputName);
+  submitButton = document.getElementById(submitButtonName);
+  progressBar = document.getElementById('progressBar');
+  progressBarBoxContent = document.getElementById('progressBarBoxContent');
+  if (fileInput \!= null &amp;&amp; submitButton \!= null &amp;&amp; progressBar \!= null &amp;&amp; progressBarBoxContent \!= null) {
+    progressBarBoxContent.innerHTML = '0%';
+    window.setTimeout("refreshProgress()", 150);
+    return true;
+  } else {
+    alert('Ajax Upload ERROR\!');
+    return false;
+  }
+}
+                </pre></li><li><p>&#21152;&#20837;&#36827;&#24230;&#26465;&#30340;div</p></li><li><p>form&#30340;onsubmit&#20107;&#20214;</p><p>&#22312;form&#30340;onsubmit&#20107;&#20214;&#37324;&#65292;&#35201;&#21152;&#19978;startProgress&#25165;&#33021;&#26174;&#31034;&#19978;&#20256;&#36827;&#24230;&#26465;&#12290;</p><pre class="programlisting">
+ onsubmit="return validateBookForm(this) &amp;&amp; startProgress('imageFile','save')"
+                </pre></li></ul></div></div><div class="sect1" lang="zh-cn"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="d4e1315"></a>8.6.&nbsp;FCKEditor<span class="emphasis"><em>&#65288;&#24453;&#30740;&#31350;&#65289;</em></span></h2></div></div></div><p>1.1 &#22312;http://www.fckeditor.net/ &#19979;&#36733;FCKeditor 2.3 &#21644;FCKeditor.Java&#21253; FCKeditor-2.3.jar</p><p>1.2 &#21442;&#29031;FCKeditor.java&#30340;&#20363;&#23376;&#65292;&#37197;&#32622;web.xml &#25903;&#25345;FCKEditor&#30340;&#22270;&#29255;&#25991;&#20214;&#19978;&#20256;&#21644;&#27983;&#35272;Servlet.(&#35265;springmodules/fckeditor/ &#20013;&#30340;web.xml)</p><p>1.3 &#21152;&#20837;FCKeditor-2.3.jar&#21644;commons-fileupload.jar</p><p>1.4&#20294;&#26159;fckeditor&#30340;&#25991;&#20214;&#23454;&#22312;&#22826;&#22810;&#20102;&#65292;&#35753;&#20154;&#27809;&#26469;&#30001;&#19968;&#38453;&#24515;&#30171;&#65292;&#21024;&#38500;&#20197;&#19979;&#30446;&#24405;&#21450;&#25991;&#20214;&#65306;</p><p>1./_testcases,  /_samples,</p><p>2./editor/_source,  /editor/skins/office2003, /editor/skins/silver, /editor/filemanager/upload, /editor/filemanager/browser/default/connector</p><p>3./editor/lang &#20165;&#20445;&#30041;en.js&#65292;zh_cn.js</p><p>4.&#22312;/&#30340;php,py&#31561;&#21518;&#32512;&#21517;&#30340;&#25991;&#20214;</p><p>5.&#21024;&#38500;plugin&#30446;&#24405;&#21644;dialog&#30446;&#24405;&#30340;spellcheck</p><p>1.5 &#23558;&#24178;&#20928;&#30340;fck&#30446;&#24405;&#22797;&#21046;&#21040;&#39033;&#30446;&#20013;</p><p>1.6 &#20462;&#25913;&#37197;&#32622;&#25991;&#20214; fckconfig.js</p><p>FCKConfig.DefaultLanguage  = 'zh-cn' ;</p><p>&#21024;&#38500;spell check &#30456;&#20851;&#30340;&#20004;&#22788;&#22320;&#26041;</p><p>&#20462;&#25913;&#22914;&#19979;url,&#20351;&#29992;fckeditor servelt&#26469;&#20570;&#25991;&#20214;&#19978;&#20256;&#19982;&#30446;&#24405;&#27983;&#35272;&#65306;</p><p>&#22312;JSP&#20013;&#20351;&#29992;</p><pre class="programlisting">
+&lt;c:set var="basepath"&gt;&lt;c:url value="/fck/" /&gt;&lt;/c:set&gt;
+&lt;FCK:editor id="descn" basePath="${basepath}" height="500px"&gt;
+   &lt;c:out value="${book.descn}" escapeXml="false" default="" /&gt;
+&lt;/FCK:editor&gt;
+        </pre></div><div class="sect1" lang="zh-cn"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="d4e1334"></a>8.7.&nbsp;dojo&#21644;extjs<span class="emphasis"><em>&#65288;&#24453;&#25972;&#29702;&#65289;</em></span></h2></div></div></div><p>&#20840;&#31449;&#24335;Ajax&#26694;&#26550;</p><p>&#21916;&#27426;extjs&#22240;&#20026;&#28418;&#20142;&#65292;&#35752;&#21388;dojo&#22240;&#20026;&#31528;&#37325;&#65292;&#20294;&#26159;dojo&#25903;&#25345;&#32472;&#22270;&#31561;&#24456;&#37034;&#24615;&#30340;&#21151;&#33021;&#12290;</p><p>js&#25511;&#20214;&#24211;&#65292;&#21487;&#36873;&#25321;&#22522;&#20110;yui,prototype,jquery&#25110;&#32773;ext-base&#24213;&#23618;&#23454;&#29616;&#65292;&#22312;&#36825;&#20123;&#24213;&#23618;&#22522;&#30784;&#19978;&#26500;&#31569;&#20102;&#20016;&#23500;&#30340;&#32452;&#20214;&#24211;&#12290;&#37319;&#29992;oo&#39118;&#26684;&#23553;&#35013;&#65292;&#26131;&#20110;&#20351;&#29992;&#21644;&#25193;&#23637;&#12290;</p><p>&#30446;&#21069;&#20027;&#35201;&#23553;&#35013;&#20102;Ext.lingo.JsonTree&#21644;Ext.lingo.JsonGrid&#65292;&#37319;&#29992;json&#26684;&#24335;&#30340;&#25968;&#25454;&#19982;&#21518;&#21488;&#20132;&#20114;&#65292;&#23454;&#29616;CURD&#31561;&#36890;&#29992;&#21151;&#33021;&#12290;</p><div class="sect2" lang="zh-cn"><div class="titlepage"><div><div><h3 class="title"><a name="d4e1341"></a>8.7.1.&nbsp;Ext.lingo.JsonTree</h3></div></div></div><p>&#26641;&#24418;&#32467;&#26500;&#65292;&#36866;&#29992;&#20110;&#21333;&#34920;&#33258;&#20851;&#32852;&#32467;&#26500;&#12290;</p><div class="orderedlist"><ol type="1"><li><p>&#24322;&#27493;&#35835;&#21462;&#33410;&#28857;&#65288;&#19981;&#36807;&#31649;&#29702;&#20998;&#31867;&#30340;&#26102;&#20505;&#38656;&#35201;&#35835;&#21462;&#25152;&#26377;&#33410;&#28857;&#65289;</p></li><li><p>&#21452;&#20987;&#33410;&#28857;&#32534;&#36753;&#33410;&#28857;&#20869;&#23481;</p></li><li><p>&#25302;&#25341;&#25490;&#24207;</p></li><li><p>&#21491;&#38190;&#24377;&#20986;&#33756;&#21333;&#65292;&#36827;&#34892;&#35814;&#32454;&#37197;&#32622;</p></li></ol></div></div><div class="sect2" lang="zh-cn"><div class="titlepage"><div><div><h3 class="title"><a name="d4e1353"></a>8.7.2.&nbsp;Ext.lingo.JsonGrid</h3></div></div></div><p>&#23454;&#29616;CURD&#21151;&#33021;&#30340;&#34920;&#26684;&#12290;</p><div class="orderedlist"><ol type="1"><li><p>&#25968;&#25454;&#24211;&#31471;&#20998;&#39029;</p></li><li><p>checkbox&#20840;&#36873;&#65292;&#22810;&#36873;&#34892;</p></li><li><p>&#25353;&#23383;&#27573;&#27169;&#31946;&#25628;&#32034;</p></li><li><p>&#24377;&#20986;&#23545;&#35805;&#26694;&#65292;&#36827;&#34892;&#26032;&#22686;&#25110;&#20462;&#25913;&#25968;&#25454;</p></li></ol></div></div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="view.html">&#19978;&#19968;&#39029;</a>&nbsp;</td><td width="20%" align="center">&nbsp;</td><td width="40%" align="right">&nbsp;<a accesskey="n" href="webservice.html">&#19979;&#19968;&#39029;</a></td></tr><tr><td width="40%" align="left" valign="top">&#31532;&nbsp;7&nbsp;&#31456;&nbsp;view&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">&#36215;&#22987;&#39029;</a></td><td width="40%" align="right" valign="top">&nbsp;&#31532;&nbsp;9&nbsp;&#31456;&nbsp;web service</td></tr></table></div></body></html>
