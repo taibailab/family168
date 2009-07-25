@@ -1,0 +1,78 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>&#31532;&nbsp;10&nbsp;&#31456;&nbsp;drools&#35268;&#21017;&#24341;&#25806;</title><link rel="stylesheet" href="css/html.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.73.2"><style type="text/css">
+body { background-image: url('images/draft.png');
+       background-repeat: no-repeat;
+       background-position: top left;
+       /* The following properties make the watermark "fixed" on the page. */
+       /* I think that's just a bit too distracting for the reader... */
+       /* background-attachment: fixed; */
+       /* background-position: center center; */
+     }</style><link rel="start" href="index.html" title="Leona"><link rel="up" href="index.html" title="Leona"><link rel="prev" href="webservice.html" title="&#31532;&nbsp;9&nbsp;&#31456;&nbsp;web service"><link rel="next" href="jms.html" title="&#31532;&nbsp;11&nbsp;&#31456;&nbsp;JMS"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div xmlns="http://www.w3.org/TR/xhtml1/transitional" xmlns:fo="http://www.w3.org/1999/XSL/Format" style="background-color:white;border:none;height:73px;border:1px solid black;"><a style="border:none;" href="http://www.family168.com/" title="Family168"><img src="images/family168.png" border="0"></img></a></div><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">&#31532;&nbsp;10&nbsp;&#31456;&nbsp;drools&#35268;&#21017;&#24341;&#25806;</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="webservice.html">&#19978;&#19968;&#39029;</a>&nbsp;</td><th width="60%" align="center">&nbsp;</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="jms.html">&#19979;&#19968;&#39029;</a></td></tr></table><hr></div><div class="chapter" lang="zh-cn"><div class="titlepage"><div><div><h2 class="title"><a name="drools"></a>&#31532;&nbsp;10&nbsp;&#31456;&nbsp;drools&#35268;&#21017;&#24341;&#25806;</h2></div></div></div><div class="sect1" lang="zh-cn"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="d4e1427"></a>10.1.&nbsp;&#26694;&#26550;&#20171;&#32461;</h2></div></div></div><p>&#22312;<a class="ulink" href="http://www.jboss.org/drools" target="_top">http://www.jboss.org/drools</a>&#37324;&#36203;&#28982;&#25552;&#21040;&#20102;&#20154;&#24037;&#31070;&#32463;&#32593;&#32476;&#65292;&#27169;&#31946;&#36923;&#36753;&#65292;&#20915;&#31574;&#26641;&#36825;&#20123;AI&#21517;&#35789;&#65292;&#38590;&#36947;&#35268;&#21017;&#24341;&#25806;&#23601;&#26159;&#20154;&#24037;&#26234;&#33021;&#20040;&#12290;&#26159;&#19981;&#26159;&#37027;&#20123;&#22797;&#26434;&#30340;&#65292;&#32463;&#24120;&#25913;&#21464;&#30340;&#19994;&#21153;&#36923;&#36753;&#23601;&#21487;&#20197;&#30452;&#25509;&#25172;&#21040;&#37324;&#36793;&#19981;&#29992;&#31649;&#20102;&#21602;&#65311;&#36824;&#26159;&#20182;&#26377;&#20160;&#20040;&#36229;&#33021;&#21147;&#21487;&#20197;&#35299;&#20915;&#25105;&#20204;&#30340;&#38382;&#39064;&#65311;</p><p>drools&#26159;&#38468;&#23646;&#20110;jboss&#30340;&#65292;&#22909;&#22788;&#26159;&#25317;&#26377;&#22810;&#31181;&#35268;&#21017;&#35821;&#27861;&#65292;&#21487;&#20197;&#20351;&#29992;DSL&#35821;&#35328;&#26144;&#23556;&#65292;&#36824;&#21487;&#20197;&#22522;&#20110;Excel&#20915;&#31574;&#26641;&#12290;</p></div><div class="sect1" lang="zh-cn"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="d4e1432"></a>10.2.&nbsp;&#19968;&#27425;Drools&#30340;&#35268;&#21017;&#36816;&#31639;&#36890;&#24120;&#22914;&#19979;&#65306;</h2></div></div></div><div class="itemizedlist"><ul type="disc"><li><p>&#20174;Drl&#35268;&#21017;&#25991;&#20214;&#32534;&#35793;&#24471;&#21040;RuleBase&#65292;&#32534;&#35793;&#21518;&#30340;&#35268;&#21017;&#38598;&#12290;</p></li><li><p>&#20174;RuleBase&#29983;&#25104;&#26412;&#27425;&#35268;&#21017;&#36816;&#31639;&#30340;&#22330;&#22320;&#65292;WorkingMemory&#12290;</p></li><li><p>&#23558;&#35268;&#21017;&#36816;&#31639;&#29992;&#21040;&#30340;&#20107;&#23454;&#25918;&#20837;WorkingMemory&#12290;</p></li><li><p>FireAll Rules&#65292;&#23545;&#20107;&#23454;&#36827;&#34892;&#35268;&#21017;&#36816;&#31639;&#12290;</p></li></ul></div></div><div class="sect1" lang="zh-cn"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="d4e1443"></a>10.3.&nbsp;Drools&#30340;&#35268;&#21017;&#35821;&#27861;</h2></div></div></div><p>&#19968;&#20010;&#23436;&#25972;&#30340;drl&#25991;&#20214;&#22914;&#19979;&#65306;</p><pre class="programlisting">
+package com.family168.dsl
+
+import com.family168.Order
+import java.lang.Double
+import java.math.BigDecimal
+
+expander orderPricing.dsl
+
+rule " order 0.9 discount"
+    when
+        order price larger than 100
+    then
+        do 0.9 discount
+        #&#21152;&#20837; &gt; &#23601;&#21487;&#20197;&#22312;drl/dsl &#20013;&#30452;&#25509;&#20889;&#20837;drl &#35821;&#27861;
+        &gt;System.out.println("original price:"
+                + order.getOriginalPrice() + " discount price:" + order.getTotalPrice());
+end
+        </pre></div><div class="sect1" lang="zh-cn"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="d4e1447"></a>10.4.&nbsp;Drools&#30340;&#35268;&#21017;&#25991;&#20214;</h2></div></div></div><pre class="programlisting">
+package com.family168.helloworld
+
+import com.family168.Message
+
+rule "Hello World"
+    when
+        m : Message(status == Message.HELLO)
+    then
+        m.setMessage("Goodbye cruel world");
+        m.setStatus(Message.GOODBYE);
+end
+        </pre><p>&#31616;&#21333;&#35299;&#37322;&#65306;</p><div class="itemizedlist"><ul type="disc"><li><p>&#36825;&#20010;&#35268;&#21017;&#26159;&#25214;&#20986;WorkingMemory&#37324;status=HELLO&#30340;Message&#23545;&#35937;&#65292;&#23558;&#20182;&#20204;&#30340;&#29366;&#24577;&#25913;&#20026;GOODBYE&#12290;</p></li><li><p>&#27880;&#24847;&#27599;&#26465;&#30340;&#22788;&#29702;&#26041;&#24335;&#23601;&#26159;&#36825;&#26679;&#65292;&#25214;&#20986;&#31867;&#22411;&#19982;&#23646;&#24615;&#31526;&#21512;&#30340;&#23454;&#20307;&#65292;&#23545;&#23427;&#36827;&#34892;&#22788;&#29702;&#12290;</p></li><li><p>[package]&#26159;&#21629;&#21517;&#31354;&#38388;&#65292;Drools&#25552;&#20379;Package&#32423;&#30340;&#31649;&#29702;API&#12290;</p></li><li><p>[import]&#23548;&#20837;&#35268;&#21017;&#24341;&#25806;&#37324;&#29992;&#21040;&#30340;Java&#23545;&#35937;&#12290;</p></li><li><p>[when]&#30340;&#35821;&#27861;&#26159;Drools&#33258;&#23450;&#20041;&#30340;(&#31616;&#21270;&#20102;Java&#30340;API)&#65292;m&#20195;&#34920;status=Message.HELLO&#30340;Message&#23545;&#35937;&#12290;</p><p>&#20882;&#21495;&#65288;:&#65289;&#37096;&#20998;&#21487;&#20197;&#30475;&#20570;&#36171;&#20540;&#35821;&#21477;&#65292;&#20882;&#21495;&#21518;&#30340;Message&#34920;&#31034;&#31867;&#22411;&#65292;&#25324;&#21495;&#20013;&#30340;&#27604;&#36739;&#26465;&#20214;&#12290;</p></li><li><p>[then]&#30340;&#35821;&#27861;&#26159;&#27491;&#23447;Java &#35821;&#27861;&#65292;&#27599;&#21477;&#20197;;&#20998;&#21495;&#32467;&#26463;&#65292;&#37324;&#38754;&#29992;&#21040;&#30340;&#23545;&#35937;&#24517;&#39035;&#22312;when&#35821;&#21477;&#25110;Gobal&#35821;&#21477;&#22768;&#26126;&#12290;</p><p>&#20063;&#21487;&#20197;&#20351;&#29992;&#20854;&#23427;&#35821;&#35328;&#22914;Groovy&#26469;&#32534;&#20889;&#65292;&#20294;&#38656;&#35201;&#22312;&#32534;&#35793;&#35268;&#21017;&#26102;&#35774;&#23450;&#35821;&#35328;&#12290;</p></li></ul></div></div><div class="sect1" lang="zh-cn"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="d4e1466"></a>10.5.&nbsp;Drools&#30340;&#24179;&#27665;&#32423;DSL&#35821;&#27861;&#26144;&#23556;</h2></div></div></div><p>Drools&#30340;DSL&#37319;&#29992;&#20102;&#30452;&#25509;&#26144;&#23556;&#30340;&#26041;&#24335;&#65292;&#36825;DSL&#36824;&#33021;&#33719;&#24471;Eclipse&#25554;&#20214;&#30340;&#25903;&#25345;</p><p>&#21482;&#35201;&#22768;&#26126;&#19968;&#20010;DSL&#26144;&#23556;&#25991;&#20214;&#65306;</p><pre class="programlisting">
+[when]order price larger than {topPrice}=order : Order( totalPrice &gt;= {topPrice} )
+#&#22914;&#26524;&#22810;&#34892;&#65292;&#21487;&#20197;&#22312;&#31532;&#19968;&#34892;&#29992;"/" &#36827;&#34892;&#25442;&#34892;
+[then]do {discountRate}discount=  order.setDiscountPrice/(new Double(order.getTotalPrice().doubleValue() * {discountRate}));
+        </pre><p>&#23601;&#21487;&#20197;&#22312;drl&#20013;&#20351;&#29992;&#65306;</p><pre class="programlisting">
+expander orderPricing.dsl
+
+rule "discount order"
+when
+    order price larger than 100
+then
+    do 0.9 discount
+end
+        </pre></div><div class="sect1" lang="zh-cn"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="d4e1473"></a>10.6.&nbsp;&#20915;&#31574;&#26641;&#65288;Excel &#25991;&#20214;&#65289;&#30340;&#20351;&#29992;</h2></div></div></div><p>drools&#35835;&#21462;Excel&#25991;&#20214;&#65292;&#25226;&#27599;&#19968;&#34892;&#20915;&#31574;&#20316;&#20026;&#19968;&#20010;&#35268;&#21017;&#65292;&#28982;&#21518;&#25226;Excel&#25991;&#20214;&#36716;&#25442;&#25104;drl&#26684;&#24335;&#30340;&#25991;&#26412;&#26469;&#20351;&#29992;&#65292;&#20877;&#23558;&#25991;&#26412;&#36716;&#25442;&#20026;&#35268;&#21017;&#35843;&#29992;&#12290;</p><p>&#22312;Excel&#25991;&#20214;&#20013;&#23450;&#20041;&#30340;&#35268;&#21017;&#26159;&#26377;&#25191;&#34892;&#39034;&#24207;&#30340;&#65292;&#23427;&#20250;&#25353;&#29031;&#34892;&#25968;&#30001;&#19978;&#33258;&#19979;&#20381;&#27425;&#25191;&#34892;&#12290;</p></div><div class="sect1" lang="zh-cn"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="d4e1477"></a>10.7.&nbsp;JBossRules&#30340;Java API</h2></div></div></div><p> JBossRules&#30340;Java API&#22823;&#27010;&#20998;&#20004;&#31867;&#65306;</p><p>&#19968;&#31867;&#26159;&#32534;&#35793;&#35268;&#21017;&#26500;&#24314;WorkingMemory&#12290;</p><p>&#19968;&#31867;&#26159;&#36816;&#34892;&#35268;&#21017;&#30340;&#65292;&#26469;&#21435;&#20027;&#35201;&#26159;insert()&#25918;&#20837;&#20107;&#23454;&#65292;setGlobal()&#20004;&#20010;&#20934;&#22791;&#20989;&#25968;&#21644;fireAllRules()&#25191;&#34892;&#20989;&#25968;&#12290;</p></div><div class="sect1" lang="zh-cn"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="d4e1482"></a>10.8.&nbsp;Drools' Performance</h2></div></div></div><p>&#23545;&#20110;&#25191;&#34892;&#25928;&#29575;&#65292;&#26377;&#20960;&#28857;&#38656;&#35201;&#27880;&#24847;&#30340;&#22320;&#26041;&#65306;</p><p>Condition &#30340;&#25490;&#25918;&#39034;&#24207;&#12290;&#22914;&#26524;&#20320;&#30340;&#35268;&#21017;&#20013;Condition&#19981;&#21482;&#19968;&#20010;&#30340;&#35805;&#65292;&#37027;&#20040;&#25226;&#21738;&#20010;Condition &#25918;&#22312;&#21069;&#38754;&#26159;&#24456;&#26377;&#35762;&#31350;&#30340;&#65292;&#36825;&#30452;&#25509;&#20851;&#31995;&#21040;&#35268;&#21017;&#24341;&#25806;&#30340;&#25191;&#34892;&#25928;&#29575;&#12290;</p><p>&#20363;&#22914;&#19979;&#38754;&#65292;&#26377;&#19978;&#19975;&#20010;&#22914;&#19979;&#31867;&#22411;&#30340;facts&#23558;&#21516;&#26102;assert&#36827;&#20837;&#35268;&#21017;&#24341;&#25806;&#20013;&#21442;&#19982;&#35745;&#31639;&#12290;&#32780;&#36825;&#20123;facts&#20013;&#32477;&#22823;&#37096;&#20998;facts&#30340;type&#20026;1&#65292;name&#21364;&#21508;&#19981;&#30456;&#21516;&#65306;</p><pre class="programlisting">
+/*
+ * fact class
+ */
+public class FactObject {
+    private int type;
+    private String name;
+    // &#30465;&#21435;getter/setter Methods
+}
+        </pre><p>&#35268;&#21017;&#25991;&#20214;&#22914;&#19979;&#23450;&#20041;&#65306;</p><pre class="programlisting">
+when
+    fact : FactObject(type == 1, name == "test")
+        </pre><p>&#21644;&#36825;&#26679;&#23450;&#20041;&#65306;</p><pre class="programlisting">
+when
+    fact : FactObject(name == "test", type == 1)
+        </pre><p>&#21518;&#38754;&#36825;&#31181;&#23450;&#20041;&#30456;&#23545;&#20110;&#21069;&#38754;&#65292;&#21333;&#21333;&#26159;&#25442;&#20102;&#19968;&#20010;&#39034;&#24207;&#65292;&#22312;&#25191;&#34892;&#25928;&#29575;&#26041;&#38754;&#30456;&#24046;&#20960;&#21313;&#20493;&#65281;&#20854;&#21407;&#29702;&#21644;&#25968;&#25454;&#24211;&#32034;&#24341;&#30340;&#21407;&#22240;&#30456;&#20284;&#12290;</p><p>&#36824;&#26159;&#22914;&#19978;&#38754;&#30340;&#36825;&#20010;&#20363;&#23376;&#65292;&#23545;&#20110;&#23383;&#31526;&#20018;&#65292;&#22914;&#26524;&#22312;&#27604;&#36739;&#20043;&#21069;&#20351;&#29992;intern()&#30340;&#35805;&#65292;&#37027;&#20040;&#25928;&#29575;&#20063;&#20250;&#37096;&#20998;&#25552;&#21319;&#12290;</p><p>&#21442;&#35265;JBoss Wiki&#65306;http://www.jboss.org/community/docs/DOC-12329</p></div><div class="sect1" lang="zh-cn"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="d4e1495"></a>10.9.&nbsp;&#21487;&#20197;&#20351;&#29992;global&#35774;&#32622;&#20840;&#23616;&#23545;&#35937;</h2></div></div></div><pre class="programlisting">
+global com.family168.OrderPricingService pricingService;
+
+rule
+  when
+    o : Order(totalPrice &gt;= 100)
+  then
+    pricingService.discount(o, 90);
+end
+            </pre><p>&#23553;&#35013;&#30340;Service&#19968;&#33324;&#20197;gobal&#24418;&#24335;&#23384;&#22312;&#12290;</p><p>&#22312;&#35843;&#29992;&#35268;&#21017;&#26102;&#20197;wm.setGlobal("pricingService", pricingService); &#25918;&#20837;&#65292;&#21629;&#21517;&#20026;pricingService.</p><p>&#22312;&#35268;&#21017;&#20013;&#20197;global com.family168.OrderPricingService pricingService; &#22768;&#26126;&#65292;&#21517;&#31216;&#24517;&#39035;&#19982;&#25918;&#20837;&#26102;&#30456;&#21516;&#65292;&#21017;&#22788;&#29702;&#20989;&#25968;&#37324;&#23601;&#33021;&#20197;pricingService&#25805;&#20316;&#12290;</p></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="webservice.html">&#19978;&#19968;&#39029;</a>&nbsp;</td><td width="20%" align="center">&nbsp;</td><td width="40%" align="right">&nbsp;<a accesskey="n" href="jms.html">&#19979;&#19968;&#39029;</a></td></tr><tr><td width="40%" align="left" valign="top">&#31532;&nbsp;9&nbsp;&#31456;&nbsp;web service&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">&#36215;&#22987;&#39029;</a></td><td width="40%" align="right" valign="top">&nbsp;&#31532;&nbsp;11&nbsp;&#31456;&nbsp;JMS</td></tr></table></div></body></html>

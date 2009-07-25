@@ -1,0 +1,83 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>&#31532;&nbsp;9&nbsp;&#31456;&nbsp;web service</title><link rel="stylesheet" href="css/html.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.73.2"><style type="text/css">
+body { background-image: url('images/draft.png');
+       background-repeat: no-repeat;
+       background-position: top left;
+       /* The following properties make the watermark "fixed" on the page. */
+       /* I think that's just a bit too distracting for the reader... */
+       /* background-attachment: fixed; */
+       /* background-position: center center; */
+     }</style><link rel="start" href="index.html" title="Leona"><link rel="up" href="index.html" title="Leona"><link rel="prev" href="ajax.html" title="&#31532;&nbsp;8&nbsp;&#31456;&nbsp;ajax"><link rel="next" href="drools.html" title="&#31532;&nbsp;10&nbsp;&#31456;&nbsp;drools&#35268;&#21017;&#24341;&#25806;"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div xmlns="http://www.w3.org/TR/xhtml1/transitional" xmlns:fo="http://www.w3.org/1999/XSL/Format" style="background-color:white;border:none;height:73px;border:1px solid black;"><a style="border:none;" href="http://www.family168.com/" title="Family168"><img src="images/family168.png" border="0"></img></a></div><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">&#31532;&nbsp;9&nbsp;&#31456;&nbsp;web service</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="ajax.html">&#19978;&#19968;&#39029;</a>&nbsp;</td><th width="60%" align="center">&nbsp;</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="drools.html">&#19979;&#19968;&#39029;</a></td></tr></table><hr></div><div class="chapter" lang="zh-cn"><div class="titlepage"><div><div><h2 class="title"><a name="webservice"></a>&#31532;&nbsp;9&nbsp;&#31456;&nbsp;web service</h2></div></div></div><div class="sect1" lang="zh-cn"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="d4e1367"></a>9.1.&nbsp;&#27010;&#36848;</h2></div></div></div><p>Web Service&#23618;&#24050;&#32463;&#20960;&#20046;&#36827;&#21270;&#21040;&#24320;&#22987;&#36319;CRUD&#20195;&#30721;&#19968;&#26679;&#26222;&#36941;&#12290;Web Service &#23618;&#30340;&#27010;&#24565;&#24456;&#22810;&#65292;&#20027;&#35201;&#20851;&#27880;&#28857;&#21253;&#25324;&#65306;</p><div class="orderedlist"><ol type="1"><li><p>&#20174;Java&#19994;&#21153;&#31867;&#24320;&#22987;&#65292;&#21457;&#24067;Web&#26381;&#21153;&#12290; </p></li><li><p>&#26681;&#25454;&#24050;&#26377;&#30340;WSDL&#65292;&#29983;&#25104;Web&#26381;&#21153;&#20195;&#30721;&#26694;&#26550;&#12290; </p></li><li><p>Java&#23545;&#35937;&#19982;XML&#30340;&#32465;&#23450;&#12290;</p></li><li><p>Client&#30340;&#32534;&#20889;&#12290;</p></li><li><p>&#23433;&#20840;&#12290;</p></li><li><p>&#24615;&#33021;&#12290;</p></li></ol></div></div><div class="sect1" lang="zh-cn"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="d4e1383"></a>9.2.&nbsp;&#37325;&#35201;&#35268;&#21017;</h2></div></div></div><p>&#20351;&#29992;Java first&#30340;&#24320;&#21457;&#27169;&#24335;&#65292;&#36890;&#36807;JSR181 annotation&#26631;&#27880;Web Service&#25509;&#21475;&#65292;&#29992;JAXB-2.0 annotation&#26631;&#27880;Java-XML Mapping&#12290;</p><p>Apache CXF&#36164;&#26009;&#20013;&#23545;&#20197;&#19979;&#30340;&#35268;&#21017;&#20570;&#20102;&#20171;&#32461;&#65306;</p><div class="itemizedlist"><ul type="disc"><li><p>&#22312;CXF&#19979;&#37027;&#20123;&#24517;&#39035;&#26174;&#24335;&#23450;&#20041;&#65292;&#19981;&#33021;&#37319;&#21462;&#40664;&#35748;&#20540;&#30340;&#30340;Annotation&#12290;</p></li><li><p>List&lt;T&gt;&#31867;&#22411;&#30340;&#22788;&#29702;&#12290;</p></li><li><p>&#20026;&#20102;&#23454;&#29616;&#20219;&#24847;&#23458;&#25143;&#31471;&#37117;&#33021;&#20351;&#29992;&#30340;&#26381;&#21153;&#65292;&#23613;&#37327;&#21482;&#20351;&#29992;&#20854;WS&#35268;&#33539;&#20013;&#26368;&#21407;&#22987;&#36890;&#29992;&#30340;&#37096;&#20998;&#65292;Soap Header/Fault&#33410;&#28857;&#37117;&#19981;&#35201;&#20351;&#29992;&#65292;&#39640;&#38454;&#30340;WS-*&#23601;&#26356;&#35201;&#24910;&#29992;&#12290;</p></li><li><p>&#34429;&#28982;JavaFirst&#30340;&#24320;&#21457;&#26041;&#24335;&#65292;WSDL&#30001;CXF&#21160;&#24577;&#33258;&#21160;&#29983;&#25104;&#65292;&#20294;&#19968;&#23450;&#35201;&#36827;&#34892;&#20445;&#23384;&#19979;&#26469;&#24182;&#21152;&#20837;&#29256;&#26412;&#31649;&#29702;&#31995;&#32479;&#12290;</p></li><li><p>&#22810;&#26426;&#36127;&#36733;&#22343;&#34913;&#25110;&#32773;&#26377;&#20869;&#22806;&#32593;IP&#20043;&#21035;&#26102;&#65292;publishedEndpointUrl&#23646;&#24615;&#25351;&#23450;WSDL&#20013;&#30340;URL&#12290;</p></li></ul></div></div><div class="sect1" lang="zh-cn"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="d4e1398"></a>9.3.&nbsp;&#38169;&#35823;&#36820;&#22238;&#26426;&#21046;</h2></div></div></div><p>&#26381;&#21153;&#31471;&#30340;&#38169;&#35823;&#21487;&#20197;&#20351;&#29992;WebService&#30340;&#24322;&#24120;&#26426;&#21046;(SOAPFault&#33410;&#28857;)&#65292;&#20063;&#21487;&#20197;&#36820;&#22238;&#32467;&#26524;&#20195;&#30721;&#30340;&#26041;&#24335;&#36820;&#22238;&#12290;&#22240;&#20026;WebService&#30340;&#26368;&#22823;&#20215;&#20540;&#26159;&#31616;&#21333;&#36890;&#29992;&#65292;&#38754;&#23545;&#20247;&#22810;&#35821;&#35328;&#30340;&#23458;&#25143;&#31471;&#23545;Soap-Fault&#22788;&#29702;&#30340;&#19981;&#30830;&#23450;&#24615;&#65292;&#22240;&#27492;&#24314;&#35758;&#38500;&#20102;&#20004;&#20010;&#23376;&#31995;&#32479;&#38388;&#20869;&#37096;&#20132;&#20114;&#30340;&#24773;&#20917;&#65292;&#23545;&#22806;&#30340;&#25509;&#21475;&#37117;&#20351;&#29992;&#32467;&#26524;&#36820;&#22238;&#20195;&#30721;&#30340;&#24418;&#24335;&#12290;</p><p>&#22240;&#20026;CXF&#22312;&#36820;&#22238;&#32467;&#26524;&#23450;&#20041;&#26102;&#36824;&#19981;&#25903;&#25345;&#38500;Collection&lt;T&gt;&#22806;&#30340;&#33539;&#22411;&#65292;&#20063;&#23601;&#26159;&#26080;&#27861;&#25903;&#25345;WebServiceResult&lt;UserDTO&gt; getUser(int id)&#36825;&#26679;&#30340;&#23450;&#20041;&#65292;&#22240;&#27492;&#38656;&#35201;&#23450;&#20041;&#22810;&#20010;Result&#31867;&#22411;&#12290;</p><p>&#27880;&#24847;&#20195;&#30721;&#20013;&#25130;&#33719;&#20102;Exception&#36716;&#25442;&#20026;WebServiceResult&#21518;&#65292;&#24517;&#39035;&#23545;&#24322;&#24120;&#20889;&#26085;&#24535;&#65292;&#22240;&#20026;CXF&#19981;&#20250;&#20877;&#24110;&#20320;&#25318;&#25130;&#24322;&#24120;&#65292;&#35760;&#24405;&#26085;&#24535;&#20102;&#12290;</p></div><div class="sect1" lang="zh-cn"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="d4e1403"></a>9.4.&nbsp;&#20869;&#37096;&#23376;&#31995;&#32479;&#38388;</h2></div></div></div><p>&#22914;&#26524;&#26159;&#20869;&#37096;&#20004;&#20010;&#23376;&#31995;&#32479;&#38388;&#37319;&#29992;web service&#20316;&#20026;&#36828;&#31243;&#35775;&#38382;&#25163;&#27573;&#26102;&#65292;&#21017;&#21487;&#20197;&#30452;&#25509;&#26631;&#27880;Service&#23618;&#21644;Entity&#31867;&#65292;&#24182;&#19988;&#30452;&#25509;&#29992;SoapFault&#20316;&#20026;&#24322;&#24120;&#26426;&#21046;&#65292;&#26080;&#38656;&#25509;&#21475;&#31867;&#12289;DTO&#21644;WebServiceResult&#31867;&#12290;</p></div><div class="sect1" lang="zh-cn"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="d4e1406"></a>9.5.&nbsp;DTO</h2></div></div></div><p>&#23545;&#22806;&#31995;&#32479;&#30340;Web Service&#25509;&#21475;&#65292;&#24517;&#39035;&#22686;&#21152;&#25509;&#21475;&#31867;&#21450;DTO&#20197;&#35299;&#32806;&#12290;</p><p>&#20026;&#20102;&#24212;&#20184;DTO&#20013;&#30340;&#23376;&#23545;&#35937;&#20063;&#38656;&#35201;&#26159;DTO(&#22914;UserDTO&#30340;&#23376;&#23545;&#35937;&#26159;RoleDTO&#65292;User&#30340;&#23376;&#23545;&#35937;&#26159;Role)&#65292;&#25110;&#32773;entity&#19982;DTO&#30340;&#23646;&#24615;&#21517;&#19981;&#21516;&#31561;&#24773;&#20917;&#65292;&#22797;&#21046;DTO&#19982;entity&#26102;&#37319;&#29992;dozer&#20570;mapper&#65292;&#32780;&#19981;&#33021;&#20351;&#29992;BeanUtils&#12290;</p></div><div class="sect1" lang="zh-cn"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="d4e1410"></a>9.6.&nbsp;&#23458;&#25143;&#31471;&#20195;&#30721;&#29983;&#25104;</h2></div></div></div><p>&#35843;&#29992;cxf&#30340;wsdl2java.bat&#29983;&#25104;&#23458;&#25143;&#31471;&#20195;&#30721;&#65292;&#36824;&#38656;&#35201;&#23558;WSDL&#20013;&#30340;Date&#31867;&#22411;&#36716;&#20026;Java&#24120;&#29992;&#30340;Date&#31867;&#22411;&#12290;</p></div><div class="sect1" lang="zh-cn"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="d4e1413"></a>9.7.&nbsp;&#31616;&#21333;&#31034;&#20363;</h2></div></div></div><p>&#20381;&#36182;</p><pre class="programlisting">
+&lt;dependency&gt;
+  &lt;groupId&gt;org.apache.cxf&lt;/groupId&gt;
+  &lt;artifactId&gt;cxf-rt-core&lt;/artifactId&gt;
+&lt;/dependency&gt;
+&lt;dependency&gt;
+  &lt;groupId&gt;org.apache.cxf&lt;/groupId&gt;
+  &lt;artifactId&gt;cxf-rt-frontend-jaxws&lt;/artifactId&gt;
+&lt;/dependency&gt;
+&lt;dependency&gt;
+  &lt;groupId&gt;org.apache.cxf&lt;/groupId&gt;
+  &lt;artifactId&gt;cxf-rt-transports-http&lt;/artifactId&gt;
+&lt;/dependency&gt;
+
+&lt;dependency&gt;
+  &lt;groupId&gt;com.sun.xml.bind&lt;/groupId&gt;
+  &lt;artifactId&gt;jaxb-impl&lt;/artifactId&gt;
+&lt;/dependency&gt;
+&lt;dependency&gt;
+  &lt;groupId&gt;com.sun.xml.bind&lt;/groupId&gt;
+  &lt;artifactId&gt;jaxb-xjc&lt;/artifactId&gt;
+&lt;/dependency&gt;
+        </pre><p>&#26381;&#21153;&#31471;</p><pre class="programlisting">
+@WebService(name = "HelloWorld", targetNamespace = "http://localhost:8080/cxf/services")
+public interface HelloWorld {
+    String sayHi(@WebParam(name = "text")
+    String text);
+}
+        </pre><pre class="programlisting">
+@WebService(endpointInterface = "com.family168.HelloWorld", targetNamespace = "http://localhost:8080/cxf/services", portName = "HelloWorldPort", serviceName = "HelloWorld")
+public class HelloWorldImpl implements HelloWorld {
+    public String sayHi(String text) {
+        System.out.println(text);
+
+        return "Hello " + text;
+    }
+}
+        </pre><p>spring&#37197;&#32622;</p><pre class="programlisting">
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:jaxws="http://cxf.apache.org/jaxws"
+    xmlns:cxf="http://cxf.apache.org/core"
+    xsi:schemaLocation="http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd
+        http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd"
+    default-autowire="byType" default-lazy-init="true"&gt;
+
+    &lt;import resource="classpath:META-INF/cxf/cxf.xml" /&gt;
+    &lt;import resource="classpath:META-INF/cxf/cxf-servlet.xml" /&gt;
+    &lt;import resource="classpath:META-INF/cxf/cxf-extension-soap.xml" /&gt;
+
+    &lt;!-- jax-ws endpoint&#23450;&#20041;  --&gt;
+    &lt;jaxws:endpoint id="helloWorldEP" address="/HelloWorld"&gt;
+        &lt;jaxws:implementor ref="helloWorld" /&gt;
+    &lt;/jaxws:endpoint&gt;
+
+    &lt;!-- WebService&#30340;&#23454;&#29616;Bean&#23450;&#20041; --&gt;
+    &lt;bean id="helloWorld" class="com.family168.HelloWorldImpl" /&gt;
+
+&lt;/beans&gt;
+        </pre><p>&#23458;&#25143;&#31471;</p><pre class="programlisting">
+&lt;%@page import="com.family168.HelloWorld"%&gt;
+&lt;%@page import="org.apache.cxf.jaxws.JaxWsProxyFactoryBean"%&gt;
+&lt;%
+    JaxWsProxyFactoryBean factory = new JaxWsProxyFactoryBean();
+    factory.setServiceClass(HelloWorld.class);
+    factory.setAddress("http://localhost:8080/cxf/services/HelloWorld");
+    HelloWorld client = (HelloWorld) factory.create();
+    String result = client.sayHi("Hello");
+    out.println(result);
+%&gt;
+        </pre><p>&#26412;&#26469;cxf&#36824;&#25903;&#25345;&#26356;&#31616;&#21333;&#30340;simple&#26041;&#24335;&#65292;&#20294;&#26159;&#22312;jetty&#19979;&#19968;&#30452;&#20986;&#38382;&#39064;&#65292;&#25152;&#20197;&#21482;&#22909;&#20351;&#29992;jaxws&#30340;&#26041;&#24335;&#65292;&#38656;&#35201;&#27880;&#24847;&#30340;&#26159;jaxws&#21457;&#24067;&#30340;&#26381;&#21153;&#31471;&#21482;&#33021;&#20351;&#29992;jaxws&#30340;&#23458;&#25143;&#31471;&#35775;&#38382;&#65292;&#20351;&#29992;simple&#26041;&#24335;&#30340;&#23458;&#25143;&#31471;&#34429;&#28982;&#19981;&#20250;&#20986;&#38169;&#65292;&#20294;&#26159;&#20063;&#26080;&#27861;&#35843;&#29992;&#26381;&#21153;&#31471;&#12290;</p></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ajax.html">&#19978;&#19968;&#39029;</a>&nbsp;</td><td width="20%" align="center">&nbsp;</td><td width="40%" align="right">&nbsp;<a accesskey="n" href="drools.html">&#19979;&#19968;&#39029;</a></td></tr><tr><td width="40%" align="left" valign="top">&#31532;&nbsp;8&nbsp;&#31456;&nbsp;ajax&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">&#36215;&#22987;&#39029;</a></td><td width="40%" align="right" valign="top">&nbsp;&#31532;&nbsp;10&nbsp;&#31456;&nbsp;drools&#35268;&#21017;&#24341;&#25806;</td></tr></table></div></body></html>
