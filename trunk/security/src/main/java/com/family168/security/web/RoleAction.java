@@ -92,16 +92,16 @@ public class RoleAction extends BaseAction<Role> {
     /** * @return redirect. */
     /*public String save() {
         Role role;
-    
+
         if (id == 0L) {
             role = new Role();
         } else {
             role = roleManager.get(id);
         }
-    
+
         MainUtils.copy(entity, role);
         roleManager.save(role);
-    
+
         return "redirect";
     }*/
 
@@ -115,7 +115,7 @@ public class RoleAction extends BaseAction<Role> {
     /** * @return redirect. */
     /*public String remove() {
         roleManager.removeById(id);
-    
+
         return "redirect";
     }*/
 
@@ -137,12 +137,12 @@ public class RoleAction extends BaseAction<Role> {
     /*public String authResc() {
         Role role = roleManager.get(id);
         Resc resc = rescManager.get(rescId);
-    
+
         if (!role.getRescs().contains(resc)) {
             role.getRescs().add(resc);
             roleManager.save(role);
         }
-    
+
         return "auth-resc-end";
     }*/
 

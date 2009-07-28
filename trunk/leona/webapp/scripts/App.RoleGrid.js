@@ -317,8 +317,8 @@ App.RoleGrid = Ext.extend(Ext.lingo.JsonGrid, {
             // 设置根节点
             var root = new Ext.tree.AsyncTreeNode({
                 text       : 'root',
-                draggable  : false/*,
-                uiProvider : Ext.tree.CheckboxNodeUI*/
+                draggable  : false//,
+                //uiProvider : Ext.tree.CheckboxNodeUI
             });
             menuTree.setRootNode(root);
 
@@ -330,10 +330,12 @@ App.RoleGrid = Ext.extend(Ext.lingo.JsonGrid, {
                 closeAction: 'hide',
                 items: [menuTree]
             });
+            this.menuTree.getLoader().baseParams.roleId = roleId;
+        } else {
+            this.menuTree.getLoader().baseParams.roleId = roleId;
+            this.menuTree.getLoader().load(this.menuTree.getRootNode());
         }
         this.selectMenuWin.show();
-        this.menuTree.getLoader().baseParams.roleId = roleId;
-        this.menuTree.getLoader().load(this.menuTree.getRootNode());
 
     }
 });
