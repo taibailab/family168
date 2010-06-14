@@ -439,6 +439,9 @@ public class MainUtils {
                     Method setter = destClass.getMethod(methodName,
                             returnType);
                     setter.invoke(dest, result);
+                } catch (NoSuchMethodException ex) {
+                    // ignore
+                    continue;
                 } catch (Throwable ex) {
                     System.err.println(ex);
                 }

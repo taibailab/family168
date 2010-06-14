@@ -248,13 +248,14 @@ public class DeptAction extends BaseAction<Dept> {
      * @throws Exception 异常
      */
     public void updateTree() throws Exception {
-        JSONObject jsonObject = JSONObject.fromObject(data);
+        //JSONObject jsonObject = JSONObject.fromObject(data);
 
-        Dept entity = deptManager.get(jsonObject.getLong("id"));
-        JsonUtils.json2Bean(jsonObject, entity, getExcludesForChildren(),
-            getDatePattern());
-
-        deptManager.save(entity);
+        //Dept entity = deptManager.get(jsonObject.getLong("id"));
+        //JsonUtils.json2Bean(jsonObject, entity, getExcludesForChildren(),
+        //    getDatePattern());
+		Dept stub = deptManager.get(id);
+		MainUtils.copy(entity,stub);
+        deptManager.save(stub);
 
         ServletActionContext.getResponse().getWriter()
                             .print("{success:true,info:\"success\"}");
