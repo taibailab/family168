@@ -5,7 +5,12 @@
 
 <struts>
     <package name="employee" extends="default" namespace="/employee">
-        <action name="employee" class="com.family168.leona.web.EmployeeAction"/>
+        <action name="employee" class="com.family168.leona.web.EmployeeAction">
+            <result name="redirectAction" type="redirectAction">
+                <param name='actionName'>employee</param>
+                <param name='method'>list</param>
+            </result>
+        </action>
     </package>
 
 </struts>

@@ -70,4 +70,13 @@ public class EmployeeAction extends AbstractGridAction<Employee> {
             "senderMessages"
         };
     }
+
+    public String redirectAction() {
+        return "redirectAction";
+    }
+
+    public void list() throws Exception {
+        ServletActionContext.getResponse().getWriter()
+            .write("redirect action result : [list]");
+    }
 }
